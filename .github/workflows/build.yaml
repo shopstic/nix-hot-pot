@@ -23,7 +23,7 @@ jobs:
           nixCacheS3SecretAccessKey: ${{ secrets.NIX_CACHE_S3_SECRET_ACCESS_KEY }}
 
       - name: Build all
-        run: nix build -L -vv
+        run: nix build -L -vv '.#defaultPackage.${{ matrix.arch }}'
 
       - name: Smoke test
         run: |
@@ -32,5 +32,5 @@ jobs:
       - name: Cache
         uses: shopstic/tailscale-nix-builder/cache@5d038bf4bfb3dea2f3b588efe6388796e263c6d4
         with:
-          nixOutput: ""
+          nixOutput: .#defaultPackage.${{ matrix.arch }}
           nixCachePrivateKey: ${{ secrets.NIX_CACHE_PRIVATE_KEY }}
