@@ -21,7 +21,8 @@ let
   };
 in
 stdenv.mkDerivation rec {
-  name = "deno-bin-${version}";
+  pname = "deno";
+  version = version;
 
   src = let download = downloadMap.${stdenv.hostPlatform.system}; in fetchzip {
     url = download.url;
