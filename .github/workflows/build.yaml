@@ -31,7 +31,6 @@ jobs:
 
       - name: Cache
         uses: shopstic/tailscale-nix-builder/cache@5d038bf4bfb3dea2f3b588efe6388796e263c6d4
-        if: ${{ secrets.NIX_CACHE_PRIVATE_KEY != "" }}
         with:
           nixOutput: ""
           nixCachePrivateKey: ${{ secrets.NIX_CACHE_PRIVATE_KEY }}
