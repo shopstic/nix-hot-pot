@@ -1,0 +1,7 @@
+{
+    "yaml.schemaStore.enable": true,
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yaml",
+        "https://json.schemastore.org/github-action.json": "*/action.yaml",
+    }
+}

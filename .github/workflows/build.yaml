@@ -1,0 +1,37 @@
+name: Build all packages
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        arch:
+          - aarch64-linux
+          - aarch64-darwin
+          - x86_64-linux
+          - x86_64-darwin
+    steps:
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
+
+      - name: Setup
+        uses: shopstic/tailscale-nix-builder/setup@5d038bf4bfb3dea2f3b588efe6388796e263c6d4
+        timeout-minutes: 1
+        with:
+          tailscaleAuthKey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          nixBuildSshKey: ${{ secrets.NIX_BUILD_SSH_KEY }}
+          nixCacheS3AccessKeyId: ${{ secrets.NIX_CACHE_S3_ACCESS_KEY_ID }}
+          nixCacheS3SecretAccessKey: ${{ secrets.NIX_CACHE_S3_SECRET_ACCESS_KEY }}
+
+      - name: Build all
+        run: nix build -L -vv
+
+      - name: Smoke test
+        run: |
+          ./result/bin/deno --version
+
+      - name: Cache
+        uses: shopstic/tailscale-nix-builder/cache@5d038bf4bfb3dea2f3b588efe6388796e263c6d4
+        if: secrets.NIX_CACHE_PRIVATE_KEY != ""
+        with:
+          nixOutput: ""
+          nixCachePrivateKey: ${{ secrets.NIX_CACHE_PRIVATE_KEY }}
