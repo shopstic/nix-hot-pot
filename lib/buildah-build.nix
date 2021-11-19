@@ -14,7 +14,7 @@ let
       "linux/arm64";
   buildArgsFlags = builtins.concatStringsSep 
     " " 
-    (builtins.mapAttrs (name: value: ''"--build-arg=${name}=${value}"'') buildArgs);
+    (builtins.mapAttrsToList (name: value: ''"--build-arg=${name}=${value}"'') buildArgs);
   script = writeScript "build" ''
     #!/usr/bin/env bash
     set -euo pipefail
