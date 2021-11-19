@@ -2,6 +2,7 @@
 , outputHash
 , buildArgs ? {}
 , stdenv
+, lib
 , writeText
 , writeScript
 , runCommand
@@ -14,7 +15,7 @@ let
       "linux/arm64";
   buildArgsFlags = builtins.concatStringsSep 
     " " 
-    (builtins.mapAttrsToList (name: value: ''"--build-arg=${name}=${value}"'') buildArgs);
+    (lib.mapAttrsToList (name: value: ''"--build-arg=${name}=${value}"'') buildArgs);
   script = writeScript "build" ''
     #!/usr/bin/env bash
     set -euo pipefail
