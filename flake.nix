@@ -16,12 +16,16 @@
         in
         rec {
           packages = {
-            deno = pkgs.callPackage ./packages/deno.nix { };
+            deno = pkgs.callPackage ./pkgs/deno.nix { };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
             paths = builtins.attrValues packages;
           };
         }
-      );
+      ) // {
+        lib = {
+          buildah-build = import ./lib/buildah-build.nix;
+        };
+      };
 }
