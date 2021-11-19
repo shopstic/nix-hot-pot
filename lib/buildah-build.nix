@@ -1,5 +1,6 @@
 { dockerFile
 , outputHash
+, buildArgs ? {}
 , stdenv
 , writeText
 , writeScript
@@ -11,6 +12,9 @@ let
     if stdenv.isx86_64 then
       "linux/amd64" else
       "linux/arm64";
+  buildArgsFlags = builtins.concatStringsSep 
+    " " 
+    (builtins.mapAttrs (name: value: ''"--build-arg=${name}=${value}"'') buildArgs);
   script = writeScript "build" ''
     #!/usr/bin/env bash
     set -euo pipefail
@@ -18,7 +22,12 @@ let
     OUT_FILE=$(mktemp)
     IMAGE_ID=$(mktemp)
 
-    buildah bud --platform=${imagePlatform} --jobs=0 --timestamp=0 --iidfile="$IMAGE_ID" /build 1>&2
+    buildah bud \
+      --platform=${imagePlatform} \
+      --jobs=0 \
+      --timestamp=0 \
+      --iidfile="$IMAGE_ID" \
+      ${buildArgsFlags} /build 1>&2
     buildah push "$(cat "$IMAGE_ID")" docker-archive:"$OUT_FILE" 1>&2
     
     cat "$OUT_FILE"
