@@ -25,7 +25,7 @@
         }
       ) // {
         lib = {
-          buildah-build = import ./lib/buildah-build.nix;
+          buildahBuild = import ./lib/buildah-build.nix;
         };
       };
 }
