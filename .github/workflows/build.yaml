@@ -25,7 +25,7 @@ jobs:
       - name: Test
         run: |
           cd ./tests
-          nix build -L --no-link '.#defaultPackage.${{ matrix.arch }}'
+          nix build -L -vv --no-link '.#defaultPackage.${{ matrix.arch }}'
 
       - name: Build all
         run: nix build -L -vv '.#defaultPackage.${{ matrix.arch }}'
