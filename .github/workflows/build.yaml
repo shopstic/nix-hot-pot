@@ -22,6 +22,11 @@ jobs:
           nixCacheS3AccessKeyId: ${{ secrets.NIX_CACHE_S3_ACCESS_KEY_ID }}
           nixCacheS3SecretAccessKey: ${{ secrets.NIX_CACHE_S3_SECRET_ACCESS_KEY }}
 
+      - name: Test
+        run: |
+          cd ./tests
+          nix build -L --no-link '.#defaultPackage.${{ matrix.arch }}'
+
       - name: Build all
         run: nix build -L -vv '.#defaultPackage.${{ matrix.arch }}'
 

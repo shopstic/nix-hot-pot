@@ -2,6 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flakeUtils = {
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,8 +25,6 @@
           };
         }
       ) // {
-        lib = {
-          buildahBuild = import ./lib/buildah-build.nix;
-        };
+        lib = import ./lib;
       };
 }
