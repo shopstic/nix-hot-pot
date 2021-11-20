@@ -16,4 +16,8 @@ buildahBuild {
   buildArgs = {
     inherit from;
   };
+  outputHash =
+    if stdenv.isx86_64 then
+      "sha256-ysTUcsLl9/aRwbGFSYrUkATwWFhv7zTA4zmd7GQ08V4=" else
+      "sha256-lFffA+u/ImyDMHoweBdCy0R8DqtcpVKO1DJlFFA8zeM=";
 }

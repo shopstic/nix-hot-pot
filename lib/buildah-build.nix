@@ -1,6 +1,7 @@
 { context
 , buildArgs ? { }
 , squash ? true
+, outputHash
 , stdenv
 , lib
 , writeScript
@@ -31,14 +32,22 @@ let
     
     cat "$OUT_FILE"
   '';
+
+  inputFiles = [ script context ];
+  inputHash = builtins.foldl'
+    (f1: f2: builtins.hashString "sha256" (builtins.concatStringsSep "" [ f1 f2 ]))
+    ""
+    inputFiles;
 in
 runCommand "buildah-build"
 {
-  __noChroot = true;
   nativeBuildInputs = [ docker-client ];
   meta = with stdenv.lib; {
     platforms = [ "x86_64-linux" "aarch64-linux" ];
   };
+  outputHashMode = "flat";
+  outputHashAlgo = "sha256";
+  outputHash = outputHash;
 }
   ''
     exec docker run \
