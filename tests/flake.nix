@@ -23,9 +23,8 @@
               inherit buildahBuild;
             };
           };
-          defaultPackage = pkgs.runCommand "test-all" {
-            nativeBuildInputs = pkgs.lib.attrValues packages;
-          } ''
+          defaultPackage = pkgs.runCommand "test-all" {} ''
+            echo '${builtins.concatStringsSep "," (pkgs.lib.attrValues packages)}'
             mkdir $out
           '';
         }
