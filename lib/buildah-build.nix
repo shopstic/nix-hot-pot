@@ -33,23 +33,7 @@ let
     cat "$OUT_FILE"
   '';
 
-  inputFiles = [ script context ];
-  inputHash = builtins.foldl'
-    (f1: f2: builtins.hashString "sha256" (builtins.concatStringsSep "" [ f1 f2 ]))
-    ""
-    inputFiles;
-in
-runCommand "buildah-build"
-{
-  nativeBuildInputs = [ docker-client ];
-  meta = with stdenv.lib; {
-    platforms = [ "x86_64-linux" "aarch64-linux" ];
-  };
-  outputHashMode = "flat";
-  outputHashAlgo = "sha256";
-  outputHash = outputHash;
-}
-  ''
+  command = ''
     exec docker run \
         --rm \
         --init \
@@ -60,4 +44,17 @@ runCommand "buildah-build"
         -v ${script}:/build.sh \
         quay.io/buildah/stable:v1.23.1 \
         /build.sh > $out
-  ''
+  '';
+
+  inputHash = builtins.hashString "sha256" command;
+in
+runCommand "buildah-image-${inputHash}"
+{
+  nativeBuildInputs = [ docker-client ];
+  meta = with stdenv.lib; {
+    platforms = [ "x86_64-linux" "aarch64-linux" ];
+  };
+  outputHashMode = "flat";
+  outputHashAlgo = "sha256";
+  outputHash = outputHash;
+} command
