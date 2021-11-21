@@ -12,6 +12,7 @@ let
     builtins.trace digest "docker.io/library/alpine@${digest}";
 in
 buildahBuild {
+  name = "test";
   context = ./.;
   buildArgs = {
     inherit from;

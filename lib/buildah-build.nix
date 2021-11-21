@@ -1,4 +1,5 @@
-{ context
+{ name
+, context
 , buildArgs ? { }
 , squash ? true
 , outputHash
@@ -48,7 +49,7 @@ let
 
   inputHash = builtins.hashString "sha256" command;
 in
-runCommand "buildah-image-${inputHash}"
+runCommand "image-${name}-${inputHash}"
 {
   nativeBuildInputs = [ docker-client ];
   meta = with stdenv.lib; {
@@ -57,4 +58,5 @@ runCommand "buildah-image-${inputHash}"
   outputHashMode = "flat";
   outputHashAlgo = "sha256";
   outputHash = outputHash;
-} command
+}
+  command
