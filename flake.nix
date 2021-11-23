@@ -18,6 +18,7 @@
         rec {
           packages = {
             deno = pkgs.callPackage ./pkgs/deno.nix { };
+            manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
