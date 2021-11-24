@@ -26,7 +26,7 @@ stdenv.mkDerivation {
 
   src = let download = downloadMap.${stdenv.system}; in fetchzip {
     name = "deno-${version}";
-    url = builtins.trace download.url download.url;
+    url = download.url;
     sha256 = download.hash;
   };
 
