@@ -1,22 +1,22 @@
 { autoPatchelfHook, fetchzip, stdenv }:
 let
-  version = "1.16.1";
+  version = "1.16.2";
   downloadMap = {
     x86_64-linux = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-x86_64-unknown-linux-gnu.zip";
-      hash = "sha256-S8uo+anDgJ9qR8oNU7S8+Y53oxoeUCKNdv0y8gaTAKg=";
+      hash = "sha256-YOPFvQ1cv3UE8z3TNqAn9UteJUFGz8zn1Z+e9wkF+TQ=";
     };
     x86_64-darwin = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-x86_64-apple-darwin.zip";
-      hash = "sha256-N5pXxV+RFfpy2WiApHVxvryfjVf6Rp4aieUPswTTpr8=";
+      hash = "sha256-o5GryK4m9iXW3QPKXO5PQ/Ka9XFgfdahtccSOvEeh1o=";
     };
     aarch64-darwin = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-aarch64-apple-darwin.zip";
-      hash = "sha256-vodjVIHZRgIUPZLdyV9l1iB117JFFa/CUeqvxOr27IA=";
+      hash = "sha256-SxAXNC5K2TxTI3tVvxPRB10/UCE/16RihtASzGqfhWo=";
     };
     aarch64-linux = {
       url = "https://github.com/LukeChannings/deno-arm64/releases/download/v${version}/deno-linux-arm64.zip";
-      hash = "sha256-OiceQJjT2Uk/FctiUqoxzlWCBMoBoMpYJJeBeeVZ4Zw=";
+      hash = "sha256-qD8ntmPeNQEfEsRZQAR0tlEKh8KBYo57wsiP9nmsgzw=";
     };
   };
 in
@@ -24,8 +24,9 @@ stdenv.mkDerivation {
   pname = "deno";
   version = version;
 
-  src = let download = downloadMap.${stdenv.hostPlatform.system}; in fetchzip {
-    url = download.url;
+  src = let download = downloadMap.${stdenv.system}; in fetchzip {
+    name = "deno-${version}";
+    url = builtins.trace download.url download.url;
     sha256 = download.hash;
   };
 
