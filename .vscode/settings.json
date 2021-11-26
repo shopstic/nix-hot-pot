@@ -3,5 +3,12 @@
     "yaml.schemas": {
         "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yaml",
         "https://json.schemastore.org/github-action.json": "*/action.yaml",
-    }
+    },
+    "deno.enable": true,
+    "deno.lint": true,
+    "deno.unstable": true,
+    "deno.suggest.imports.hosts": {
+        "https://deno.land": false
+    },
+    "editor.tabSize": 2
 }

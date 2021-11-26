@@ -14,10 +14,29 @@
       (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          deno = pkgs.callPackage ./pkgs/deno.nix { };
+          intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
+            {
+              inherit deno;
+              name = "intellij-helper";
+              src = builtins.path
+                {
+                  path = ./pkgs/intellij-helper;
+                  name = "intellij-helper-src";
+                  filter = with pkgs.lib; (path: type:
+                    hasInfix "/src" path ||
+                    hasSuffix "/lock.json" path
+                  );
+                };
+              appSrcPath = "./src/intellij-helper.ts";
+            };
         in
         rec {
+          devShell = pkgs.mkShellNoCC {
+            buildInputs = [ deno ];
+          };
           packages = {
-            deno = pkgs.callPackage ./pkgs/deno.nix { };
+            inherit deno intellij-helper;
             manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
             faq = pkgs.callPackage ./pkgs/faq.nix { };
           };
@@ -27,6 +46,6 @@
           };
         }
       ) // {
-        lib = import ./lib;
-      };
+      lib = import ./lib;
+    };
 }
