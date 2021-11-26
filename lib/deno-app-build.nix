@@ -42,5 +42,5 @@ let
     };
 in
 writeShellScriptBin name ''
-  exec deno run --no-remote --cached-only --unstable -A "${jsBundle}" "$@"
+  exec ${deno}/bin/deno run --no-remote --cached-only --unstable -A "${jsBundle}" "$@"
 ''
