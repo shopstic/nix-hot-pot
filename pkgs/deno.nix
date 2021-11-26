@@ -21,8 +21,8 @@ let
   };
 in
 stdenv.mkDerivation {
+  inherit version;
   pname = "deno";
-  version = version;
 
   src = let download = downloadMap.${stdenv.system}; in fetchzip {
     name = "deno-${version}";

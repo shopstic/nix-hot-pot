@@ -23,7 +23,7 @@
                 {
                   path = ./pkgs/intellij-helper;
                   name = "intellij-helper-src";
-                  filter = with pkgs.lib; (path: type:
+                  filter = with pkgs.lib; (path: /* type */_:
                     hasInfix "/src" path ||
                     hasSuffix "/lock.json" path
                   );

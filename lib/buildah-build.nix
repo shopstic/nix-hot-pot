@@ -51,12 +51,12 @@ let
 in
 runCommand "image-${name}-${inputHash}"
 {
+  inherit outputHash;
   nativeBuildInputs = [ docker-client ];
   meta = with stdenv.lib; {
     platforms = [ "x86_64-linux" "aarch64-linux" ];
   };
   outputHashMode = "flat";
   outputHashAlgo = "sha256";
-  outputHash = outputHash;
 }
   command
