@@ -15,6 +15,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           deno = pkgs.callPackage ./pkgs/deno.nix { };
+          
           intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
             {
               inherit deno;
