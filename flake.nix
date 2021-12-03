@@ -15,6 +15,7 @@
         let
           pkgs = import nixpkgs { inherit system; };
           deno = pkgs.callPackage ./pkgs/deno.nix { };
+          deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
             {
@@ -37,7 +38,7 @@
             buildInputs = [ deno ];
           };
           packages = {
-            inherit deno intellij-helper;
+            inherit deno deno_1_13_x intellij-helper;
             manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
             faq = pkgs.callPackage ./pkgs/faq.nix { };
           };
