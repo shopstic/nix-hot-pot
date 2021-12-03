@@ -42,5 +42,6 @@ stdenv.mkDerivation {
     homepage = https://deno.land;
     description = "A secure runtime for JavaScript and TypeScript";
     platforms = builtins.attrNames downloadMap;
+    priority = 10;
   };
 }
