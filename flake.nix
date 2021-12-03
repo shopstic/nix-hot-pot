@@ -2,7 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/29830319abf5a925921885974faae5509312b940";
+    nixpkgs.url = "github:nixos/nixpkgs/21.11";
     flakeUtils = {
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -13,9 +13,9 @@
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ]
       (system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = import nixpkgs { inherit system; };
           deno = pkgs.callPackage ./pkgs/deno.nix { };
-          
+
           intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
             {
               inherit deno;

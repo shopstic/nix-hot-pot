@@ -2,7 +2,7 @@ name: Build all packages
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: [self-hosted, nix]
     strategy:
       matrix:
         arch:
@@ -13,15 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
 
-      - name: Setup
-        uses: shopstic/tailscale-nix-builder/setup@5d038bf4bfb3dea2f3b588efe6388796e263c6d4
-        timeout-minutes: 1
-        with:
-          tailscaleAuthKey: ${{ secrets.TAILSCALE_AUTHKEY }}
-          nixBuildSshKey: ${{ secrets.NIX_BUILD_SSH_KEY }}
-          nixCacheS3AccessKeyId: ${{ secrets.NIX_CACHE_S3_ACCESS_KEY_ID }}
-          nixCacheS3SecretAccessKey: ${{ secrets.NIX_CACHE_S3_SECRET_ACCESS_KEY }}
-
       - name: Test
         run: |
           cd ./tests
@@ -30,10 +21,9 @@ jobs:
       - name: Build all
         run: nix build -L -vv '.#defaultPackage.${{ matrix.arch }}'
 
-      - run: sudo tailscale logout
-      
-      - name: Cache
-        uses: shopstic/tailscale-nix-builder/cache@5d038bf4bfb3dea2f3b588efe6388796e263c6d4
-        with:
-          nixOutput: .#defaultPackage.${{ matrix.arch }}
-          nixCachePrivateKey: ${{ secrets.NIX_CACHE_PRIVATE_KEY }}
+      - name: Cache all
+        env:
+          NIX_OUTPUT: .#defaultPackage.${{ matrix.arch }}
+        run: |
+          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
+          nix copy -v "${NIX_OUTPUT}" --to s3://nixed/cache
