@@ -38,9 +38,14 @@ export default createCliAction(
         "/Users/foo/Library/Application Support/JetBrains/IntelliJIdea2021.2/options/jdk.table.xml",
       ],
     }),
+    inPlace: Type.Optional(Type.Boolean({
+      description: "Whether to patch the XML file in-place",
+      examples: [false],
+      default: false
+    })),
   }),
   async (args) => {
-    const { name, jdkPath, jdkTableXmlPath } = args;
+    const { name, jdkPath, jdkTableXmlPath, inPlace } = args;
 
     const releaseFilePath = joinPath(jdkPath, "release");
 
@@ -170,7 +175,14 @@ export default createCliAction(
       ];
     });
 
-    console.log(stringify(updatedIntellijJdkTable));
+    const out = stringify(updatedIntellijJdkTable)
+
+    if (inPlace) {
+      await Deno.writeTextFile(jdkTableXmlPath, out)
+    }
+    else {
+      console.log(out);
+    }
 
     return ExitCode.Zero;
   },
