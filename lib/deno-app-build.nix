@@ -3,6 +3,7 @@
 , appSrcPath
 , stdenv
 , deno
+, denoRunFlags ? "--no-remote --cached-only --unstable -A"
 , writeShellScriptBin
 }:
 let
@@ -42,5 +43,5 @@ let
     };
 in
 writeShellScriptBin name ''
-  exec ${deno}/bin/deno run --no-remote --cached-only --unstable -A "${jsBundle}" "$@"
+  exec ${deno}/bin/deno run ${denoRunFlags} "${jsBundle}" "$@"
 ''
