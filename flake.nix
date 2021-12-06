@@ -41,6 +41,7 @@
             inherit deno deno_1_13_x intellij-helper;
             manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
             faq = pkgs.callPackage ./pkgs/faq.nix { };
+            hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
