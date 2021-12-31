@@ -25,7 +25,7 @@
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
             {
-              deno = deno_1_16_x;
+              inherit deno;
               name = "intellij-helper";
               src = builtins.path
                 {
@@ -66,15 +66,10 @@
         in
         rec {
           devShell = pkgs.mkShellNoCC {
-            buildInputs = [ deno_1_16_x ] ++ builtins.attrValues
-              {
-                inherit (pkgs)
-                  jq
-                  ;
-              };
+            buildInputs = [ deno ];
             shellHook = ''
               mkdir -p ./.vscode
-              cat ${vscodeSettings} | jq . > ./.vscode/settings.json
+              cat ${vscodeSettings} > ./.vscode/settings.json
             '';
           };
           packages = {

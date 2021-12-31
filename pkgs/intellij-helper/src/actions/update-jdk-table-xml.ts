@@ -1,20 +1,19 @@
-import { parse, stringify } from "https://deno.land/x/xml@2.0.3/mod.ts";
-import { join as joinPath } from "https://deno.land/std@0.113.0/path/mod.ts";
-import { validate } from "https://raw.githubusercontent.com/shopstic/deno-utils/1.10.0/src/validation_utils.ts";
-import {
-  Type,
-} from "https://raw.githubusercontent.com/shopstic/deno-utils/1.10.0/src/deps/typebox.ts";
-import immerProduce from "https://cdn.skypack.dev/immer@9.0.7?dts";
 import {
   createCliAction,
   ExitCode,
-} from "https://raw.githubusercontent.com/shopstic/deno-utils/1.10.0/src/cli_utils.ts";
+  immerProduce,
+  joinPath,
+  parseXml,
+  stringifyXml,
+  Type,
+  validate,
+} from "../deps.ts";
 
-export const IntellijJdkTableSchema = Type.PartialObject({
-  application: Type.PartialObject({
-    component: Type.PartialObject({
-      jdk: Type.Array(Type.PartialObject({
-        name: Type.PartialObject({
+export const IntellijJdkTableSchema = Type.Object({
+  application: Type.Object({
+    component: Type.Object({
+      jdk: Type.Array(Type.Object({
+        name: Type.Object({
           "@value": Type.String(),
         }),
       })),
@@ -41,7 +40,7 @@ export default createCliAction(
     inPlace: Type.Optional(Type.Boolean({
       description: "Whether to patch the XML file in-place",
       examples: [false],
-      default: false
+      default: false,
     })),
   }),
   async (args) => {
@@ -146,7 +145,7 @@ export default createCliAction(
       "additional": null,
     };
 
-    const parsedTable = parse(await Deno.readTextFile(jdkTableXmlPath));
+    const parsedTable = parseXml(await Deno.readTextFile(jdkTableXmlPath));
 
     const tableResult = validate(
       IntellijJdkTableSchema,
@@ -175,12 +174,11 @@ export default createCliAction(
       ];
     });
 
-    const out = stringify(updatedIntellijJdkTable)
+    const out = stringifyXml(updatedIntellijJdkTable);
 
     if (inPlace) {
-      await Deno.writeTextFile(jdkTableXmlPath, out)
-    }
-    else {
+      await Deno.writeTextFile(jdkTableXmlPath, out);
+    } else {
       console.log(out);
     }
 

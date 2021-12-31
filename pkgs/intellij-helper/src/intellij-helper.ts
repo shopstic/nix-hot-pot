@@ -1,6 +1,4 @@
-import {
-  CliProgram,
-} from "https://raw.githubusercontent.com/shopstic/deno-utils/1.10.0/src/cli_utils.ts";
+import { CliProgram } from "./deps.ts";
 import updateJdkTableXml from "./actions/update-jdk-table-xml.ts";
 
 await new CliProgram()
