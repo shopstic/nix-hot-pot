@@ -1,14 +1,22 @@
 {
-    "yaml.schemaStore.enable": true,
-    "yaml.schemas": {
-        "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yaml",
-        "https://json.schemastore.org/github-action.json": "*/action.yaml",
-    },
-    "deno.enable": true,
-    "deno.lint": true,
-    "deno.unstable": true,
-    "deno.suggest.imports.hosts": {
-        "https://deno.land": false
-    },
-    "editor.tabSize": 2
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno",
+    "editor.formatOnSave": true
+  },
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.path": "/nix/store/jnvacsy9nqzi77cqv5s63s3kdxa4l3r0-deno-1.16.3/bin/deno",
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": false
+  },
+  "deno.unstable": true,
+  "editor.tabSize": 2,
+  "nix.enableLanguageServer": true,
+  "nix.formatterPath": "/nix/store/3zvb3yjf44zad68nzzh11bqrxmhi8q1v-nixpkgs-fmt-1.2.0/bin/nixpkgs-fmt",
+  "nix.serverPath": "/nix/store/vs4i3hq2dilsil153vgqyyqrb1yjzsic-rnix-lsp-0.2.1/bin/rnix-lsp",
+  "yaml.schemaStore.enable": true,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-action.json": "*/action.yaml",
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yaml"
+  }
 }

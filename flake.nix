@@ -38,10 +38,44 @@
                 };
               appSrcPath = "./src/intellij-helper.ts";
             };
+          vscodeSettings = pkgs.writeTextFile {
+            name = "vscode-settings.json";
+            text = builtins.toJSON {
+              "deno.enable" = true;
+              "deno.lint" = true;
+              "deno.unstable" = true;
+              "deno.path" = deno_1_16_x + "/bin/deno";
+              "deno.suggest.imports.hosts" = {
+                "https://deno.land" = false;
+              };
+              "editor.tabSize" = 2;
+              "[typescript]" = {
+                "editor.defaultFormatter" = "denoland.vscode-deno";
+                "editor.formatOnSave" = true;
+              };
+              "yaml.schemaStore.enable" = true;
+              "yaml.schemas" = {
+                "https://json.schemastore.org/github-workflow.json" = ".github/workflows/*.yaml";
+                "https://json.schemastore.org/github-action.json" = "*/action.yaml";
+              };
+              "nix.enableLanguageServer" = true;
+              "nix.formatterPath" = pkgs.nixpkgs-fmt + "/bin/nixpkgs-fmt";
+              "nix.serverPath" = pkgs.rnix-lsp + "/bin/rnix-lsp";
+            };
+          };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
-            buildInputs = [ deno_1_16_x ];
+            buildInputs = [ deno_1_16_x ] ++ builtins.attrValues
+              {
+                inherit (pkgs)
+                  jq
+                  ;
+              };
+            shellHook = ''
+              mkdir -p ./.vscode
+              cat ${vscodeSettings} | jq . > ./.vscode/settings.json
+            '';
           };
           packages = {
             inherit deno deno_1_13_x deno_1_16_x deno_1_17_x intellij-helper;
