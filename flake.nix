@@ -17,11 +17,15 @@
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
           deno_1_16_x = pkgs.callPackage ./pkgs/deno-1.16.x.nix { };
           deno_1_17_x = pkgs.callPackage ./pkgs/deno-1.17.x.nix { };
-          deno = deno_1_16_x;
+          deno = deno_1_17_x.overrideAttrs (oldAttrs: {
+            meta = oldAttrs.meta // {
+              priority = 0;
+            };
+          });
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
             {
-              inherit deno;
+              deno = deno_1_16_x;
               name = "intellij-helper";
               src = builtins.path
                 {
@@ -37,7 +41,7 @@
         in
         rec {
           devShell = pkgs.mkShellNoCC {
-            buildInputs = [ deno ];
+            buildInputs = [ deno_1_16_x ];
           };
           packages = {
             inherit deno deno_1_13_x deno_1_16_x deno_1_17_x intellij-helper;

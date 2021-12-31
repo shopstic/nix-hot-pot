@@ -20,4 +20,5 @@
       hash = "sha256-CZ5VYI/MYQ8NRKNhpjbizpOpZTdFcTkGl7my4gyk7gE=";
     };
   };
+  priority = 10;
 })
