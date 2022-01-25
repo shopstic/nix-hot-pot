@@ -17,7 +17,8 @@
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
           deno_1_16_x = pkgs.callPackage ./pkgs/deno-1.16.x.nix { };
           deno_1_17_x = pkgs.callPackage ./pkgs/deno-1.17.x.nix { };
-          deno = deno_1_17_x.overrideAttrs (oldAttrs: {
+          deno_1_18_x = pkgs.callPackage ./pkgs/deno-1.18.x.nix { };
+          deno = deno_1_18_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -44,7 +45,7 @@
               "deno.enable" = true;
               "deno.lint" = true;
               "deno.unstable" = true;
-              "deno.path" = deno_1_16_x + "/bin/deno";
+              "deno.path" = deno + "/bin/deno";
               "deno.suggest.imports.hosts" = {
                 "https://deno.land" = false;
               };
@@ -73,7 +74,7 @@
             '';
           };
           packages = {
-            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x intellij-helper;
+            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x intellij-helper;
             manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
