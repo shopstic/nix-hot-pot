@@ -43,7 +43,7 @@ let
         --security-opt apparmor=unconfined \
         -v ${context}:/context \
         -v ${script}:/build.sh \
-        quay.io/buildah/stable:v1.23.1@sha256:86749777c49803520742b762251e93d54f53c43cd9c5ea6a01a1dd76c3ae808d \
+        docker.io/shopstic/buildah:v1.23.1@sha256:45247c6e60e775c8830719b5269144cebd0feffc5f24053972e76d4497ec133b \
         /build.sh > $out
   '';
 
