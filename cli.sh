@@ -4,7 +4,7 @@ set -euo pipefail
 build_push_images() {
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
-  parallel -j1 --tagstring "[{}]" --line-buffer \
+  parallel -j2 --tagstring "[{}]" --line-buffer \
     "$0" build_push_multi_arch {} ::: "${IMAGES[@]}"
 }
 
