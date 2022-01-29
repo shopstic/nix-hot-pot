@@ -13,7 +13,7 @@ build_push_multi_arch() {
   local IMAGE_TAG
   IMAGE_TAG=$(nix eval --raw ".#packages.x86_64-linux.image-${IMAGE}.imageTag") || exit $?
 
-  parallel -j1 --tagstring "[{}]" --line-buffer \
+  parallel -j2 --tagstring "[{}]" --line-buffer \
     "$0" build_push_single_arch "${IMAGE}" {} "${IMAGE_TAG}" ::: \
     amd64 arm64
 
