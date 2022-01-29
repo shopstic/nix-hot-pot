@@ -9,12 +9,17 @@ jobs:
       - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
 
       - name: Login
+        id: registry-login
         shell: nix develop -v -c bash {0}
         run: |-
+          export REGISTRY_AUTH_FILE=$(mktemp)
           aws ecr-public get-login-password | skopeo login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
+          echo ""::set-output name=authFile::${REGISTRY_AUTH_FILE}"
 
       - name: Build and push images
         shell: nix develop -v -c bash {0}
+        env:
+          REGISTRY_AUTH_FILE: ${{ steps.registry-login.outputs.authFile }}
         run: |
           ./cli.sh build_push_images
 
