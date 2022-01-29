@@ -14,6 +14,7 @@ jobs:
         run: |-
           export REGISTRY_AUTH_FILE="$(mktemp -d)/auth.json"
           aws ecr-public get-login-password | skopeo login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
+          cat "${REGISTRY_AUTH_FILE}"
           echo ""::set-output name=authFile::${REGISTRY_AUTH_FILE}"
 
       - name: Build and push images
