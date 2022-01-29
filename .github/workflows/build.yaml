@@ -12,7 +12,7 @@ jobs:
         id: registry-login
         shell: nix develop -v -c bash {0}
         run: |-
-          export REGISTRY_AUTH_FILE=$(mktemp)
+          export REGISTRY_AUTH_FILE="$(mktemp -d)/auth.json"
           aws ecr-public get-login-password | skopeo login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
           echo ""::set-output name=authFile::${REGISTRY_AUTH_FILE}"
 
