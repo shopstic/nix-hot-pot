@@ -1,7 +1,24 @@
-name: Build all packages
+name: Build
 on: [push]
 jobs:
-  build:
+  build-images:
+    runs-on: [self-hosted, nix]
+    env:
+      IMAGE_REPOSITORY: public.ecr.aws/shopstic
+    steps:
+      - uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
+
+      - name: Login
+        shell: nix develop -v -c bash {0}
+        run: |-
+          aws ecr-public get-login-password | skopeo login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
+
+      - name: Build and push images
+        shell: nix develop -v -c bash {0}
+        run: |
+          ./cli.sh build_push_images
+
+  build-packages:
     runs-on: [self-hosted, nix]
     strategy:
       matrix:
@@ -18,10 +35,10 @@ jobs:
           cd ./tests
           nix build -L -vv --no-link '.#defaultPackage.${{ matrix.arch }}'
 
-      - name: Build all
+      - name: Build all packages
         run: nix build -L -vv '.#defaultPackage.${{ matrix.arch }}'
 
-      - name: Cache all
+      - name: Cache all packages
         env:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.arch }}
         run: |

@@ -50,6 +50,7 @@
                 "https://deno.land" = false;
               };
               "editor.tabSize" = 2;
+              "shellcheck.executablePath" = pkgs.shellcheck + "/bin/shellcheck";
               "[typescript]" = {
                 "editor.defaultFormatter" = "denoland.vscode-deno";
                 "editor.formatOnSave" = true;
@@ -67,8 +68,15 @@
         in
         rec {
           devShell = pkgs.mkShellNoCC {
-            buildInputs = [ deno ];
+            buildInputs = [ deno ] ++ builtins.attrValues {
+              inherit (pkgs)
+                awscli2
+                parallel
+                skopeo
+                ;
+            };
             shellHook = ''
+              echo 'will cite' | parallel --citation >/dev/null 2>&1
               mkdir -p ./.vscode
               cat ${vscodeSettings} > ./.vscode/settings.json
             '';
@@ -78,10 +86,13 @@
             manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
+          } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+            image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
+            image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
-            paths = builtins.attrValues packages;
+            paths = builtins.attrValues (pkgs.lib.filterAttrs (n: _: !(pkgs.lib.hasPrefix "image-" n)) packages);
           };
         }
       ) // {
