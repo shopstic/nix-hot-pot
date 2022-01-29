@@ -3,17 +3,19 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/21.11";
+    fdb.url = "github:shopstic/nix-fdb/6.3.23";
     flakeUtils = {
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, flakeUtils }:
+  outputs = { self, nixpkgs, flakeUtils, fdb }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ]
       (system:
         let
           pkgs = import nixpkgs { inherit system; };
+          fdbLib = fdb.defaultPackage.${system}.lib;
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
           deno_1_16_x = pkgs.callPackage ./pkgs/deno-1.16.x.nix { };
           deno_1_17_x = pkgs.callPackage ./pkgs/deno-1.17.x.nix { };
@@ -90,6 +92,9 @@
           } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
             image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
             image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
+            image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
+              inherit fdbLib;
+            };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
