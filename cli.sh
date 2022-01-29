@@ -4,7 +4,7 @@ set -euo pipefail
 build_push_images() {
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
-  parallel -j2 --tagstring "[{}]" --line-buffer \
+  parallel -j2 --tagstring "[{}]" --line-buffer --retries=2 \
     "$0" build_push_multi_arch {} ::: "${IMAGES[@]}"
 }
 
@@ -13,7 +13,7 @@ build_push_multi_arch() {
   local IMAGE_TAG
   IMAGE_TAG=$(nix eval --raw ".#packages.x86_64-linux.image-${IMAGE}.imageTag") || exit $?
 
-  parallel -j2 --tagstring "[{}]" --line-buffer \
+  parallel -j2 --tagstring "[{}]" --line-buffer --retries=2 \
     "$0" build_push_single_arch "${IMAGE}" {} "${IMAGE_TAG}" ::: \
     amd64 arm64
 
