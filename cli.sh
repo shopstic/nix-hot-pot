@@ -38,20 +38,27 @@ build_push_single_arch() {
 
   nix build -L -v ".#packages.${NIX_ARCH}-linux.image-${IMAGE}" -o "${TEMP_DIR}/image"
 
+  local TARGET_IMAGE="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-${ARCH}"
+
+  >&2 echo "Pushing ${TARGET_IMAGE}"
+
   skopeo --insecure-policy copy \
     docker-archive:"${TEMP_DIR}/image" \
-    "docker://${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-${ARCH}"
+    "docker://${TARGET_IMAGE}"
 }
 
 push_manifest() {
   local IMAGE_REPOSITORY=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
   local IMAGE=${1:?"Image name is required"}
   local IMAGE_TAG=${2:?"Image tag is required"}
+  local TARGET="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}"
+  
+  >&2 echo "Writing manifest for ${TARGET}"
 
   manifest-tool push from-args \
     --platforms linux/amd64,linux/arm64 \
     --template "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-ARCH" \
-    --target "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}"
+    --target "${TARGET}"
 }
 
 "$@"
