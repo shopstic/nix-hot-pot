@@ -65,10 +65,11 @@
               "nix.serverPath" = pkgs.rnix-lsp + "/bin/rnix-lsp";
             };
           };
+          manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
-            buildInputs = [ deno ] ++ builtins.attrValues {
+            buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
               inherit (pkgs)
                 awscli2
                 parallel
