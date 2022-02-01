@@ -95,6 +95,7 @@
             image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
               inherit fdbLib;
             };
+            image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
