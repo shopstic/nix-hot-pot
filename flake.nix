@@ -89,6 +89,7 @@
             manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
+            packer = pkgs.callPackage ./pkgs/packer.nix { };
           } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
             image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
             image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
