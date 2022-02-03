@@ -99,6 +99,10 @@
             image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { };
             image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { };
             image-netcat = pkgs.callPackage ./images/netcat { };
+            image-jre-fdb = pkgs.callPackage ./images/jre-fdb {
+              jre = pkgs.jdk11_headless;
+              inherit fdbLib;
+            };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
