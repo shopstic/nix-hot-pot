@@ -1,0 +1,11 @@
+{
+  "name": "openapi-ts",
+  "version": "5.1.1",
+  "scripts": {
+    "test": "node openapi-ts.mjs ./test/petstorev3.json ./test/formatter.mjs > /dev/null && echo 'All good!'"
+  },
+  "dependencies": {
+    "openapi-typescript": "^5.1.1"
+  },
+  "license": "MIT"
+}

@@ -8,13 +8,18 @@
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    npmlock2nixPkg = {
+      url = "github:nix-community/npmlock2nix/master";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdb }:
+  outputs = { self, nixpkgs, flakeUtils, fdb, npmlock2nixPkg }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ]
       (system:
         let
           pkgs = import nixpkgs { inherit system; };
+          npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
           fdbLib = fdb.defaultPackage.${system}.lib;
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
           deno_1_16_x = pkgs.callPackage ./pkgs/deno-1.16.x.nix { };
@@ -76,6 +81,7 @@
                 awscli2
                 parallel
                 skopeo
+                nodejs
                 ;
             };
             shellHook = ''
@@ -90,6 +96,9 @@
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
             packer = pkgs.callPackage ./pkgs/packer.nix { };
+            openapi-ts = pkgs.callPackage ./pkgs/openapi-ts {
+              inherit npmlock2nix;
+            };
           } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
             image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
             image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
