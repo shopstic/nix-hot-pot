@@ -15,6 +15,7 @@ update_cache() {
 }
 
 update_lock() {
+  deno cache --reload "${DIR_PATH}"/src/intellij-helper.ts
   deno cache "${DIR_PATH}"/src/intellij-helper.ts --lock "${DIR_PATH}"/lock.json --lock-write
 }
 
