@@ -5,7 +5,9 @@ export {
 export { join as joinPath } from "https://deno.land/std@0.119.0/path/mod.ts";
 export { validate } from "https://deno.land/x/utils@2.0.1/validation_utils.ts";
 export { Type } from "https://deno.land/x/utils@2.0.1/deps/typebox.ts";
-import immerProduce from "https://cdn.skypack.dev/immer@9.0.7?dts";
+// @deno-types="https://cdn.skypack.dev/pin/immer@v9.0.7-x2CHFftUbIlt09HPl5Vq/dist=es2020,mode=types/dist/immer.d.ts"
+import immerProduce from "https://cdn.skypack.dev/pin/immer@v9.0.7-x2CHFftUbIlt09HPl5Vq/dist=es2020,mode=imports/optimized/immer.js";
+
 export {
   CliProgram,
   createCliAction,
