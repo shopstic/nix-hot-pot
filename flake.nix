@@ -91,11 +91,11 @@
             '';
           };
           packages = {
-            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x intellij-helper;
-            manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
+            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x intellij-helper manifest-tool;
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
             packer = pkgs.callPackage ./pkgs/packer.nix { };
+            regclient = import ./pkgs/regclient.nix { inherit pkgs; };
             openapi-ts = pkgs.callPackage ./pkgs/openapi-ts {
               inherit npmlock2nix;
             };
