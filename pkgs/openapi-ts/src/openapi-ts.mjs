@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import openapiTS from "openapi-typescript";
+import openapiTs from "openapi-typescript";
 
 const schemaFilePath = process.argv[2];
 if (!schemaFilePath) {
@@ -20,7 +20,7 @@ const formatter = await (async () => {
   return () => { };
 })();
 
-openapiTS(schemaFilePath, {
+openapiTs(schemaFilePath, {
   formatter
 }).then(ret => {
   console.log(ret)
