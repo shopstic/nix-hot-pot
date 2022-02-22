@@ -20,7 +20,6 @@ let
     #!/usr/bin/env bash
     set -euo pipefail
 
-    OUT_FILE=$(mktemp)
     IMAGE_ID=$(mktemp)
 
     buildah bud \
@@ -28,14 +27,15 @@ let
       --jobs=0 \
       --timestamp=0 \
       --iidfile="$IMAGE_ID" \
-      ${builtins.concatStringsSep " " flags} /context 1>&2
-    buildah push "$(cat "$IMAGE_ID")" docker-archive:"$OUT_FILE" 1>&2
-    
-    cat "$OUT_FILE"
+      ${builtins.concatStringsSep " " flags} /context
+    buildah push "$(cat "$IMAGE_ID")" docker-archive:"/out/archive"
+    chown -R "$OUT_UID:$OUT_GID" /out
   '';
 
   command = ''
-    exec docker run \
+    OUT_DIR=$(mktemp -d)
+
+    docker run \
         --rm \
         --init \
         --device /dev/fuse:rw \
@@ -43,8 +43,14 @@ let
         --security-opt apparmor=unconfined \
         -v ${context}:/context \
         -v ${script}:/build.sh \
+        -v $OUT_DIR:/out \
+        -e OUT_UID="$(id -u)" \
+        -e OUT_GID="$(id -g)" \
         docker.io/shopstic/buildah:v1.23.1@sha256:45247c6e60e775c8830719b5269144cebd0feffc5f24053972e76d4497ec133b \
-        /build.sh > $out
+        /build.sh
+
+    mv $OUT_DIR/archive $out
+    rm -Rf $OUT_DIR
   '';
 
   inputHash = builtins.hashString "sha256" command;
