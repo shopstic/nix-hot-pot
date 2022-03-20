@@ -26,7 +26,8 @@
           deno_1_17_x = pkgs.callPackage ./pkgs/deno-1.17.x.nix { };
           deno_1_18_x = pkgs.callPackage ./pkgs/deno-1.18.x.nix { };
           deno_1_19_x = pkgs.callPackage ./pkgs/deno-1.19.x.nix { };
-          deno = deno_1_19_x.overrideAttrs (oldAttrs: {
+          deno_1_20_x = pkgs.callPackage ./pkgs/deno-1.20.x.nix { };
+          deno = deno_1_20_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -92,7 +93,7 @@
             '';
           };
           packages = {
-            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x intellij-helper manifest-tool;
+            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x intellij-helper manifest-tool;
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
             packer = pkgs.callPackage ./pkgs/packer.nix { };
