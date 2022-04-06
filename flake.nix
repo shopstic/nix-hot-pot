@@ -95,7 +95,9 @@
             '';
           };
           packages = {
-            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x jdk17 intellij-helper manifest-tool;
+            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x intellij-helper manifest-tool;
+            jdk17 = jdk17.jdk;
+            jre17 = jdk17.jre;
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
             packer = pkgs.callPackage ./pkgs/packer.nix { };
@@ -113,7 +115,7 @@
             image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { };
             image-netcat = pkgs.callPackage ./images/netcat { };
             image-jre-fdb = pkgs.callPackage ./images/jre-fdb {
-              jre = pkgs.jdk11_headless;
+              jre = pkgs.jdk17_headless;
               inherit fdbLib;
             };
           };
