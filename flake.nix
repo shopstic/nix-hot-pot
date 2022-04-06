@@ -33,7 +33,7 @@
             };
           });
 
-          jdk17 = pkgs.callPackage ./pkgs/jdk17 { };
+          jdk = pkgs.callPackage ./pkgs/jdk17 { };
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
             {
@@ -96,8 +96,8 @@
           };
           packages = {
             inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x intellij-helper manifest-tool;
-            jdk17 = jdk17.jdk;
-            jre17 = jdk17.jre;
+            jdk17 = jdk.jdk;
+            jre17 = jdk.jre;
             faq = pkgs.callPackage ./pkgs/faq.nix { };
             hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
             packer = pkgs.callPackage ./pkgs/packer.nix { };
