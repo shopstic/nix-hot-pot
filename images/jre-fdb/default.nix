@@ -27,7 +27,7 @@ dockerTools.buildLayeredImage
 {
   name = "jre-fdb";
   fromImage = baseImage;
-  tag = "11-6.3.23";
+  tag = "17-6.3.23";
   config = {
     Env = [
       "PATH=${lib.makeBinPath [ dumb-init jre ]}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
