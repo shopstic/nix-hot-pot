@@ -122,6 +122,7 @@
               jre = pkgs.jdk17_headless;
               inherit fdbLib;
             };
+            image-dind = pkgs.callPackage ./images/dind { };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
