@@ -2,14 +2,10 @@
 , buildahBuild
 , dockerTools
 }:
-let
-  name = "strimzi-debezium-postgresql";
-  tag = "0.27.1-kafka-2.8.0-debezium-1.9.0";
-in
 buildahBuild
 {
-  name = name;
-  tag = "${name}:${tag}";
+  name = "strimzi-debezium-postgresql";
+  tag = "0.27.1-kafka-2.8.0-debezium-1.9.0";
   context = ./context;
   buildArgs = {
     fromDigest = "sha256:f4d68bb94447c6612f70de7f6587e9e7ef712c83769ea1f11a8dbda0d241a059";

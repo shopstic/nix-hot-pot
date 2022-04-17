@@ -1,5 +1,5 @@
 { name
-, tag ? ""
+, tag ? null
 , context
 , buildArgs ? { }
 , squash ? true
@@ -27,7 +27,7 @@ let
       --platform=${imagePlatform} \
       --jobs=0 \
       --timestamp=0 \
-      --tag=${tag} \
+      ${if tag != null then "--tag=${name}:${tag}" else ""} \
       --iidfile="$IMAGE_ID" \
       ${builtins.concatStringsSep " " flags} /context
     buildah push "$(cat "$IMAGE_ID")" docker-archive:"/out/archive"
@@ -56,15 +56,22 @@ let
   '';
 
   inputHash = builtins.hashString "sha256" command;
+  result = runCommand "image-${name}-${inputHash}"
+    {
+      inherit outputHash;
+      nativeBuildInputs = [ docker-client ];
+      meta = with stdenv.lib; {
+        platforms = [ "x86_64-linux" "aarch64-linux" ];
+      };
+      outputHashMode = "flat";
+      outputHashAlgo = "sha256";
+      imageTag = tag;
+      passthru.imageTag =
+        if tag != null
+        then tag
+        else
+          lib.head (lib.strings.splitString "-" (baseNameOf result.outPath));
+    }
+    command;
 in
-runCommand "image-${name}-${inputHash}"
-{
-  inherit outputHash;
-  nativeBuildInputs = [ docker-client ];
-  meta = with stdenv.lib; {
-    platforms = [ "x86_64-linux" "aarch64-linux" ];
-  };
-  outputHashMode = "flat";
-  outputHashAlgo = "sha256";
-}
-  command
+result
