@@ -16,6 +16,6 @@ buildahBuild
   };
   outputHash =
     if stdenv.isx86_64 then
-      "sha256-3JqjNe+9n+oKxXad35q/szx+ttIgfyeFQQlh0nnh0YE=" else
+      "sha256-AqJqVRW8cyRUwfFoablsCU58IugCRmmUEkeJ9Jj0Erk=" else
       "sha256-vzYvEFeNOU8+KPHmj7vKmN/Pd+jwlluzWIW743lW4rM=";
 }
