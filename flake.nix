@@ -123,6 +123,9 @@
               inherit fdbLib;
             };
             image-dind = pkgs.callPackage ./images/dind { };
+            image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
+              buildahBuild = pkgs.callPackage ./lib/buildah-build.nix;
+            };
           };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
