@@ -1,4 +1,5 @@
 { name
+, tag ? ""
 , context
 , buildArgs ? { }
 , squash ? true
@@ -26,6 +27,7 @@ let
       --platform=${imagePlatform} \
       --jobs=0 \
       --timestamp=0 \
+      --tag=${tag} \
       --iidfile="$IMAGE_ID" \
       ${builtins.concatStringsSep " " flags} /context
     buildah push "$(cat "$IMAGE_ID")" docker-archive:"/out/archive"
