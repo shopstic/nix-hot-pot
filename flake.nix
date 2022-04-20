@@ -77,6 +77,7 @@
             };
           };
           manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
+          buildahBuild = pkgs.callPackage ./lib/buildah-build.nix;
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -124,7 +125,10 @@
             };
             image-dind = pkgs.callPackage ./images/dind { };
             image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
-              buildahBuild = pkgs.callPackage ./lib/buildah-build.nix;
+              inherit buildahBuild;
+            };
+            image-confluent-community = pkgs.callPackage ./images/confluent-community {
+              inherit buildahBuild;
             };
           };
           defaultPackage = pkgs.buildEnv {
