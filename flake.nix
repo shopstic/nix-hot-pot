@@ -27,7 +27,8 @@
           deno_1_18_x = pkgs.callPackage ./pkgs/deno-1.18.x.nix { };
           deno_1_19_x = pkgs.callPackage ./pkgs/deno-1.19.x.nix { };
           deno_1_20_x = pkgs.callPackage ./pkgs/deno-1.20.x.nix { };
-          deno = deno_1_20_x.overrideAttrs (oldAttrs: {
+          deno_1_21_x = pkgs.callPackage ./pkgs/deno-1.21.x.nix { };
+          deno = deno_1_21_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -96,7 +97,7 @@
             '';
           };
           packages = {
-            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x intellij-helper manifest-tool;
+            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x intellij-helper manifest-tool;
             jdk17 = jdk17.jdk.overrideAttrs (oldAttrs: {
               meta = oldAttrs.meta // {
                 priority = 0;
