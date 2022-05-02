@@ -1,6 +1,6 @@
 { pkgs }:
-let 
-  version = "0.3.10";
+let
+  version = "0.4.2";
 in
 pkgs.callPackage "${pkgs.path}/pkgs/development/tools/regclient" {
   buildGoModule = args: pkgs.buildGoModule (args // {
@@ -9,8 +9,9 @@ pkgs.callPackage "${pkgs.path}/pkgs/development/tools/regclient" {
       owner = "regclient";
       repo = "regclient";
       rev = "v${version}";
-      sha256 = "sha256-3nYVhKHNz0V0j6JlZ5Dm5TFWA2kmUhshNVUym/QWSyM=";
+      sha256 = "sha256-lx2IQ3NpFuVr4Vb7vFcp/QVZBlLzi4VXFE7Sw3LKIXE=";
     };
-    vendorSha256 = "sha256-rj4sQ8Ci2KMayJNXn+KVihOiZehk233l48Ps0yjOOE4=";
+    vendorSha256 = "sha256-9DcmUYwG+CoT8hmoI7FHl7td1bBukpN/FJT3iiCAkHU=";
+    checkPhase = "";
   });
 }
