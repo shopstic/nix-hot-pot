@@ -34,7 +34,7 @@
             };
           });
 
-          jdk17 = pkgs.callPackage ./pkgs/jdk17 { };
+          jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
             {
@@ -96,42 +96,48 @@
               cat ${vscodeSettings} > ./.vscode/settings.json
             '';
           };
-          packages = {
-            inherit deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x intellij-helper manifest-tool;
-            jdk17 = jdk17.jdk.overrideAttrs (oldAttrs: {
-              meta = oldAttrs.meta // {
-                priority = 0;
+          packages =
+            let
+              jdk17 = jdk17Pkg.jdk.overrideAttrs (oldAttrs: {
+                meta = oldAttrs.meta // {
+                  priority = 0;
+                };
+              });
+              jre17 = jdk17Pkg.jre;
+            in
+            {
+              inherit
+                deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x
+                intellij-helper manifest-tool jdk17 jre17;
+              faq = pkgs.callPackage ./pkgs/faq.nix { };
+              hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
+              packer = pkgs.callPackage ./pkgs/packer.nix { };
+              regclient = import ./pkgs/regclient.nix { inherit pkgs; };
+              openapi-ts = pkgs.callPackage ./pkgs/openapi-ts {
+                inherit npmlock2nix;
               };
-            });
-            jre17 = jdk17.jre;
-            faq = pkgs.callPackage ./pkgs/faq.nix { };
-            hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
-            packer = pkgs.callPackage ./pkgs/packer.nix { };
-            regclient = import ./pkgs/regclient.nix { inherit pkgs; };
-            openapi-ts = pkgs.callPackage ./pkgs/openapi-ts {
-              inherit npmlock2nix;
+              jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
+            } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+              image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
+              image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
+              image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
+                inherit fdbLib;
+              };
+              image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { };
+              image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { };
+              image-netcat = pkgs.callPackage ./images/netcat { };
+              image-jre-fdb = pkgs.callPackage ./images/jre-fdb {
+                jre = jre17;
+                inherit fdbLib;
+              };
+              image-dind = pkgs.callPackage ./images/dind { };
+              image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
+                inherit buildahBuild;
+              };
+              image-confluent-community = pkgs.callPackage ./images/confluent-community {
+                inherit buildahBuild;
+              };
             };
-          } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
-            image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
-            image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
-            image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
-              inherit fdbLib;
-            };
-            image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { };
-            image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { };
-            image-netcat = pkgs.callPackage ./images/netcat { };
-            image-jre-fdb = pkgs.callPackage ./images/jre-fdb {
-              jre = pkgs.jdk17_headless;
-              inherit fdbLib;
-            };
-            image-dind = pkgs.callPackage ./images/dind { };
-            image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
-              inherit buildahBuild;
-            };
-            image-confluent-community = pkgs.callPackage ./images/confluent-community {
-              inherit buildahBuild;
-            };
-          };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
             paths = builtins.attrValues (pkgs.lib.filterAttrs (n: _: !(pkgs.lib.hasPrefix "image-" n)) packages);
