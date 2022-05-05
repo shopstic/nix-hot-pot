@@ -130,6 +130,10 @@
                 jre = jre17;
                 inherit fdbLib;
               };
+              image-jre-fdb-app = pkgs.callPackage ./images/jre-fdb-app {
+                jre = jre17;
+                inherit fdbLib buildahBuild;
+              };
               image-dind = pkgs.callPackage ./images/dind { };
               image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
                 inherit buildahBuild;
