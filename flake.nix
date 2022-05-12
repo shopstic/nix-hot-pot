@@ -141,9 +141,6 @@
               image-confluent-community = pkgs.callPackage ./images/confluent-community {
                 inherit buildahBuild;
               };
-              image-buildah = pkgs.callPackage ./images/buildah {
-                inherit buildahBuild;
-              };
             };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";

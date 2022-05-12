@@ -14,12 +14,12 @@ let
       context = ./context;
       buildArgs = {
         fromTag = "11-jdk-focal";
-        fromDigest = "sha256:888cfa78edbdfa87860ef9785174b5db5aa7ef8ba5a88aff35ebd47fb05a8bf2";
+        fromDigest = "sha256:5da9a1c62c20666ea0c3c61825e3ac62a0cca2148d40e080f2194fa09ccf34b1";
       };
       outputHash =
         if stdenv.isx86_64 then
-          "sha256-0mPv3pyCwGjUUNB6OeoQLCU7GS8MJS/MX8g0LOc4lvw=" else
-          "sha256-qt5IGG0IJI2HMRN6XykfVgK17x19ASZRiedEz8382LY=";
+          "sha256-+ftOGITuu4/WXuF3NNea8iATNhT0e2Owfw4ElwlToIU=" else
+          "sha256-qdIgKvrU5dpPOKYSthiZH3C0/7dXxSedpP944F2dywE=";
     };
 
   package = fetchzip {
