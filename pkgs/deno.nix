@@ -1,4 +1,4 @@
-{ autoPatchelfHook, fetchzip, stdenv, version, downloadMap, priority }:
+{ autoPatchelfHook, fetchzip, stdenv, lib, version, downloadMap, priority }:
 stdenv.mkDerivation {
   inherit version;
   pname = "deno";
