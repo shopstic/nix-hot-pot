@@ -10,10 +10,7 @@ stdenv.mkDerivation {
       sha256 = download.hash;
     };
 
-  nativeBuildInputs =
-    if stdenv.isLinux then [
-      autoPatchelfHook
-    ] else [ ];
+  nativeBuildInputs = lib.optionals (stdenv.isLinux) [ autoPatchelfHook ];
 
   installPhase = ''
     install -m755 -D deno $out/bin/deno

@@ -12,12 +12,9 @@ stdenv.mkDerivation {
     sha256 = "sha256-/U8jAvPUX3nsEMSxLoLdOp1MGAXskp0vcv/LwSSccJ0=";
   };
 
-  nativeBuildInputs =
-    if stdenv.isLinux then [
-      autoPatchelfHook
-    ] else [ ] ++ [
-      makeWrapper
-    ];
+  nativeBuildInputs = (lib.optionals (stdenv.isLinux) [ autoPatchelfHook ]) ++ [
+    makeWrapper
+  ];
 
   installPhase = ''
     mkdir -p $out

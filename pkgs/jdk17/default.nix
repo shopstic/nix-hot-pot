@@ -4,17 +4,17 @@ if stdenv.isDarwin then
     dist = {
       x86_64-darwin = {
         arch = "x64";
-        zuluVersion = "17.32.13";
-        jdkVersion = "17.0.2";
-        jdkSha256 = "sha256-idBLLZmwXcslEUF45l9qHFynQuElyrCmPYfn5C8/y4A=";
-        jreSha256 = "sha256-W91VbAbioUG+MD7C8G5EF1iPvkygtI7iAUCbZmvGI0A=";
+        zuluVersion = "17.34.19";
+        jdkVersion = "17.0.3";
+        jdkSha256 = "sha256-qImyxVC2y2QhxuVZwamKPyo46+n+7ytIFXpYI0e6w2c=";
+        jreSha256 = "sha256-QAjdLEYx2mwkK7kwf89VW6jNu1y37/qHFYcsxHApZak=";
       };
       aarch64-darwin = {
         arch = "aarch64";
-        zuluVersion = "17.32.13";
-        jdkVersion = "17.0.2";
-        jdkSha256 = "sha256-VCR93iSP+808BIZ1UEscUDuB2vLcDWSnnjU8SNODyXc=";
-        jreSha256 = "sha256-TGOsKIyX4fnAVi6uq0Yrayr4RGBFeaZvVxZkta8ifjA=";
+        zuluVersion = "17.34.19";
+        jdkVersion = "17.0.3";
+        jdkSha256 = "sha256-eaRX8Qa/Mqr9JhpHSEcf0Q9c4qmqLMgWqRhkEEwAjf8=";
+        jreSha256 = "sha256-SZzeHRh8/q5juii2USpL37P0VU0A2oal/qqsEoHpurI=";
       };
     }."${stdenv.hostPlatform.system}";
   in
