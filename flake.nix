@@ -118,6 +118,16 @@
                 inherit npmlock2nix;
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
+              awscli2 = pkgs.awscli2.overrideAttrs (_: attrs: rec {
+                name = "${attrs.pname}-${version}";
+                version = "2.7.6";
+                src = pkgs.fetchFromGitHub {
+                  owner = "aws";
+                  repo = "aws-cli";
+                  rev = version;
+                  sha256 = "sha256-TBA0PJzahANmg2It3tNxdkpcNG5SlyuqDBvE1/Afr/0=";
+                };
+              });
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
               image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
               image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
