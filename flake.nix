@@ -18,14 +18,7 @@
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ]
       (system:
         let
-          pkgs = import nixpkgs
-            {
-              inherit system;
-              config = {
-                # allowUnsupportedSystem = true;
-                allowBroken = true;
-              };
-            };
+          pkgs = import nixpkgs { inherit system; };
           npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
           fdbLib = fdb.defaultPackage.${system}.lib;
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
