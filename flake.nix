@@ -2,7 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/22.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
     fdb.url = "github:shopstic/nix-fdb/6.3.23";
     flakeUtils = {
       url = "github:numtide/flake-utils";
