@@ -18,8 +18,8 @@ let
       };
       outputHash =
         if stdenv.isx86_64 then
-          "sha256-GgfPaN6si6+wrRVH3Fa03U8MBkJz5ziaw52Suo2rrgc=" else
-          "sha256-3u3m5tLWwcTQzlqyRYTIcaS+BGklpUOapNlg/c0sPfs=";
+          "sha256-nuVWs5eJeSlHfAgFaQoFaNXNLzNfZiaYuatr/U+egIQ=" else
+          "sha256-o7vgqSRLITD1UhCmoVBsZSSJDKuEbuCk0Zd7ygehQYA=";
     };
   javaSecurityOverrides = writeTextFile {
     name = "java.security.overrides";

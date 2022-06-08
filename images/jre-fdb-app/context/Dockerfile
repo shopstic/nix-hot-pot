@@ -2,13 +2,16 @@ ARG fromTag
 ARG fromDigest
 FROM docker.io/ubuntu:$fromTag@$fromDigest
 
-ARG APP_UID=1000
-ARG APP_GID=1000
-
 RUN \
-  (groupadd --gid "${APP_GID}" app || true) && \
-  useradd --home-dir /home/app --create-home --uid "${APP_UID}" \
-  --gid "${APP_GID}" --shell /bin/bash --skel /dev/null app
+  echo "app:x:1000:1000::/home/app:/bin/bash" >> /etc/passwd && \
+  echo "app:!::0:99999:7:::" >> /etc/shadow && \
+  echo "app:x:1000:" >> /etc/group && \
+  echo "app:!::" >> /etc/gshadow && \
+  echo "app:!::" >> /etc/gshadow && \
+  echo "app:100000:65536" >> /etc/subuid && \
+  echo "app:100000:65536" >> /etc/subgid && \
+  mkdir -p /home/app && \
+  chown app:app /home/app
 
 USER app:app
 

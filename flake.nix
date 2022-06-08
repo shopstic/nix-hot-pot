@@ -22,7 +22,7 @@
             {
               inherit system;
               config = {
-                allowUnsupportedSystem = true;
+                # allowUnsupportedSystem = true;
                 allowBroken = true;
               };
             };
