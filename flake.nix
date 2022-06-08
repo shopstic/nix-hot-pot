@@ -113,7 +113,7 @@
               faq = pkgs.callPackage ./pkgs/faq.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               packer = pkgs.callPackage ./pkgs/packer.nix { };
-              regclient = import ./pkgs/regclient.nix { inherit pkgs; };
+              regclient = pkgs.callPackage ./pkgs/regclient.nix { };
               openapi-ts = pkgs.callPackage ./pkgs/openapi-ts {
                 inherit npmlock2nix;
               };
