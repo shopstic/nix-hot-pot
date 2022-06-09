@@ -128,6 +128,7 @@
                   sha256 = "sha256-TBA0PJzahANmg2It3tNxdkpcNG5SlyuqDBvE1/Afr/0=";
                 };
               });
+              tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
               image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
               image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
