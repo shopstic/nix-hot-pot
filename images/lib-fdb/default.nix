@@ -3,7 +3,7 @@
 }:
 dockerTools.buildImage {
   name = "lib-fdb";
-  tag = "6.3.23";
+  tag = "7.1.9";
   contents = [
     fdbLib
   ];

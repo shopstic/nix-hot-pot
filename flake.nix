@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
-    fdb.url = "github:shopstic/nix-fdb/6.3.23";
+    fdb.url = "github:shopstic/nix-fdb/7.1.9";
     flakeUtils = {
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -20,7 +20,7 @@
         let
           pkgs = import nixpkgs { inherit system; };
           npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
-          fdbLib = fdb.defaultPackage.${system}.lib;
+          fdbLib = fdb.packages.${system}.fdb_7.lib;
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
           deno_1_16_x = pkgs.callPackage ./pkgs/deno-1.16.x.nix { };
           deno_1_17_x = pkgs.callPackage ./pkgs/deno-1.17.x.nix { };

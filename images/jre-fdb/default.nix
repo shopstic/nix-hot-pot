@@ -9,11 +9,11 @@
 let
   baseImage = dockerTools.pullImage {
     imageName = "docker.io/library/ubuntu";
-    imageDigest = "sha256:ba394fabd516b39ccf8597ec656a9ddd7d0a2688ed8cb373ca7ac9b6fe67848f";
+    imageDigest = "sha256:b6b83d3c331794420340093eb706a6f152d9c1fa51b262d9bf34594887c2c7ac";
     sha256 =
       if stdenv.isx86_64 then
-        "sha256-jZmw6RuP1Kj92oA8hCePVM1+fYqOWPC5UnSUCnfsRtA=" else
-        "sha256-6J6ANqCYTvqhkW23iNVqV2kRejbllq/nx8VBzlcu4CU=";
+        "sha256-puR757IYOrsuM3us+5QVvZodq19v/3Zzsu8B0YO+6Nk=" else
+        "sha256-yPysq07M5xXM/WiLxxY4X4gVCtfRE/DEp/OblhH9Ngk=";
   };
   javaSecurityOverrides = writeTextFile {
     name = "java.security.overrides";
@@ -27,7 +27,7 @@ dockerTools.buildLayeredImage
 {
   name = "jre-fdb";
   fromImage = baseImage;
-  tag = "17-6.3.23";
+  tag = "17-7.1.9";
   config = {
     Env = [
       "PATH=${lib.makeBinPath [ dumb-init jre ]}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"

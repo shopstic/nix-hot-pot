@@ -13,13 +13,13 @@ let
       name = "jre-fdb-app-base";
       context = ./context;
       buildArgs = {
-        fromTag = "21.04";
-        fromDigest = "sha256:ba394fabd516b39ccf8597ec656a9ddd7d0a2688ed8cb373ca7ac9b6fe67848f";
+        fromTag = "22.04";
+        fromDigest = "sha256:b6b83d3c331794420340093eb706a6f152d9c1fa51b262d9bf34594887c2c7ac";
       };
       outputHash =
         if stdenv.isx86_64 then
-          "sha256-nuVWs5eJeSlHfAgFaQoFaNXNLzNfZiaYuatr/U+egIQ=" else
-          "sha256-o7vgqSRLITD1UhCmoVBsZSSJDKuEbuCk0Zd7ygehQYA=";
+          "sha256-ImMQfu7JqVkTUL+ToVlUqY23AmnIUZdSvAFE359Qbto=" else
+          "sha256-snHeEM8efkRPy8/GBkcm9wPmECmm0IpoeX8o+ifur+0=";
     };
   javaSecurityOverrides = writeTextFile {
     name = "java.security.overrides";
@@ -33,7 +33,7 @@ dockerTools.buildLayeredImage
 {
   name = "jre-fdb-app";
   fromImage = baseImage;
-  tag = "17-6.3.23";
+  tag = "17-7.1.9";
   config = {
     Env = [
       "PATH=${lib.makeBinPath [ dumb-init jre ]}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
