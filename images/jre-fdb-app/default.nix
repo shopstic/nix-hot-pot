@@ -33,10 +33,11 @@ dockerTools.buildLayeredImage
 {
   name = "jre-fdb-app";
   fromImage = baseImage;
-  tag = "17-7.1.9";
+  tag = "17-7.1.11";
   config = {
     Env = [
       "PATH=${lib.makeBinPath [ dumb-init jre ]}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      "FDB_NETWORK_OPTION_EXTERNAL_CLIENT_DIRECTORY=${fdbLib}"
       "JDK_JAVA_OPTIONS=-DFDB_LIBRARY_PATH_FDB_C=${fdbLib}/libfdb_c.so -DFDB_LIBRARY_PATH_FDB_JAVA=${fdbLib}/libfdb_java.so -Djava.security.properties=${javaSecurityOverrides}"
     ];
   };
