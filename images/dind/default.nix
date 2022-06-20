@@ -12,8 +12,8 @@ let
     finalImageName = "docker-dind";
     sha256 =
       if stdenv.isx86_64 then
-        "sha256-VaJc5cDDC4YvcqosnLEXjO2+GQ2VoSZnuJXh6w/vh20=" else
-        "sha256-bHmOA6KyVNj2sIsdBOLO0jji681oBw79eXm+QNqv5r4=";
+        "sha256-1raWuAEncm30OFIWvF4pegLrTmdvh2H5aLMWQE3cKfE=" else
+        "sha256-ZndZTZm3vcyn8k7JQBYy0mNR1vXF98khjFgfA9fJ+r0=";
   };
   entrypoint = writeTextFile {
     name = "entrypoint.sh";
