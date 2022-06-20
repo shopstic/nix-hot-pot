@@ -3,7 +3,7 @@
 , dumb-init
 }:
 let
-  version = "3.4.1";
+  version = "3.4.3";
 in
 dockerTools.buildImage {
   name = "netcat";
