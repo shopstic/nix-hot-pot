@@ -12,7 +12,7 @@ cat /config/settings.sh
 # on first entry set a routing rule to the k8s DNS server
 if ip addr | grep -q vxlan0; then
   ip link del vxlan0
-else
+fi
 
 # For debugging reasons print some info
 ip addr
@@ -22,10 +22,6 @@ ip route
 K8S_DNS_IP="$(cut -d ' ' -f 1 <<< "$K8S_DNS_IPS")"
 GATEWAY_IP="$(dig +short "$GATEWAY_NAME" "@${K8S_DNS_IP}")"
 VXLAN_GATEWAY_IP="${VXLAN_IP_NETWORK}.1"
-
-# For debugging reasons print some info
-ip addr
-ip route
 
 # Check we can connect to the GATEWAY IP
 ping -c1 "$GATEWAY_IP"
@@ -55,7 +51,6 @@ interface "vxlan0"
           #domain-name-servers;
  }
 EOF
-
 
 IP=$(cut -d' ' -f2 <<< "$NAT_ENTRY")
 VXLAN_IP="${VXLAN_IP_NETWORK}.${IP}"
