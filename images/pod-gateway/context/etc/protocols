@@ -1,0 +1,4 @@
+ip           0          #dummy for IP
+icmp         1          #control message protocol
+tcp          6          #tcp
+udp         17          #user datagram protocol
