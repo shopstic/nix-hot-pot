@@ -48,9 +48,6 @@ for local_cidr in $DNS_LOCAL_CIDRS; do
 EOF
 done
 
-# Make a copy of /etc/resolv.conf
-/bin/copy_resolv.sh
-
 # Dnsmasq daemon
 dnsmasq -k &
 dnsmasq=$!

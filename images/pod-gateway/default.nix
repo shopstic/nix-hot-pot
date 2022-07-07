@@ -21,8 +21,8 @@ let
       };
       outputHash =
         if stdenv.isx86_64 then
-          "sha256-DAVsQMEL8YPDhc6hYdYhpBHr7Xm8nj06zhC/OL7T+g4=" else
-          "sha256-HdfUnWA80JkD96XlMdMSJODbKHXjn29CC4y+qAi5QYc=";
+          "sha256-nq5PVn9gxKQ4b8reB99D+BAHL8Nco3nbu0bTsnhE5qk=" else
+          "sha256-zlMyZOiG/cZhHD4wHMEez+bz3pnHIv1kHTaXCHKwSHQ=";
     };
 
   binPath = lib.makeBinPath [
