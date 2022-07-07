@@ -7,6 +7,7 @@
 , dnsmasq
 , iproute2
 , bind
+, dig
 , iptables
 }:
 let
@@ -31,6 +32,7 @@ let
     dnsmasq
     iproute2
     bind
+    dig
     iptables
   ];
 in
