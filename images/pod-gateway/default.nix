@@ -7,7 +7,6 @@
 , dnsmasq
 , iproute2
 , bind
-, inotify-tools
 , iptables
 }:
 let
@@ -22,8 +21,8 @@ let
       };
       outputHash =
         if stdenv.isx86_64 then
-          "sha256-z4BXX34kmEgs6RMy1oMFNxjsLKU/ZYydK/yRJ/DEJRw=" else
-          "sha256-cnnEgklVCVN9j5bmru1zuPdsydVLC/jlCrupDV6ZEJQ=";
+          "sha256-DAVsQMEL8YPDhc6hYdYhpBHr7Xm8nj06zhC/OL7T+g4=" else
+          "sha256-HdfUnWA80JkD96XlMdMSJODbKHXjn29CC4y+qAi5QYc=";
     };
 
   binPath = lib.makeBinPath [
@@ -32,7 +31,6 @@ let
     dnsmasq
     iproute2
     bind
-    inotify-tools
     iptables
   ];
 in

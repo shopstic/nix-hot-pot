@@ -38,10 +38,7 @@ clear-on-reload
 conf-file=${DNSMASQ_SHARE}/trust-anchors.conf
 dnssec
 
-# /etc/resolv.conf cannot be monitored by dnsmasq since it is in a different file system
-# and dnsmasq monitors directories only
-# copy_resolv.sh is used to copy the file on changes
-resolv-file=${RESOLV_CONF_COPY}
+resolv-file=/etc/resolv.conf
 EOF
 
 for local_cidr in $DNS_LOCAL_CIDRS; do
@@ -58,17 +55,10 @@ done
 dnsmasq -k &
 dnsmasq=$!
 
-# inotifyd to keep in sync resolv.conf copy
-# Monitor file content (c) and metadata (e) changes
-inotifyd /bin/copy_resolv.sh /etc/resolv.conf:ce
-inotifyd=$!
-
 _kill_procs() {
   echo "Signal received -> killing processes"
   kill -TERM $dnsmasq
   wait $dnsmasq
-  kill -TERM $inotifyd
-  wait $inotifyd
 }
 
 # Setup a trap to catch SIGTERM and relay it to child processes
@@ -76,9 +66,3 @@ trap _kill_procs SIGTERM
 
 #Wait for dnsmasq
 wait $dnsmasq
-
-echo "TERMINATING"
-
-# kill inotifyd
-kill -TERM $inotifyd
-wait $inotifyd
