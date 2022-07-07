@@ -18,7 +18,12 @@
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ]
       (system:
         let
-          pkgs = import nixpkgs { inherit system; };
+          pkgs = import nixpkgs {
+            inherit system;
+            config.permittedInsecurePackages = [
+              "dhcp-4.4.3"
+            ];
+          };
           npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
           fdbLib = fdb.packages.${system}.fdb_7.lib;
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
@@ -156,6 +161,9 @@
               };
               image-pod-gateway = pkgs.callPackage ./images/pod-gateway {
                 inherit buildahBuild;
+                dhcp = pkgs.dhcp.override {
+                  withClient = true;
+                };
               };
             };
           defaultPackage = pkgs.buildEnv {

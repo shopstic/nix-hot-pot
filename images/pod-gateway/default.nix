@@ -10,6 +10,7 @@
 , dig
 , inetutils
 , iptables
+, dhcp
 }:
 let
   name = "pod-gateway";
@@ -36,6 +37,7 @@ let
     dig
     inetutils
     iptables
+    dhcp
   ];
 in
 dockerTools.buildLayeredImage
