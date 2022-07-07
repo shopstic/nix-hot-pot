@@ -52,10 +52,8 @@ interface "vxlan0"
  }
 EOF
 
-IP=$(cut -d' ' -f2 <<< "$NAT_ENTRY")
-VXLAN_IP="${VXLAN_IP_NETWORK}.${IP}"
-echo "Use fixed IP $VXLAN_IP"
-ip addr add "${VXLAN_IP}/24" dev vxlan0
+echo "Get dynamic IP"
+dhclient -v -cf /etc/dhclient.conf vxlan0
 
 for local_cidr in $VPN_LOCAL_CIDRS; do
   ip route add "$local_cidr" via "$VXLAN_GATEWAY_IP"
