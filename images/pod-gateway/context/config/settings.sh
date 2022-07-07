@@ -27,6 +27,9 @@ VPN_TRAFFIC_PORT=443
 # Traffic to these IPs will be send through the K8S gateway
 VPN_LOCAL_CIDRS="10.0.0.0/8 192.168.0.0/16"
 
+# Traffic to these IPs will be send through the VPN gateway
+VPN_CIDRS=""
+
 # DNS queries to these domains will be resolved by K8S DNS instead of
 # the default (typcally the VPN client changes it)
 DNS_LOCAL_CIDRS="local"

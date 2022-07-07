@@ -55,8 +55,8 @@ echo "Get dynamic IP"
 mkdir -p /var/db
 dhclient -v -cf /etc/dhclient.conf vxlan0
 
-for local_cidr in $VPN_LOCAL_CIDRS; do
-  ip route add "$local_cidr" via "$VXLAN_GATEWAY_IP"
+for vpn_cidr in $VPN_CIDRS; do
+  ip route add "$vpn_cidr" via "$VXLAN_GATEWAY_IP"
 done
 
 # For debugging reasons print some info
