@@ -8,6 +8,7 @@
 , iproute2
 , bind
 , dig
+, inetutils
 , iptables
 }:
 let
@@ -33,6 +34,7 @@ let
     iproute2
     bind
     dig
+    inetutils
     iptables
   ];
 in
