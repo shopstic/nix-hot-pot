@@ -34,8 +34,7 @@ ip link set up dev vxlan0
 cat << EOF > /etc/dhclient.conf
 backoff-cutoff 2;
 initial-interval 1;
-link-timeout 10;
-reboot 0;
+reboot 1;
 retry 10;
 select-timeout 0;
 timeout 30;
@@ -53,6 +52,7 @@ interface "vxlan0"
 EOF
 
 echo "Get dynamic IP"
+mkdir -p /var/db
 dhclient -v -cf /etc/dhclient.conf vxlan0
 
 for local_cidr in $VPN_LOCAL_CIDRS; do
