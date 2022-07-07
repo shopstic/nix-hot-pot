@@ -8,6 +8,7 @@
 , iproute2
 , bind
 , inotify-tools
+, iptables
 }:
 let
   name = "pod-gateway";
@@ -24,6 +25,16 @@ let
           "sha256-fNXL6j068KwsM8W/04SmjyiltQRmoMna3kHplF24af8=" else
           "sha256-WSfJNAGJtp/fYACCUi3WNeOYn9vNIt2jyNlT3dYPKcM=";
     };
+
+  binPath = lib.makeBinPath [
+    dumb-init
+    coreutils
+    dnsmasq
+    iproute2
+    bind
+    inotify-tools
+    iptables
+  ];
 in
 dockerTools.buildLayeredImage
 {
@@ -32,7 +43,7 @@ dockerTools.buildLayeredImage
   tag = "1.6.0";
   config = {
     Env = [
-      "PATH=${lib.makeBinPath [ dumb-init coreutils dnsmasq iproute2 bind inotify-tools ]}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      "PATH=${binPath}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     ];
   };
 }
