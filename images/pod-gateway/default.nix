@@ -22,8 +22,8 @@ let
       };
       outputHash =
         if stdenv.isx86_64 then
-          "sha256-fNXL6j068KwsM8W/04SmjyiltQRmoMna3kHplF24af8=" else
-          "sha256-WSfJNAGJtp/fYACCUi3WNeOYn9vNIt2jyNlT3dYPKcM=";
+          "sha256-z4BXX34kmEgs6RMy1oMFNxjsLKU/ZYydK/yRJ/DEJRw=" else
+          "sha256-cnnEgklVCVN9j5bmru1zuPdsydVLC/jlCrupDV6ZEJQ=";
     };
 
   binPath = lib.makeBinPath [
@@ -44,6 +44,8 @@ dockerTools.buildLayeredImage
   config = {
     Env = [
       "PATH=${binPath}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      "DNSMASQ_SHARE=${dnsmasq}/share/dnsmasq"
     ];
+    Entrypoint = [ "${dumb-init}/bin/dumb-init" "--" ];
   };
 }

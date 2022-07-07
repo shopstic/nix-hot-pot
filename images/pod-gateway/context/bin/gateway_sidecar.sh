@@ -2,6 +2,8 @@
 
 set -ex
 
+DNSMASQ_SHARE=${DNSMASQ_SHARE:?"DNSMASQ_SHARE env var is required"}
+
 # Load main settings
 cat /default_config/settings.sh
 . /default_config/settings.sh
@@ -11,8 +13,7 @@ cat /config/settings.sh
 #Get K8S DNS
 K8S_DNS=$(grep nameserver /etc/resolv.conf | cut -d' ' -f2)
 
-
-cat << EOF > /etc/dnsmasq.d/pod-gateway.conf
+cat << EOF > /etc/dnsmasq.conf
 # DHCP server settings
 interface=vxlan0
 bind-interfaces
@@ -34,7 +35,7 @@ log-facility=-
 clear-on-reload
 
 # Enable DNSSEC validation and caching
-conf-file=/usr/share/dnsmasq/trust-anchors.conf
+conf-file=${DNSMASQ_SHARE}/trust-anchors.conf
 dnssec
 
 # /etc/resolv.conf cannot be monitored by dnsmasq since it is in a different file system
@@ -44,7 +45,7 @@ resolv-file=${RESOLV_CONF_COPY}
 EOF
 
 for local_cidr in $DNS_LOCAL_CIDRS; do
-  cat << EOF >> /etc/dnsmasq.d/pod-gateway.conf
+  cat << EOF >> /etc/dnsmasq.conf
   # Send ${local_cidr} DNS queries to the K8S DNS server
   server=/${local_cidr}/${K8S_DNS}
 EOF
