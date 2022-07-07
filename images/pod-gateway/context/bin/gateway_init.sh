@@ -51,8 +51,8 @@ if [[ -n "$VPN_INTERFACE" ]]; then
   done </config/nat.conf
 
   echo "Setting iptables for VPN with NIC ${VPN_INTERFACE}"
-  # Firewall incomming traffic from VPN
-  echo "Accept traffic alredy ESTABLISHED"
+  # Firewall incoming traffic from VPN
+  echo "Accept traffic already ESTABLISHED"
 
   iptables -A FORWARD -i "$VPN_INTERFACE" -m state --state ESTABLISHED,RELATED -j ACCEPT
   # Reject other traffic"
@@ -80,7 +80,7 @@ if [[ -n "$VPN_INTERFACE" ]]; then
   fi
 
   #Routes for local networks
-  K8S_GW_IP=$(/sbin/ip route | awk '/default/ { print $3 }')
+  K8S_GW_IP=$(ip route | awk '/default/ { print $3 }') || exit 1
   for local_cidr in $VPN_LOCAL_CIDRS; do
     # command might fail if rule already set
     ip route add "$local_cidr" via "$K8S_GW_IP" || /bin/true
