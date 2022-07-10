@@ -20,9 +20,14 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            config.permittedInsecurePackages = [
-              "dhcp-4.4.3"
-            ];
+            config = {
+              permittedInsecurePackages = [
+                "dhcp-4.4.3"
+              ];
+              allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+                "zerotierone"
+              ];
+            };
           };
           npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
           fdbLib = fdb.packages.${system}.fdb_7.lib;
@@ -136,6 +141,7 @@
               });
               tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+              zerotierone = pkgs.callPackage ./pkgs/zerotierone.nix { };
               image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
               image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
               image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
