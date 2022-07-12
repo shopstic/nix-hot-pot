@@ -171,6 +171,9 @@
                   withClient = true;
                 };
               };
+              image-zerotier-router = pkgs.callPackage ./images/zerotier-router {
+                inherit buildahBuild;
+              };
             };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
