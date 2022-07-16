@@ -33,10 +33,10 @@ jobs:
       - name: Test
         run: |
           cd ./tests
-          nix build -L -vv --no-link '.#defaultPackage.${{ matrix.arch }}'
+          nix build -L -v --no-link '.#defaultPackage.${{ matrix.arch }}'
 
       - name: Build all packages
-        run: nix build -L -vv '.#defaultPackage.${{ matrix.arch }}'
+        run: nix build -L -v '.#defaultPackage.${{ matrix.arch }}'
 
       - name: Cache all packages
         env:
