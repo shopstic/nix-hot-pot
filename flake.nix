@@ -140,7 +140,7 @@
                 };
               });
               tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
-            } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+            } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux rec {
               zerotierone = pkgs.callPackage ./pkgs/zerotierone.nix { };
               image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
               image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
@@ -172,7 +172,7 @@
                 };
               };
               image-zerotier-router = pkgs.callPackage ./images/zerotier-router {
-                inherit buildahBuild;
+                inherit buildahBuild zerotierone;
               };
             };
           defaultPackage = pkgs.buildEnv {

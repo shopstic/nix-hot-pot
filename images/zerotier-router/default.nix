@@ -4,6 +4,7 @@
 , dockerTools
 , iptables
 , tini
+, zerotierone
 }:
 let
   name = "zerotier-router";
@@ -23,6 +24,7 @@ let
 
   binPath = lib.makeBinPath [
     iptables
+    zerotierone
   ];
 
   entrypoint = ./entrypoint.sh;
@@ -31,7 +33,7 @@ dockerTools.buildLayeredImage
 {
   inherit name;
   fromImage = baseImage;
-  tag = "1.0.0";
+  tag = "1.10.1";
   config = {
     Env = [
       "PATH=${binPath}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"

@@ -81,6 +81,11 @@ done
 echo "INFO: $(zerotier-cli listnetworks)"
 echo "INFO: $(zerotier-cli info)"
 
+if [ -f /etc/zerotier-router/on-up.sh ]; then
+  echo "Executing /etc/zerotier-router/on-up.sh"
+  /etc/zerotier-router/on-up.sh
+fi
+
 if [ "${ZT_ENABLE_FORWARD}" = true ] ; then
   echo "INFO: Enabling IP forwarding..."
   # Configure iptables forwarding and masquerade
