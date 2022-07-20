@@ -5,6 +5,7 @@
 , iptables
 , tini
 , zerotierone
+, kubectl
 }:
 let
   name = "zerotier-router";
@@ -25,6 +26,7 @@ let
   binPath = lib.makeBinPath [
     iptables
     zerotierone
+    kubectl
   ];
 
   entrypoint = ./entrypoint.sh;
