@@ -6,6 +6,7 @@
 , tini
 , zerotierone
 , kubectl
+, iperf
 }:
 let
   name = "zerotier-router";
@@ -27,6 +28,7 @@ let
     iptables
     zerotierone
     kubectl
+    iperf
   ];
 
   entrypoint = ./entrypoint.sh;
