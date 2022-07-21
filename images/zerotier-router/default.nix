@@ -40,6 +40,6 @@ dockerTools.buildLayeredImage
     Env = [
       "PATH=${binPath}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     ];
-    Entrypoint = [ tini "--" entrypoint ];
+    Entrypoint = [ "${tini}/bin/tini" "--" entrypoint ];
   };
 }
