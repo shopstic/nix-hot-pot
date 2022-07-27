@@ -116,11 +116,21 @@
                 };
               });
               jre17 = jdk17Pkg.jre;
+              awscli2 = pkgs.awscli2.overrideAttrs (_: attrs: rec {
+                name = "${attrs.pname}-${version}";
+                version = "2.7.19";
+                src = pkgs.fetchFromGitHub {
+                  owner = "aws";
+                  repo = "aws-cli";
+                  rev = version;
+                  sha256 = "sha256-kVqs6gh4r0kBwlDll0jiE7d0aKMLlYFcPsqbtCa5uBc=";
+                };
+              });
             in
             {
               inherit
                 deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x
-                intellij-helper manifest-tool jdk17 jre17;
+                intellij-helper manifest-tool jdk17 jre17 awscli2;
               faq = pkgs.callPackage ./pkgs/faq.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               packer = pkgs.callPackage ./pkgs/packer.nix { };
@@ -129,16 +139,6 @@
                 inherit npmlock2nix;
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
-              awscli2 = pkgs.awscli2.overrideAttrs (_: attrs: rec {
-                name = "${attrs.pname}-${version}";
-                version = "2.7.6";
-                src = pkgs.fetchFromGitHub {
-                  owner = "aws";
-                  repo = "aws-cli";
-                  rev = version;
-                  sha256 = "sha256-TBA0PJzahANmg2It3tNxdkpcNG5SlyuqDBvE1/Afr/0=";
-                };
-              });
               tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux rec {
               zerotierone = pkgs.callPackage ./pkgs/zerotierone.nix { };
@@ -173,6 +173,9 @@
               };
               image-zerotier-router = pkgs.callPackage ./images/zerotier-router {
                 inherit buildahBuild zerotierone;
+              };
+              image-aws-cli2-jq = pkgs.callPackage ./images/aws-cli2-jq {
+                inherit buildahBuild awscli2;
               };
             };
           defaultPackage = pkgs.buildEnv {
