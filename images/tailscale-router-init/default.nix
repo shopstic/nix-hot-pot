@@ -13,14 +13,19 @@
 }:
 let
   name = "tailscale-router-init";
-  baseImage = dockerTools.pullImage {
-    imageName = "docker.io/library/ubuntu";
-    imageDigest = "sha256:b6b83d3c331794420340093eb706a6f152d9c1fa51b262d9bf34594887c2c7ac";
-    sha256 =
-      if stdenv.isx86_64 then
-        "sha256-puR757IYOrsuM3us+5QVvZodq19v/3Zzsu8B0YO+6Nk=" else
-        "sha256-yPysq07M5xXM/WiLxxY4X4gVCtfRE/DEp/OblhH9Ngk=";
-  };
+  baseImage = buildahBuild
+    {
+      name = "${name}-base";
+      context = ./context;
+      buildArgs = {
+        fromTag = "22.04";
+        fromDigest = "sha256:b6b83d3c331794420340093eb706a6f152d9c1fa51b262d9bf34594887c2c7ac";
+      };
+      outputHash =
+        if stdenv.isx86_64 then
+          "sha256-5qFhYEW0lGioxDLtKGsKbNyURLMBWMXvlxEzzIhY1qo=" else
+          "sha256-4SExIPoF1wqU+kr6GINEGFnYyoCuH1nDvvaQkyRMWEE=";
+    };
 
   binPath = lib.makeBinPath [
     awscli2
