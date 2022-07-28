@@ -4,9 +4,15 @@
 , dockerTools
 , awscli2
 , jq
+, coreutils
+, iproute2
+, bind
+, dig
+, inetutils
+, iptables
 }:
 let
-  name = "aws-cli2-jq";
+  name = "tailscale-router-init";
   baseImage = dockerTools.pullImage {
     imageName = "docker.io/library/ubuntu";
     imageDigest = "sha256:b6b83d3c331794420340093eb706a6f152d9c1fa51b262d9bf34594887c2c7ac";
@@ -19,6 +25,12 @@ let
   binPath = lib.makeBinPath [
     awscli2
     jq
+    coreutils
+    iproute2
+    bind
+    dig
+    inetutils
+    iptables
   ];
 in
 dockerTools.buildLayeredImage

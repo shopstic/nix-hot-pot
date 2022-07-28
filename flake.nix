@@ -174,7 +174,7 @@
               image-zerotier-router = pkgs.callPackage ./images/zerotier-router {
                 inherit buildahBuild zerotierone;
               };
-              image-aws-cli2-jq = pkgs.callPackage ./images/aws-cli2-jq {
+              image-tailscale-router-init = pkgs.callPackage ./images/ailscale-router-init {
                 inherit buildahBuild awscli2;
               };
             };
