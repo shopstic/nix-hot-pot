@@ -141,6 +141,7 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
+              mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux rec {
               zerotierone = pkgs.callPackage ./pkgs/zerotierone.nix { };
               image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
