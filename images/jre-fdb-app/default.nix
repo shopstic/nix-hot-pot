@@ -14,12 +14,12 @@ let
       context = ./context;
       buildArgs = {
         fromTag = "22.04";
-        fromDigest = "sha256:b6b83d3c331794420340093eb706a6f152d9c1fa51b262d9bf34594887c2c7ac";
+        fromDigest = "sha256:34fea4f31bf187bc915536831fd0afc9d214755bf700b5cdb1336c82516d154e";
       };
       outputHash =
         if stdenv.isx86_64 then
-          "sha256-ImMQfu7JqVkTUL+ToVlUqY23AmnIUZdSvAFE359Qbto=" else
-          "sha256-snHeEM8efkRPy8/GBkcm9wPmECmm0IpoeX8o+ifur+0=";
+          "sha256-ZRE+URaTis09Kyec4Hx6S5uAS+LrN28tisViK99OIso=" else
+          "sha256-8CkiVyyISCHSIhQTifOZk3FwpeYgyXc9mggcCr8R7hU=";
     };
   javaSecurityOverrides = writeTextFile {
     name = "java.security.overrides";

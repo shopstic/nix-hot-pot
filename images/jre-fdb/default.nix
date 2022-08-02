@@ -9,11 +9,11 @@
 let
   baseImage = dockerTools.pullImage {
     imageName = "docker.io/library/ubuntu";
-    imageDigest = "sha256:b6b83d3c331794420340093eb706a6f152d9c1fa51b262d9bf34594887c2c7ac";
+    imageDigest = "sha256:34fea4f31bf187bc915536831fd0afc9d214755bf700b5cdb1336c82516d154e";
     sha256 =
       if stdenv.isx86_64 then
-        "sha256-puR757IYOrsuM3us+5QVvZodq19v/3Zzsu8B0YO+6Nk=" else
-        "sha256-yPysq07M5xXM/WiLxxY4X4gVCtfRE/DEp/OblhH9Ngk=";
+        "sha256-BvCwhmD6YXiQBAugQyqlbrvonHO4L8gjieYfNiTvNpc=" else
+        "sha256-6ywrDWx9bsVrlDKBZwIhXl0Ar35YVg9rjFBHsdCb2eM=";
   };
   javaSecurityOverrides = writeTextFile {
     name = "java.security.overrides";
