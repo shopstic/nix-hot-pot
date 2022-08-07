@@ -143,7 +143,6 @@
               tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux rec {
-              zerotierone = pkgs.callPackage ./pkgs/zerotierone.nix { };
               image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
               image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
               image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
@@ -172,9 +171,6 @@
                 dhcp = pkgs.dhcp.override {
                   withClient = true;
                 };
-              };
-              image-zerotier-router = pkgs.callPackage ./images/zerotier-router {
-                inherit buildahBuild zerotierone;
               };
               image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
                 inherit buildahBuild awscli2;
