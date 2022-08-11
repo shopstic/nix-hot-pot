@@ -15,16 +15,24 @@ let
     finalImageTag = "v${arcVersion}-ubuntu-20.04-fc55477";
     finalImageName = baseName;
   };
+  pathEnv = "${lib.makeBinPath [ nix ]}:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/runner/.local/bin";
 in
 dockerTools.buildLayeredImage
 {
   name = "${baseName}-nix";
   fromImage = baseImage;
   tag = "${arcVersion}-${nix.version}";
-  contents = [ nix ];
+  contents = [
+    (
+      writeTextDir "etc/environment" ''
+        PATH=${pathEnv}
+        ImageOS=ubuntu20
+      ''
+    )
+  ];
   config = {
     Env = [
-      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      "PATH=${pathEnv}"
       "GIT_SSL_CAINFO=/etc/ssl/certs/ca-certificates.crt"
       "NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
     ];
