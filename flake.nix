@@ -175,6 +175,9 @@
               image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
                 inherit buildahBuild awscli2;
               };
+              image-actions-runner-dind-nix = pkgs.callPackage ./images/actions-runner-dind-nix {
+                inherit buildahBuild;
+              };
             };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
