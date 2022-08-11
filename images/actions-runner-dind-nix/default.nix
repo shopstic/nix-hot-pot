@@ -24,6 +24,7 @@ dockerTools.buildLayeredImage
   contents = [ nix ];
   config = {
     Env = [
+      "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       "GIT_SSL_CAINFO=/etc/ssl/certs/ca-certificates.crt"
       "NIX_SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
     ];
