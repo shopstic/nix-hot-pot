@@ -101,6 +101,7 @@
                 parallel
                 skopeo
                 nodejs
+                kubectl
                 ;
             };
             shellHook = ''
@@ -144,6 +145,7 @@
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux rec {
               image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
+              image-bin-kubectl = pkgs.callPackage ./images/bin-kubectl { };
               image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
               image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
                 inherit fdbLib;
