@@ -1,6 +1,7 @@
 { dockerTools
 , gh-runner-token
 , cacert
+, bash
 }:
 dockerTools.buildImage {
   name = "gh-runner-token";
@@ -16,6 +17,7 @@ dockerTools.buildImage {
   contents = [
     gh-runner-token
     cacert
+    bash
   ];
 }
 
