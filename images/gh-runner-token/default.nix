@@ -2,6 +2,7 @@
 , gh-runner-token
 , cacert
 , bash
+, coreutils
 }:
 dockerTools.buildImage {
   name = "gh-runner-token";
@@ -18,6 +19,7 @@ dockerTools.buildImage {
     gh-runner-token
     cacert
     bash
+    coreutils
   ];
 }
 
