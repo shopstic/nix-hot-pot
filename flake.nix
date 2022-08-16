@@ -180,6 +180,7 @@
               image-actions-runner-dind-nix = pkgs.callPackage ./images/actions-runner-dind-nix {
                 inherit buildahBuild;
               };
+              image-gh-token = pkgs.callPackage ./images/gh-token { };
             };
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
