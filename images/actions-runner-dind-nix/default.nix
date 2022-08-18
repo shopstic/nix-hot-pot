@@ -11,7 +11,10 @@ let
   baseImage = dockerTools.pullImage {
     imageName = "docker.io/summerwind/actions-runner-dind";
     imageDigest = "sha256:1c4c7b8e125d51bcf6f6c5777eb515a76b12201aa36a2fe98543f71a8702913b";
-    sha256 = "sha256-0dkBF9HBaottGeURDvFA2LcK7pz2wtoUoqen5t4QBiA=";
+    sha256 =
+      if stdenv.isx86_64 then
+        "sha256-zJvuwZzZ2v6gVXwtCZD6wpFMXRJnZx1YtPq7+i4UEbc=" else
+        "sha256-0dkBF9HBaottGeURDvFA2LcK7pz2wtoUoqen5t4QBiA=";
     finalImageTag = "v${arcVersion}-ubuntu-20.04-3724b46";
     finalImageName = baseName;
   };
