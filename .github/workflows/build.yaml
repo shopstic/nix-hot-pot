@@ -28,6 +28,7 @@ jobs:
       - name: Push all images
         shell: nix develop -v -c bash {0}
         run: |
+          ls -la ./result/
           ./cli.sh push_all_single_arch_images ${{ matrix.arch.nix }}
 
   push-manifests:
