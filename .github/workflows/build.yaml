@@ -1,8 +1,47 @@
 name: Build
 on: [push]
 jobs:
+  build-packages:
+    runs-on:
+      [
+        self-hosted,
+        nix,
+        "${{ matrix.runner.runner }}",
+        "${{ matrix.runner.size }}",
+      ]
+    strategy:
+      matrix:
+        runner:
+          - arch: x86_64-linux
+            runner: amd64-linux
+            size: medium
+          - arch: aarch64-linux
+            runner: arm64-linux
+            size: medium
+          - arch: aarch64-darwin
+            runner: arm64-darwin
+            size: small
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Test
+        run: |
+          cd ./tests
+          nix build -L -v --no-link '.#defaultPackage.${{ matrix.runner.arch }}'
+
+      - name: Build all packages
+        run: nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}'
+
+      - name: Cache all packages
+        env:
+          NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
+        run: |
+          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
+          nix copy -v "${NIX_OUTPUT}" --to s3://nixed/cache
+
   build-push-images:
     runs-on: [self-hosted, nix, "${{ matrix.arch.runner }}-linux", medium]
+    needs: [build-packages]
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
     strategy:
@@ -45,41 +84,3 @@ jobs:
         shell: nix develop -v -c bash {0}
         run: |
           ./cli.sh push_all_manifests
-
-  build-packages:
-    runs-on:
-      [
-        self-hosted,
-        nix,
-        "${{ matrix.runner.runner }}",
-        "${{ matrix.runner.size }}",
-      ]
-    strategy:
-      matrix:
-        runner:
-          - arch: x86_64-linux
-            runner: amd64-linux
-            size: medium
-          - arch: aarch64-linux
-            runner: arm64-linux
-            size: medium
-          - arch: aarch64-darwin
-            runner: arm64-darwin
-            size: small
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Test
-        run: |
-          cd ./tests
-          nix build -L -v --no-link '.#defaultPackage.${{ matrix.runner.arch }}'
-
-      - name: Build all packages
-        run: nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}'
-
-      - name: Cache all packages
-        env:
-          NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
-        run: |
-          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
-          nix copy -v "${NIX_OUTPUT}" --to s3://nixed/cache
