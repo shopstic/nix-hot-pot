@@ -15,19 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build all images
-        shell: nix develop -v -c bash {0}
-        run: |
-          ./cli.sh build_all_images ${{ matrix.arch.nix }}
-
       - name: Login
         shell: nix develop -v -c bash {0}
         run: |-
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
 
-      - name: Push all images
+      - name: Build all images
         shell: nix develop -v -c bash {0}
         run: |
+          ./cli.sh build_all_images ${{ matrix.arch.nix }}
+          ls -la .
           ls -la ./result/
           ./cli.sh push_all_single_arch_images ${{ matrix.arch.nix }}
 
