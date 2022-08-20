@@ -42,6 +42,9 @@ push_single_arch() {
   local IMAGE_TAG
   IMAGE_TAG=$(nix eval --raw ".#packages.${IMAGE_ARCH}-linux.image-${IMAGE}.imageTag") || exit $?
 
+  local FILE_NAME
+  FILE_NAME=$(nix eval --raw ".#packages.${IMAGE_ARCH}-linux.image-${IMAGE}.name") || exit $?
+
   local NIX_ARCH="x86_64"
   if [[ "${ARCH}" == "arm64" ]]; then
     NIX_ARCH="aarch64"
@@ -52,7 +55,7 @@ push_single_arch() {
   >&2 echo "Pushing ${TARGET_IMAGE}"
 
   skopeo --insecure-policy copy \
-    docker-archive:"./result/docker-image-${IMAGE}.tar.gz" \
+    docker-archive:"./result/${FILE_NAME}" \
     "docker://${TARGET_IMAGE}"
 }
 
