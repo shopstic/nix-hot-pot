@@ -150,39 +150,30 @@
                   image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
                   image-bin-kubectl = pkgs.callPackage ./images/bin-kubectl { };
                   image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
-                  # image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
-                  #   inherit fdbLib;
-                  # };
-                  # image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { };
-                  # image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { };
-                  # image-netcat = pkgs.callPackage ./images/netcat { };
-                  # image-jre-fdb = pkgs.callPackage ./images/jre-fdb {
-                  #   jre = jre17;
-                  #   inherit fdbLib;
-                  # };
-                  # image-jre-fdb-app = pkgs.callPackage ./images/jre-fdb-app {
-                  #   jre = jre17;
-                  #   inherit fdbLib buildahBuild;
-                  # };
-                  # image-dind = pkgs.callPackage ./images/dind { };
-                  # image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
-                  #   inherit buildahBuild;
-                  # };
-                  # image-confluent-community = pkgs.callPackage ./images/confluent-community {
-                  #   inherit buildahBuild;
-                  # };
-                  # image-pod-gateway = pkgs.callPackage ./images/pod-gateway {
-                  #   inherit buildahBuild;
-                  #   dhcp = pkgs.dhcp.override {
-                  #     withClient = true;
-                  #   };
-                  # };
-                  # image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
-                  #   inherit buildahBuild awscli2;
-                  # };
-                  # image-gh-runner-token = pkgs.callPackage ./images/gh-runner-token {
-                  #   inherit gh-runner-token;
-                  # };
+                  image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
+                    inherit fdbLib;
+                  };
+                  image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { };
+                  image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { };
+                  image-netcat = pkgs.callPackage ./images/netcat { };
+                  image-jre-fdb = pkgs.callPackage ./images/jre-fdb {
+                    jre = jre17;
+                    inherit fdbLib;
+                  };
+                  image-jre-fdb-app = pkgs.callPackage ./images/jre-fdb-app {
+                    jre = jre17;
+                    inherit fdbLib buildahBuild;
+                  };
+                  image-dind = pkgs.callPackage ./images/dind { };
+                  image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
+                    inherit buildahBuild;
+                  };
+                  image-confluent-community = pkgs.callPackage ./images/confluent-community {
+                    inherit buildahBuild;
+                  };
+                  image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
+                    inherit buildahBuild awscli2;
+                  };
                 }; in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
