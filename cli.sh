@@ -10,12 +10,17 @@ get_current_arch() {
   echo "${IMAGE_ARCH}"
 }
 
-build_push_all_single_arch_images() {
+build_all_images() {
+  local ARCH=${1:?"Arch is required (x86_64 | aarch64)"}
+  nix build -L -v ".#packages.${ARCH}-linux.all-images"
+}
+
+push_all_single_arch_images() {
   local ARCH=${1:?"Arch is required (amd64 | arm64)"}
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
-  parallel -j2 --tagstring "[{}]" --line-buffer --retries=2 \
-    "$0" build_push_single_arch {} "${ARCH}" ::: "${IMAGES[@]}"
+  parallel -j8 --tagstring "[{}]" --line-buffer --retries=2 \
+    "$0" push_single_arch {} "${ARCH}" ::: "${IMAGES[@]}"
 }
 
 push_all_manifests() {
@@ -25,7 +30,7 @@ push_all_manifests() {
     "$0" push_manifest {} ::: "${IMAGES[@]}"
 }
 
-build_push_single_arch() {
+push_single_arch() {
   local IMAGE_REPOSITORY=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
 
   local IMAGE=${1:?"Image name is required"}
@@ -37,24 +42,17 @@ build_push_single_arch() {
   local IMAGE_TAG
   IMAGE_TAG=$(nix eval --raw ".#packages.${IMAGE_ARCH}-linux.image-${IMAGE}.imageTag") || exit $?
 
-  local TEMP_DIR
-
-  TEMP_DIR=$(mktemp -d)
-  trap "rm -Rf ${TEMP_DIR}" EXIT
-
   local NIX_ARCH="x86_64"
   if [[ "${ARCH}" == "arm64" ]]; then
     NIX_ARCH="aarch64"
   fi
-
-  nix build -L -v ".#packages.${NIX_ARCH}-linux.image-${IMAGE}" -o "${TEMP_DIR}/image"
 
   local TARGET_IMAGE="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-${ARCH}"
 
   >&2 echo "Pushing ${TARGET_IMAGE}"
 
   skopeo --insecure-policy copy \
-    docker-archive:"${TEMP_DIR}/image" \
+    docker-archive:"./result/docker-image-${IMAGE}.tar.gz" \
     "docker://${TARGET_IMAGE}"
 }
 
