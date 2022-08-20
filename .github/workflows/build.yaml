@@ -1,7 +1,7 @@
 name: Build
 on: [push]
 jobs:
-  build-images:
+  build-push-images:
     runs-on: [self-hosted, nix, "${{ matrix.arch.runner }}-linux", medium]
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
@@ -20,30 +20,19 @@ jobs:
         run: |
           ./cli.sh build_all_images ${{ matrix.arch.nix }}
 
-  push-images:
-    runs-on: [self-hosted, nix, "${{ matrix.arch }}-linux", medium]
-    needs: [build-images]
-    env:
-      IMAGE_REPOSITORY: public.ecr.aws/shopstic
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
-    steps:
-      - uses: actions/checkout@v3
-
       - name: Login
         shell: nix develop -v -c bash {0}
         run: |-
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
 
-      - name: Build and push images
+      - name: Push all images
         shell: nix develop -v -c bash {0}
         run: |
-          ./cli.sh push_all_single_arch_images ${{ matrix.arch }}
+          ./cli.sh push_all_single_arch_images ${{ matrix.arch.nix }}
 
   push-manifests:
     runs-on: [self-hosted, nix, arm64-linux, small]
-    needs: [push-images]
+    needs: [build-push-images]
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
     steps:
