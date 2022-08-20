@@ -11,11 +11,11 @@ get_current_arch() {
 }
 
 build_push_all_single_arch_images() {
-  local ARCH=${1:?"Arch is required (amd64 | arm64"}
+  local ARCH=${1:?"Arch is required (amd64 | arm64)"}
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
   parallel -j2 --tagstring "[{}]" --line-buffer --retries=2 \
-    "$0" build_push_single_arch {} ::: "${IMAGES[@]}" "${ARCH}"
+    "$0" build_push_single_arch {} "${ARCH}" ::: "${IMAGES[@]}"
 }
 
 push_all_manifests() {
