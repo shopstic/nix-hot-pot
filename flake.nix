@@ -181,7 +181,7 @@
             );
           defaultPackage = pkgs.buildEnv {
             name = "nix-hot-pot";
-            paths = builtins.attrValues (pkgs.lib.filterAttrs (n: _: !(pkgs.lib.hasPrefix "image-" n)) packages);
+            paths = builtins.attrValues (pkgs.lib.filterAttrs (n: _: (!(pkgs.lib.hasPrefix "image-" n) && n != "all-images")) packages);
           };
         }
       ) // {
