@@ -26,7 +26,7 @@ push_all_single_arch_images() {
 push_all_manifests() {
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
-  parallel -j2 --tagstring "[{}]" --line-buffer --retries=2 \
+  parallel -j8 --tagstring "[{}]" --line-buffer --retries=2 \
     "$0" push_manifest {} ::: "${IMAGES[@]}"
 }
 

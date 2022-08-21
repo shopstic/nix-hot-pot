@@ -2,6 +2,7 @@ name: Build
 on: [push]
 jobs:
   build-packages:
+    timeout-minutes: 20
     runs-on:
       [
         self-hosted,
@@ -40,6 +41,7 @@ jobs:
           nix copy -v "${NIX_OUTPUT}" --to s3://nixed/cache
 
   build-push-images:
+    timeout-minutes: 20
     runs-on: [self-hosted, nix, "${{ matrix.arch.runner }}-linux", medium]
     needs: [build-packages]
     env:
@@ -70,6 +72,7 @@ jobs:
           ./cli.sh push_all_single_arch_images ${{ matrix.arch.nix }}
 
   push-manifests:
+    timeout-minutes: 20
     runs-on: [self-hosted, nix, arm64-linux, small]
     needs: [build-push-images]
     env:
