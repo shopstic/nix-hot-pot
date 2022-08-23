@@ -4,12 +4,11 @@ jobs:
   build-packages:
     timeout-minutes: 20
     runs-on:
-      [
-        self-hosted,
-        nix,
-        "${{ matrix.runner.runner }}",
-        "${{ matrix.runner.size }}",
-      ]
+      - self-hosted
+      - nix
+      - general
+      - "${{ matrix.runner.runner }}"
+      - "${{ matrix.runner.size }}"
     strategy:
       matrix:
         runner:
@@ -42,7 +41,7 @@ jobs:
 
   build-push-images:
     timeout-minutes: 20
-    runs-on: [self-hosted, nix, "${{ matrix.arch.runner }}-linux", medium]
+    runs-on: self-hosted, nix, general, "${{ matrix.arch.runner }}-linux", medium]
     needs: [build-packages]
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
@@ -73,7 +72,7 @@ jobs:
 
   push-manifests:
     timeout-minutes: 20
-    runs-on: [self-hosted, nix, arm64-linux, small]
+    runs-on: [self-hosted, nix, general, arm64-linux, small]
     needs: [build-push-images]
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
