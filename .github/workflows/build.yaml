@@ -7,8 +7,8 @@ jobs:
       - self-hosted
       - nix
       - general
-      - "${{ matrix.runner.runner }}"
-      - "${{ matrix.runner.size }}"
+      - ${{ matrix.runner.runner }}
+      - ${{ matrix.runner.size }}
     strategy:
       matrix:
         runner:
