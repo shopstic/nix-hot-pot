@@ -1,6 +1,6 @@
 {
   "nodes": {
-    "fdb": {
+    "fdbPkg": {
       "inputs": {
         "flakeUtils": "flakeUtils",
         "nixpkgs": "nixpkgs"
@@ -17,6 +17,21 @@
         "owner": "shopstic",
         "ref": "7.1.11",
         "repo": "nix-fdb",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "locked": {
+        "lastModified": 1653893745,
+        "narHash": "sha256-0jntwV3Z8//YwuOjzhV2sgJJPt+HY6KhU7VZUL0fKZQ=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "1ed9fb1935d260de5fe1c2f7ee0ebaae17ed2fa1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
         "type": "github"
       }
     },
@@ -47,6 +62,27 @@
       "original": {
         "owner": "numtide",
         "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nix2containerPkg": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1660275534,
+        "narHash": "sha256-cmYNjqxGcwnayMZG2L6aeHZG/Si8OtACvw9leRkVXP8=",
+        "owner": "shopstic",
+        "repo": "nix2container",
+        "rev": "144cb58e8817e8ea0a5ad1cb0ec3c08850a148bf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "shopstic",
+        "repo": "nix2container",
         "type": "github"
       }
     },
@@ -101,8 +137,9 @@
     },
     "root": {
       "inputs": {
-        "fdb": "fdb",
+        "fdbPkg": "fdbPkg",
         "flakeUtils": "flakeUtils_2",
+        "nix2containerPkg": "nix2containerPkg",
         "nixpkgs": "nixpkgs_2",
         "npmlock2nixPkg": "npmlock2nixPkg"
       }
