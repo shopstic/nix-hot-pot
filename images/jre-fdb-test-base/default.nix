@@ -51,7 +51,7 @@ let
       {
         inherit name;
         fromImage = base-image;
-        tag = "${(replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
+        tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
         copyToRoot = [ nix-bin shadow home-dir ];
         maxLayers = 50;
         perms = [
