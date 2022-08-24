@@ -148,7 +148,6 @@
                 intellij-helper manifest-tool jdk17 jre17 awscli2 gh-runner-token
                 skopeo-nix2container nix2containerUtil
                 karpenter;
-              faq = pkgs.callPackage ./pkgs/faq.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               packer = pkgs.callPackage ./pkgs/packer.nix { };
               regclient = pkgs.callPackage ./pkgs/regclient.nix { };
