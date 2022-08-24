@@ -20,7 +20,7 @@ let
 
     vendorSha256 = "sha256-/zA3hioNkmZp1rHWutpadqh2/k9DFrrgYtK0/8ZDBuA=";
 
-    subPackages = [ "./cmd/controller" "./cmd/webhook" ];
+    subPackages = [ "cmd/controller" "cmd/webhook" ];
 
     outputs = [ "out" "controller" "webhook" ];
 
