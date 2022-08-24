@@ -1,57 +1,58 @@
 { lib
 , stdenv
-, dumb-init
 , writeTextFile
-, buildahBuild
-, dockerTools
+, buildEnv
+, runCommand
+, nix2container
 , fetchzip
+, dumb-init
 }:
 let
   name = "confluent-community";
-  baseImage = buildahBuild
+  minorVersion = "7.2";
+  version = "7.2.1";
+  base-image = nix2container.pullImage
     {
-      name = "${name}-base";
-      context = ./context;
-      buildArgs = {
-        fromTag = "11-jdk-focal";
-        fromDigest = "sha256:5da9a1c62c20666ea0c3c61825e3ac62a0cca2148d40e080f2194fa09ccf34b1";
-      };
-      outputHash =
+      imageName = "docker.io/eclipse-temurin"; # 11.0.16_8-jdk
+      imageDigest = "sha256:fd9eadffb87df27b63c1670d250eef5a86be1b3a05787ba4b11d0b2308c4b6fe";
+      sha256 =
         if stdenv.isx86_64 then
-          "sha256-+ftOGITuu4/WXuF3NNea8iATNhT0e2Owfw4ElwlToIU=" else
-          "sha256-qdIgKvrU5dpPOKYSthiZH3C0/7dXxSedpP944F2dywE=";
+          "sha256-gA4RCyivmlN971G3lG6YGQdaRfLGbxOFnx4xOJOMDqM=" else
+          "sha256-BC8XswWSymocCfIXGnpwB/dFcmfRFTS6Xo7eSbyTzqc=";
     };
 
-  package = fetchzip {
-    url = "https://packages.confluent.io/archive/7.1/confluent-community-7.1.1.zip";
-    sha256 = "sha256-WsbSzFKX1rxhCKaGPeGbwhlP95PtujC3GuCzx2OMDi4=";
+  confluent-community = fetchzip {
+    url = "https://packages.confluent.io/archive/${minorVersion}/confluent-community-${version}.zip";
+    sha256 = "sha256-y2wODaLRBmWpsG7NyEY3/DFzQGEvV56Mvh7OqaG1kZk=";
   };
 
-  entrypoint = writeTextFile {
-    name = "entrypoint";
-    executable = true;
-    text = ''
-      #!/usr/bin/env bash
-      set -euo pipefail
-      exec dumb-init -- "$@"
+  nix-bin = buildEnv {
+    name = "nix-bin";
+    pathsToLink = [ "/bin" ];
+    postBuild = ''
+      mv $out/bin $out/nix-bin
     '';
+    paths = [
+      dumb-init
+      confluent-community
+    ];
   };
-  baseImageWithDeps = dockerTools.buildImage {
-    inherit name;
-    fromImage = baseImage;
-    config = {
-      Env = [
-        "PATH=${lib.makeBinPath [ dumb-init package ]}:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-      ];
-    };
-  };
-in
-dockerTools.buildLayeredImage {
-  inherit name;
-  fromImage = baseImageWithDeps;
-  tag = "7.1.1";
-  config = {
-    Entrypoint = [ entrypoint ];
-  };
-}
 
+  image = nix2container.buildImage
+    {
+      inherit name;
+      fromImage = base-image;
+      tag = version;
+      copyToRoot = [ nix-bin ];
+      maxLayers = 50;
+      config = {
+        env = [
+          "PATH=/nix-bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ];
+        entrypoint = [ "dumb-init" "--" ];
+      };
+    };
+in
+image // {
+  dir = runCommand "${name}-dir" { } "${image.copyTo}/bin/copy-to dir:$out";
+}

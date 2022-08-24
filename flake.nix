@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-22.05";
-    fdb.url = "github:shopstic/nix-fdb/7.1.11";
+    fdbPkg.url = "github:shopstic/nix-fdb/7.1.11";
     flakeUtils = {
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,25 +12,34 @@
       url = "github:nix-community/npmlock2nix/master";
       flake = false;
     };
+    nix2containerPkg = {
+      url = "github:shopstic/nix2container";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdb, npmlock2nixPkg }:
+  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ]
       (system:
         let
           pkgs = import nixpkgs {
             inherit system;
             config = {
-              permittedInsecurePackages = [
-                "dhcp-4.4.3"
-              ];
-              allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
-                "zerotierone"
-              ];
+              # permittedInsecurePackages = [
+              #   "dhcp-4.4.3"
+              # ];
+              # allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+              #   "zerotierone"
+              # ];
             };
           };
           npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
-          fdbLib = fdb.packages.${system}.fdb_7.lib;
+          nix2containerPkgs = nix2containerPkg.packages.${system};
+          nix2container = nix2containerPkgs.nix2container;
+          skopeo-nix2container = nix2containerPkgs.skopeo-nix2container;
+          nix2containerUtil = nix2containerPkgs.nix2containerUtil;
+          fdb = fdbPkg.packages.${system}.fdb_7;
+          fdbLib = fdb.lib;
           deno_1_13_x = pkgs.callPackage ./pkgs/deno-1.13.x.nix { };
           deno_1_16_x = pkgs.callPackage ./pkgs/deno-1.16.x.nix { };
           deno_1_17_x = pkgs.callPackage ./pkgs/deno-1.17.x.nix { };
@@ -92,14 +101,16 @@
           };
           manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
           buildahBuild = pkgs.callPackage ./lib/buildah-build.nix;
+          writeTextFiles = pkgs.callPackage ./lib/write-text-files.nix { };
+          nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix { inherit writeTextFiles; };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
+              inherit skopeo-nix2container;
               inherit (pkgs)
                 awscli2
                 parallel
-                skopeo
                 nodejs
                 kubectl
                 ;
@@ -133,7 +144,8 @@
             {
               inherit
                 deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x deno_1_24_x
-                intellij-helper manifest-tool jdk17 jre17 awscli2 gh-runner-token;
+                intellij-helper manifest-tool jdk17 jre17 awscli2 gh-runner-token 
+                skopeo-nix2container nix2containerUtil;
               faq = pkgs.callPackage ./pkgs/faq.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               packer = pkgs.callPackage ./pkgs/packer.nix { };
@@ -147,32 +159,26 @@
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {
-                  image-bin-dumb-init = pkgs.callPackage ./images/bin-dumb-init { };
-                  image-bin-kubectl = pkgs.callPackage ./images/bin-kubectl { };
-                  image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { };
+                  image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { inherit nix2container; };
                   image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
-                    inherit fdbLib;
+                    inherit fdb nix2container;
                   };
-                  image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { };
-                  image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { };
-                  image-netcat = pkgs.callPackage ./images/netcat { };
-                  image-jre-fdb = pkgs.callPackage ./images/jre-fdb {
+                  image-lib-jmx-prometheus-javaagent = pkgs.callPackage ./images/lib-jmx-prometheus-javaagent { inherit nix2container; };
+                  image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { inherit nix2container; };
+                  image-netcat = pkgs.callPackage ./images/netcat { inherit nix2container; };
+                  image-jre-fdb-test-base = pkgs.callPackage ./images/jre-fdb-test-base {
                     jre = jre17;
-                    inherit fdbLib;
+                    inherit fdb nix2container nonRootShadowSetup;
                   };
                   image-jre-fdb-app = pkgs.callPackage ./images/jre-fdb-app {
                     jre = jre17;
-                    inherit fdbLib buildahBuild;
-                  };
-                  image-dind = pkgs.callPackage ./images/dind { };
-                  image-strimzi-debezium-postgresql = pkgs.callPackage ./images/strimzi-debezium-postgresql {
-                    inherit buildahBuild;
+                    inherit fdb nix2container nonRootShadowSetup;
                   };
                   image-confluent-community = pkgs.callPackage ./images/confluent-community {
-                    inherit buildahBuild;
+                    inherit nix2container;
                   };
                   image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
-                    inherit buildahBuild awscli2;
+                    inherit writeTextFiles nonRootShadowSetup nix2container awscli2;
                   };
                 }; in
               (images // ({
@@ -185,6 +191,6 @@
           };
         }
       ) // {
-      lib = import ./lib;
+      lib = (import ./lib);
     };
 }

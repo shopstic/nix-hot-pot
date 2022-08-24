@@ -2,6 +2,7 @@ name: Build
 on: [push]
 jobs:
   build-packages:
+    name: Build packages
     timeout-minutes: 20
     runs-on:
       - self-hosted
@@ -40,45 +41,47 @@ jobs:
           nix copy -v "${NIX_OUTPUT}" --to s3://nixed/cache
 
   build-push-images:
+    name: Build and push images
     timeout-minutes: 20
     runs-on: 
       - self-hosted
       - nix
       - general
-      - ${{ matrix.arch.runner }}-linux
+      - ${{ matrix.imageArch }}-linux
       - medium
     needs: [build-packages]
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
     strategy:
       matrix:
-        arch:
-          - nix: x86_64
-            runner: amd64
-          - nix: aarch64
-            runner: arm64
+        imageArch: [amd64, arm64]
+
     steps:
       - uses: actions/checkout@v3
 
       - name: Build all images
         shell: nix develop -v -c bash {0}
         run: |
-          ./cli.sh build_all_images ${{ matrix.arch.nix }}
+          ./cli.sh build_all_images ${{ matrix.imageArch }}
 
       - name: Login
+        if: github.ref == 'refs/heads/main'
         shell: nix develop -v -c bash {0}
         run: |-
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
 
       - name: Push all images
+        if: github.ref == 'refs/heads/main'
         shell: nix develop -v -c bash {0}
         run: |
-          ./cli.sh push_all_single_arch_images ${{ matrix.arch.nix }}
+          ./cli.sh push_all_single_arch_images ${{ matrix.imageArch }}
 
   push-manifests:
+    name: Build and push multi-arch manifests
     timeout-minutes: 20
     runs-on: [self-hosted, nix, general, arm64-linux, small]
     needs: [build-push-images]
+    if: github.ref == 'refs/heads/main'
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
     steps:

@@ -1,11 +1,10 @@
-{ dockerTools
+{ nix2container
 , docker-client
 }:
-dockerTools.buildImage {
+nix2container.buildImage
+{
   name = "bin-docker-client";
-  tag = "20.10.16";
-  contents = [
-    docker-client
-  ];
+  tag = docker-client.version;
+  copyToRoot = [ docker-client ];
 }
 

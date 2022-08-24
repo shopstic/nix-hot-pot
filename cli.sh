@@ -1,26 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-get_current_arch() {
-  local IMAGE_ARCH
-  IMAGE_ARCH=$(uname -m) || exit $?
+image_arch_to_nix_arch() {
+  local IMAGE_ARCH=${1:?"Image arch is required (amd64 | arm64)"}
+
   if [[ "${IMAGE_ARCH}" == "arm64" ]]; then
-  IMAGE_ARCH="aarch64"
+    echo "aarch64"
+  elif [[ "${IMAGE_ARCH}" == "amd64" ]]; then
+    echo "x86_64"
+  else
+     >&2 echo "Invalid image arch of ${IMAGE_ARCH}"
+     exit 1
   fi
-  echo "${IMAGE_ARCH}"
 }
 
 build_all_images() {
-  local ARCH=${1:?"Arch is required (x86_64 | aarch64)"}
-  nix build -L -v ".#packages.${ARCH}-linux.all-images"
+  local ARCH=${1:?"Arch is required (amd64 | arm64)"}
+
+  local NIX_ARCH
+  NIX_ARCH=$("$0" image_arch_to_nix_arch "${ARCH}") || exit $?
+
+  nix build -L -v ".#packages.${NIX_ARCH}-linux.all-images"
 }
 
 push_all_single_arch_images() {
-  local ARCH=${1:?"Arch is required (amd64 | arm64)"}
+  local IMAGE_ARCH=${1:?"Arch is required (amd64 | arm64)"}
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
   parallel -j8 --tagstring "[{}]" --line-buffer --retries=2 \
-    "$0" push_single_arch {} "${ARCH}" ::: "${IMAGES[@]}"
+    "$0" push_single_arch {} "${IMAGE_ARCH}" ::: "${IMAGES[@]}"
 }
 
 push_all_manifests() {
@@ -34,39 +42,38 @@ push_single_arch() {
   local IMAGE_REPOSITORY=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
 
   local IMAGE=${1:?"Image name is required"}
-  local ARCH=${2:?"Arch is required (amd64 | arm64"}
+  local ARCH=${2:?"Arch is required (amd64 | arm64)"}
   
-  local IMAGE_ARCH
-  IMAGE_ARCH=$("$0" get_current_arch) || exit $?
+  local NIX_ARCH
+  NIX_ARCH=$("$0" image_arch_to_nix_arch "${ARCH}") || exit $?
 
   local IMAGE_TAG
-  IMAGE_TAG=$(nix eval --raw ".#packages.${IMAGE_ARCH}-linux.image-${IMAGE}.imageTag") || exit $?
+  IMAGE_TAG=$(nix eval --raw ".#packages.${NIX_ARCH}-linux.image-${IMAGE}.imageTag") || exit $?
 
   local FILE_NAME
-  FILE_NAME=$(nix eval --raw ".#packages.${IMAGE_ARCH}-linux.image-${IMAGE}.name") || exit $?
-
-  local NIX_ARCH="x86_64"
-  if [[ "${ARCH}" == "arm64" ]]; then
-    NIX_ARCH="aarch64"
-  fi
+  FILE_NAME=$(nix eval --raw ".#packages.${NIX_ARCH}-linux.image-${IMAGE}.name") || exit $?
 
   local TARGET_IMAGE="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-${ARCH}"
 
   >&2 echo "Pushing ${TARGET_IMAGE}"
 
   skopeo --insecure-policy copy \
-    docker-archive:"./result/${FILE_NAME}" \
+    nix:"./result/${FILE_NAME}" \
     "docker://${TARGET_IMAGE}"
 }
 
 push_manifest() {
   local IMAGE_REPOSITORY=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
   local IMAGE=${1:?"Image name is required"}
-  local IMAGE_ARCH
   local IMAGE_TAG
 
-  IMAGE_ARCH=$("$0" get_current_arch) || exit $?
-  IMAGE_TAG=$(nix eval --raw ".#packages.${IMAGE_ARCH}-linux.image-${IMAGE}.imageTag") || exit $?
+  local NIX_ARCH
+  NIX_ARCH=$(uname -m) || exit $?
+  if [[ "${NIX_ARCH}" == "arm64" ]]; then
+    NIX_ARCH="aarch64"
+  fi
+
+  IMAGE_TAG=$(nix eval --raw ".#packages.${NIX_ARCH}-linux.image-${IMAGE}.imageTag") || exit $?
 
   local TARGET="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}"
   

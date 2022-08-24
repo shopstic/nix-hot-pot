@@ -1,11 +1,11 @@
-{ dockerTools
-, fdbLib
+{ nix2container
+, fdb
 }:
-dockerTools.buildImage {
+nix2container.buildImage {
   name = "lib-fdb";
-  tag = "7.1.11";
-  contents = [
-    fdbLib
+  tag = fdb.version;
+  copyToRoot = [
+    fdb.lib
   ];
 }
 

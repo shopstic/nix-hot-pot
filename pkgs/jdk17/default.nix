@@ -2,19 +2,12 @@
 if stdenv.isDarwin then
   let
     dist = {
-      x86_64-darwin = {
-        arch = "x64";
-        zuluVersion = "17.34.19";
-        jdkVersion = "17.0.3";
-        jdkSha256 = "sha256-qImyxVC2y2QhxuVZwamKPyo46+n+7ytIFXpYI0e6w2c=";
-        jreSha256 = "sha256-QAjdLEYx2mwkK7kwf89VW6jNu1y37/qHFYcsxHApZak=";
-      };
       aarch64-darwin = {
         arch = "aarch64";
-        zuluVersion = "17.34.19";
-        jdkVersion = "17.0.3";
-        jdkSha256 = "sha256-eaRX8Qa/Mqr9JhpHSEcf0Q9c4qmqLMgWqRhkEEwAjf8=";
-        jreSha256 = "sha256-SZzeHRh8/q5juii2USpL37P0VU0A2oal/qqsEoHpurI=";
+        zuluVersion = "17.36.17";
+        jdkVersion = "17.0.4.1";
+        jdkSha256 = "sha256-R+J+OO0JJ52CbhTK5LW/kd2Tw+/CodGiAjW433SWTzQ=";
+        jreSha256 = "sha256-liE+cpAH5QYQ2QyhvNTHvIM4+P4rb2z8JwKtAn6ANdE=";
       };
     }."${stdenv.hostPlatform.system}";
   in

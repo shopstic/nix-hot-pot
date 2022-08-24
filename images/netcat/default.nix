@@ -1,13 +1,12 @@
-{ dockerTools
+{ nix2container
 , netcat
 , dumb-init
 }:
-let
-  version = "3.4.3";
-in
-dockerTools.buildImage {
+nix2container.buildImage
+{
   name = "netcat";
-  tag = version;
+  tag = netcat.version;
+  copyToRoot = [ netcat ];
   config = {
     Entrypoint = [ "${dumb-init}/bin/dumb-init" "--" "${netcat}/bin/nc" ];
   };
