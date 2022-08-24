@@ -140,12 +140,14 @@
                 };
               });
               gh-runner-token = pkgs.callPackage ./pkgs/gh-runner-token.nix { };
+              karpenter = pkgs.callPackage ./pkgs/karpenter.nix { };
             in
             {
               inherit
                 deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x deno_1_24_x
-                intellij-helper manifest-tool jdk17 jre17 awscli2 gh-runner-token 
-                skopeo-nix2container nix2containerUtil;
+                intellij-helper manifest-tool jdk17 jre17 awscli2 gh-runner-token
+                skopeo-nix2container nix2containerUtil
+                karpenter;
               faq = pkgs.callPackage ./pkgs/faq.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               packer = pkgs.callPackage ./pkgs/packer.nix { };
@@ -179,6 +181,18 @@
                   };
                   image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
                     inherit writeTextFiles nonRootShadowSetup nix2container awscli2;
+                  };
+                  image-karpenter-controller = pkgs.callPackage ./images/karpenter-controller {
+                    inherit karpenter nix2container;
+                  };
+                  image-karpenter-webhook = pkgs.callPackage ./images/karpenter-webhook {
+                    inherit karpenter nix2container;
+                  };
+                  image-pvc-autoresizer = pkgs.callPackage ./images/pvc-autoresizer {
+                    inherit nix2container;
+                  };
+                  image-github-runner-nix = pkgs.callPackage ./images/github-runner-nix {
+                    inherit nix2container writeTextFiles nonRootShadowSetup;
                   };
                 }; in
               (images // ({
