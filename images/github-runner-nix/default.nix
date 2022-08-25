@@ -24,6 +24,12 @@ let
     composeSupport = false;
   };
 
+  patched-github-runner = github-runner.overrideAttrs (finalAttrs: previousAttrs: {
+    postInstall = ''
+      install -m755 src/Misc/layoutroot/safe_sleep.sh $out/lib/
+    '';
+  });
+
   base-image = nix2container.pullImage {
     imageName = "docker.io/library/ubuntu";
     imageDigest = "sha256:34fea4f31bf187bc915536831fd0afc9d214755bf700b5cdb1336c82516d154e";
@@ -61,7 +67,7 @@ let
   env = [
     "PATH=${globalPath}"
     "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
-    "GH_RUNNER_PATH=${github-runner}/bin"
+    "GH_RUNNER_PATH=${patched-github-runner}/bin"
   ];
 
   etc-dir = writeTextFiles {
@@ -70,7 +76,7 @@ let
 
   image = nix2container.buildImage {
     inherit name;
-    tag = "${github-runner.version}-${nix.version}";
+    tag = "${patched-github-runner.version}-${nix.version}";
     fromImage = base-image;
     config = {
       inherit env;
