@@ -28,7 +28,7 @@ let
     postInstall = ''
       install -m755 src/Misc/layoutroot/safe_sleep.sh $out/lib/
     '';
-    disabledTests = finalAttrs.disabledTests ++ [
+    disabledTests = previousAttrs.disabledTests ++ [
       "GitHub.Runner.Common.Tests.ProcessInvokerL0.OomScoreAdjIsInherited"
     ];
   });
