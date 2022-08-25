@@ -192,6 +192,7 @@
                   };
                   image-github-runner-nix = pkgs.callPackage ./images/github-runner-nix {
                     inherit nix2container writeTextFiles nonRootShadowSetup;
+                    nix = pkgs.nixVersions.nix_2_8;
                   };
                 }; in
               (images // ({
