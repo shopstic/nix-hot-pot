@@ -28,9 +28,9 @@ let
     postInstall = ''
       install -m755 src/Misc/layoutroot/safe_sleep.sh $out/lib/
     '';
-    checkPhase = ''
-      echo "Skipping tests"
-    '';
+    disabledTests = finalAttrs.disabledTests ++ [
+      "GitHub.Runner.Common.Tests.ProcessInvokerL0.OomScoreAdjIsInherited"
+    ];
   });
 
   base-image = nix2container.pullImage {
