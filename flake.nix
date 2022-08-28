@@ -194,6 +194,9 @@
                     inherit nix2container writeTextFiles nonRootShadowSetup;
                     nix = pkgs.nixVersions.nix_2_8;
                   };
+                  image-kubectl = pkgs.callPackage ./images/kubectl {
+                    inherit nix2container;
+                  };
                 }; in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
