@@ -1,9 +1,9 @@
-{ buildGo118Module
+{ buildGo119Module
 , fetchFromGitHub
 , lib
 }:
 let
-  karpenter = buildGo118Module rec {
+  karpenter = buildGo119Module rec {
     pname = "karpenter";
     version = "0.16.1";
 
@@ -11,7 +11,7 @@ let
       owner = "aws";
       repo = "karpenter";
       rev = "v${version}";
-      sha256 = "sha256-2GiEj3hPRYkFZroVrk61nQ6odqiPz5e57BrWdygwwTk=";
+      sha256 = "sha256-VaCSYTCToUl7xsx3suFkR7/sXwMMJvZ5P8oYlaPfo6w=";
     };
 
     postPatch = ''
