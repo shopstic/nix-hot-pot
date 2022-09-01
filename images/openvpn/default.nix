@@ -10,6 +10,7 @@
 , iproute2
 , dig
 , gawk
+, gnugrep
 , coreutils
 , bash
 }:
@@ -34,6 +35,7 @@ let
             dig
             coreutils
             gawk
+            gnugrep
             bash
           ];
         };
