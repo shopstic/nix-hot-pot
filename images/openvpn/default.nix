@@ -9,6 +9,7 @@
 , sysctl
 , iproute2
 , dig
+, gawk
 , coreutils
 , bash
 }:
@@ -32,6 +33,7 @@ let
             iproute2
             dig
             coreutils
+            gawk
             bash
           ];
         };
