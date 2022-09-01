@@ -203,6 +203,9 @@
                   image-snmp-notifier = pkgs.callPackage ./images/snmp-notifier {
                     inherit nix2container;
                   };
+                  image-openvpn = pkgs.callPackage ./images/openvpn {
+                    inherit nix2container;
+                  };
                 }; in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
