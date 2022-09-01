@@ -148,7 +148,7 @@
               inherit
                 deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x deno_1_24_x
                 intellij-helper manifest-tool jdk17 jre17 awscli2 gh-runner-token
-                nix2container skopeo-nix2container nix2containerUtil
+                skopeo-nix2container nix2containerUtil
                 karpenter oras;
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               packer = pkgs.callPackage ./pkgs/packer.nix { };
