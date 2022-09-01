@@ -59,7 +59,9 @@ push_single_arch() {
 
   skopeo --insecure-policy copy \
     nix:"./result/${FILE_NAME}" \
-    "docker://${TARGET_IMAGE}"
+    "docker-daemon:${TARGET_IMAGE}"
+
+  docker push ${TARGET_IMAGE}
 }
 
 push_manifest() {
