@@ -1,36 +1,49 @@
 { nix2container
+, stdenv
+, buildEnv
+, runCommand
 , dumb-init
-, bash
-, coreutils
 , openvpn
 , netcat
 , iptables
 , sysctl
 , iproute2
-, gnugrep
 , dig
+, coreutils
+, bash
 }:
-nix2container.buildImage
-{
+let
   name = openvpn.name;
-  tag = openvpn.version;
-  copyToRoot = [
-    dumb-init
-    bash
-    coreutils
-    openvpn
-    netcat
-    iptables
-    sysctl
-    iproute2
-    gnugrep
-    dig
-  ];
-  config = {
-    env = [
-      "PATH=/bin"
-    ];
-    entrypoint = [ "dumb-init" "--" "openvpn" ];
-  };
+  image =
+    nix2container.buildImage
+      {
+        inherit name;
+        # fromImage = base-image;
+        tag = openvpn.version;
+        copyToRoot = buildEnv {
+          name = "bin";
+          pathsToLink = [ "/bin" ];
+          paths = [
+            dumb-init
+            openvpn
+            netcat
+            iptables
+            sysctl
+            iproute2
+            dig
+            coreutils
+            bash
+          ];
+        };
+        maxLayers = 80;
+        config = {
+          env = [
+            "PATH=/bin"
+          ];
+          entrypoint = [ "dumb-init" "--" "openvpn" ];
+        };
+      };
+in
+image // {
+  dir = runCommand "${name}-dir" { } "${image.copyTo}/bin/copy-to dir:$out";
 }
-
