@@ -15,7 +15,7 @@ let
     };
 
     postPatch = ''
-      substituteInPlace ./pkg/cloudprovider/aws/instance.go --replace 'SpotAllocationStrategyCapacityOptimizedPrioritized' 'SpotAllocationStrategyCapacityOptimized'
+      substituteInPlace ./pkg/cloudprovider/aws/instance.go --replace 'SpotAllocationStrategyCapacityOptimizedPrioritized' 'SpotAllocationStrategyLowestPrice'
     '';
 
     vendorSha256 = "sha256-/zA3hioNkmZp1rHWutpadqh2/k9DFrrgYtK0/8ZDBuA=";
