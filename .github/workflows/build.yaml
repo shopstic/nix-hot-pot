@@ -38,7 +38,7 @@ jobs:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
         run: |
           nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
-          nix copy -v "${NIX_OUTPUT}" --to s3://nixed/cache
+          ./cli.sh nix_copy_to_s3_cache "${NIX_OUTPUT}"
 
   build-push-images:
     name: Build and push images

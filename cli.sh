@@ -87,4 +87,14 @@ push_manifest() {
     --target "${TARGET}"
 }
 
+nix_copy_path_to_s3_cache() {
+  nix copy -v --to s3://nixed/cache "$@"
+}
+
+nix_copy_to_s3_cache() {
+  readarray -t STORE_PATHS < <(nix path-info -r "$@" | xargs -I{} basename {})
+  parallel -j$((`nproc`-2)) --tagstring "[{}]" --line-buffer \
+    "$0" nix_copy_path_to_s3_cache '/nix/store/{}' ::: "${STORE_PATHS[@]}"
+}
+
 "$@"

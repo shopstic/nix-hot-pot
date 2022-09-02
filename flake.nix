@@ -213,10 +213,8 @@
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
               }))
             );
-          defaultPackage = pkgs.buildEnv {
-            name = "nix-hot-pot";
-            paths = builtins.attrValues (pkgs.lib.filterAttrs (n: _: (!(pkgs.lib.hasPrefix "image-" n) && n != "all-images")) packages);
-          };
+          defaultPackage = pkgs.linkFarmFromDrvs "nix-hot-pot"
+            (pkgs.lib.unique (builtins.attrValues (pkgs.lib.filterAttrs (n: _: (!(pkgs.lib.hasPrefix "image-" n) && n != "all-images")) packages)));
         }
       ) // {
       lib = (import ./lib);

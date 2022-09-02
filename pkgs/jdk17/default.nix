@@ -22,7 +22,7 @@ if stdenv.isDarwin then
       };
     });
     jre = jdk17.overrideAttrs (oldAttrs: {
-      pname = "zulu${dist.zuluVersion}-ca-jdk";
+      pname = "zulu${dist.zuluVersion}-ca-jre";
       version = dist.jdkVersion;
       src = fetchurl {
         url = "https://cdn.azul.com/zulu/bin/zulu${dist.zuluVersion}-ca-jre${dist.jdkVersion}-macosx_${dist.arch}.tar.gz";
