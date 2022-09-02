@@ -130,16 +130,6 @@
                 };
               });
               jre17 = jdk17Pkg.jre;
-              awscli2 = pkgs.awscli2.overrideAttrs (_: attrs: rec {
-                name = "${attrs.pname}-${version}";
-                version = "2.7.19";
-                src = pkgs.fetchFromGitHub {
-                  owner = "aws";
-                  repo = "aws-cli";
-                  rev = version;
-                  sha256 = "sha256-kVqs6gh4r0kBwlDll0jiE7d0aKMLlYFcPsqbtCa5uBc=";
-                };
-              });
               gh-runner-token = pkgs.callPackage ./pkgs/gh-runner-token.nix { };
               karpenter = pkgs.callPackage ./pkgs/karpenter.nix { };
               oras = pkgs.callPackage ./pkgs/oras.nix { };
@@ -147,7 +137,7 @@
             {
               inherit
                 deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x deno_1_24_x
-                intellij-helper manifest-tool jdk17 jre17 awscli2 gh-runner-token
+                intellij-helper manifest-tool jdk17 jre17 gh-runner-token
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
@@ -181,7 +171,7 @@
                     inherit nix2container;
                   };
                   image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
-                    inherit writeTextFiles nonRootShadowSetup nix2container awscli2;
+                    inherit writeTextFiles nonRootShadowSetup nix2container;
                   };
                   image-karpenter-controller = pkgs.callPackage ./images/karpenter-controller {
                     inherit karpenter nix2container;
