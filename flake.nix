@@ -50,7 +50,8 @@
           deno_1_22_x = pkgs.callPackage ./pkgs/deno-1.22.x.nix { };
           deno_1_23_x = pkgs.callPackage ./pkgs/deno-1.23.x.nix { };
           deno_1_24_x = pkgs.callPackage ./pkgs/deno-1.24.x.nix { };
-          deno = deno_1_24_x.overrideAttrs (oldAttrs: {
+          deno_1_25_x = pkgs.callPackage ./pkgs/deno-1.25.x.nix { };
+          deno = deno_1_25_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -136,7 +137,7 @@
             in
             {
               inherit
-                deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x deno_1_24_x
+                deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x deno_1_24_x deno_1_25_x
                 intellij-helper manifest-tool jdk17 jre17 gh-runner-token
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
