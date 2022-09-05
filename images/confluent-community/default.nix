@@ -26,30 +26,17 @@ let
     sha256 = "sha256-y2wODaLRBmWpsG7NyEY3/DFzQGEvV56Mvh7OqaG1kZk=";
   };
 
-  nix-bin = buildEnv {
-    name = "nix-bin";
-    pathsToLink = [ "/bin" ];
-    postBuild = ''
-      mv $out/bin $out/nix-bin
-    '';
-    paths = [
-      dumb-init
-      confluent-community
-    ];
-  };
-
   image = nix2container.buildImage
     {
       inherit name;
       fromImage = base-image;
       tag = version;
-      copyToRoot = [ nix-bin ];
       maxLayers = 50;
       config = {
         env = [
-          "PATH=/nix-bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          "PATH=${confluent-community}/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
         ];
-        entrypoint = [ "dumb-init" "--" ];
+        entrypoint = [ "${dumb-init}/bin/dumb-init" "--" ];
       };
     };
 in
