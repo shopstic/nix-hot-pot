@@ -150,6 +150,7 @@
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
+              grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {
