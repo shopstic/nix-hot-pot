@@ -64,7 +64,6 @@ let
     nix2container.buildImage
       {
         inherit name;
-        fromImage = base-image;
         tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
         copyToRoot = [ nix-bin shadow home-dir ];
         maxLayers = 50;
