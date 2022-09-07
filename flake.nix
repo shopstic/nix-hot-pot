@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/550179b49da1182c1925b833cb70fbb2fdb11111";
-    fdbPkg.url = "github:shopstic/nix-fdb/7.1.11";
+    fdbPkg.url = "github:shopstic/nix-fdb/7.1.21";
     flakeUtils = {
       url = "github:numtide/flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
