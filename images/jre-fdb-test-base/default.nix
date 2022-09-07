@@ -8,18 +8,13 @@
 , fdb
 , jre
 , dumb-init
+, docker-client
+, coreutils
+, ps
+, bash
 }:
 let
   name = "jre-fdb-test-base";
-
-  base-image = nix2container.pullImage {
-    imageName = "docker.io/library/ubuntu";
-    imageDigest = "sha256:34fea4f31bf187bc915536831fd0afc9d214755bf700b5cdb1336c82516d154e";
-    sha256 =
-      if stdenv.isx86_64 then
-        "sha256-js71udw5wijNGx+U7xekS3y9tUvFAdJqQMoA9lOTpr8=" else
-        "sha256-jkkPmXnYVU0LB+KQv35oCe5kKs6KWDEDmTXw4/yx8nU=";
-  };
 
   javaSecurityOverrides = writeTextFile {
     name = "java.security.overrides";
@@ -31,9 +26,22 @@ let
 
   user = "app";
 
-  shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "/bin/bash"; };
+  shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "${bash}/bin/bash"; };
 
   home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
+
+  entrypoint = writeShellScriptBin "entrypoint.sh" ''
+    set -euo pipefail
+    JAVA_SECURITY_OVERRIDES=''${JAVA_SECURITY_OVERRIDES:-""}
+
+    cat << EOF > /home/${user}/.java.security.overrides.properties
+    networkaddress.cache.ttl=5
+    networkaddress.cache.negative.ttl=0
+    ''${JAVA_SECURITY_OVERRIDES}
+    EOF
+
+    exec "$@"
+  '';
 
   nix-bin = buildEnv {
     name = "nix-bin";
@@ -44,8 +52,14 @@ let
     paths = [
       dumb-init
       jre
+      docker-client
+      entrypoint
+      coreutils
+      bash
+      ps
     ];
   };
+
   image =
     nix2container.buildImage
       {
@@ -65,9 +79,10 @@ let
           env = [
             "PATH=/nix-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
             "FDB_NETWORK_OPTION_EXTERNAL_CLIENT_DIRECTORY=${fdb.lib}"
-            "JDK_JAVA_OPTIONS=-DFDB_LIBRARY_PATH_FDB_C=${fdb.lib}/libfdb_c.so -DFDB_LIBRARY_PATH_FDB_JAVA=${fdb.lib}/libfdb_java.so -Djava.security.properties=${javaSecurityOverrides}"
+            "JDK_JAVA_OPTIONS=-DFDB_LIBRARY_PATH_FDB_C=${fdb.lib}/libfdb_c.so -DFDB_LIBRARY_PATH_FDB_JAVA=${fdb.lib}/libfdb_java.so -Djava.security.properties=/home/${user}/.java.security.overrides.properties"
           ];
-          entrypoint = [ "dumb-init" "--" ];
+          entrypoint = [ "dumb-init" "--" "entrypoint.sh" ];
+          user = "${user}:${user}";
         };
       };
 in
