@@ -3,25 +3,23 @@
 , nonRootShadowSetup
 , runCommand
 , buildEnv
-, writeTextFile
+, writeShellScriptBin
 , nix2container
 , fdb
 , jre
 , dumb-init
-, docker-client
-, coreutils
-, ps
 , bash
 }:
 let
   name = "jre-fdb-test-base";
 
-  javaSecurityOverrides = writeTextFile {
-    name = "java.security.overrides";
-    text = ''
-      networkaddress.cache.ttl=5
-      networkaddress.cache.negative.ttl=1
-    '';
+  base-image = nix2container.pullImage {
+    imageName = "docker.io/docker"; # 20.10.17-cli
+    imageDigest = "sha256:6c5c8b70d0de524ff092921c05ebe9c1b0d05c29962d6717666b29049e52aefe";
+    sha256 =
+      if stdenv.isx86_64 then
+        "sha256-cpuJL4DL9Ebv+Uf5GBlWZL5olpgWoOZnDKvxfqvao/U=" else
+        "sha256-6DCXLBYvQP9g1WSroGskPcK0KNDYol37jck/9XRH4So=";
   };
 
   user = "app";
@@ -52,11 +50,8 @@ let
     paths = [
       dumb-init
       jre
-      docker-client
       entrypoint
-      coreutils
       bash
-      ps
     ];
   };
 
@@ -64,6 +59,7 @@ let
     nix2container.buildImage
       {
         inherit name;
+        fromImage = base-image;
         tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
         copyToRoot = [ nix-bin shadow home-dir ];
         maxLayers = 50;
