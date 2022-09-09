@@ -29,6 +29,8 @@ push_all_single_arch_images() {
 
   parallel -j8 --tagstring "[{}]" --line-buffer --retries=2 \
     "$0" push_single_arch {} "${IMAGE_ARCH}" ::: "${IMAGES[@]}"
+
+  docker image prune -f
 }
 
 push_all_manifests() {
@@ -61,7 +63,9 @@ push_single_arch() {
     nix:"./result/${FILE_NAME}" \
     "docker-daemon:${TARGET_IMAGE}"
 
-  docker push ${TARGET_IMAGE}
+  docker push "${TARGET_IMAGE}"
+  docker tag "${TARGET_IMAGE}" "${IMAGE_REPOSITORY}/${IMAGE}:____prior____"
+  docker rmi "${TARGET_IMAGE}"
 }
 
 push_manifest() {
