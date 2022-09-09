@@ -1,0 +1,12 @@
+:8080
+log {
+	output stdout
+}
+handle /healthz {
+	respond 200
+}
+handle /* {
+	reverse_proxy http://host.docker.internal:9876
+}
+header -server
+header -x-server-hostname

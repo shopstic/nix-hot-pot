@@ -114,7 +114,7 @@
                 parallel
                 nodejs
                 kubectl
-
+                caddy
                 ;
             };
             shellHook = ''
@@ -203,6 +203,9 @@
                   };
                   image-openvpn = pkgs.callPackage ./images/openvpn {
                     inherit nix2container;
+                  };
+                  image-caddy = pkgs.callPackage ./images/caddy {
+                    inherit nix2container nonRootShadowSetup;
                   };
                 }; in
               (images // ({
