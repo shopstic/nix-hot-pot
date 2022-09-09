@@ -24,20 +24,20 @@ jobs:
             size: small
     defaults:
       run:
-        shell: nix develop -v -c bash {0} | grep -v "^evaluating file '"            
+        shell: nix develop -v -c bash {0} 2>&1 >/dev/null | grep -v "^evaluating file '" | cat            
     steps:
       - uses: actions/checkout@v3
 
       - name: Build all packages
         run: |
-          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}' | grep -v "^evaluating file '"
+          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}'
 
       - name: Cache all packages
         env:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
         run: |
-          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key | grep -v "^evaluating file '"
-          nix copy -v --to s3://nixed/cache "${NIX_OUTPUT}" | grep -v "^evaluating file '"
+          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
+          nix copy -v --to s3://nixed/cache "${NIX_OUTPUT}"
 
   build-push-images:
     name: Build and push images
@@ -56,7 +56,7 @@ jobs:
         imageArch: [amd64, arm64]
     defaults:
       run:
-        shell: nix develop -v -c bash {0} | grep -v "^evaluating file '"
+        shell: nix develop -v -c bash {0}  2>&1 >/dev/null | grep -v "^evaluating file '" | cat
     steps:
       - uses: actions/checkout@v3
 
@@ -84,7 +84,7 @@ jobs:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
     defaults:
       run:
-        shell: nix develop -v -c bash {0} | grep -v "^evaluating file '"      
+        shell: nix develop -v -c bash {0} 2>&1 >/dev/null | grep -v "^evaluating file '" | cat      
     steps:
       - uses: actions/checkout@v3
 
