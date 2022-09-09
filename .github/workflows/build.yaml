@@ -30,14 +30,14 @@ jobs:
 
       - name: Build all packages
         run: |
-          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}'
+          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}' | grep -v "^evaluating file '"
 
       - name: Cache all packages
         env:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
         run: |
-          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
-          nix copy -v --to s3://nixed/cache "${NIX_OUTPUT}"
+          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key | grep -v "^evaluating file '"
+          nix copy -v --to s3://nixed/cache "${NIX_OUTPUT}" | grep -v "^evaluating file '"
 
   build-push-images:
     name: Build and push images
