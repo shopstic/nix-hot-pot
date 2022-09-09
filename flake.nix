@@ -188,6 +188,10 @@
                     inherit nix2container writeTextFiles nonRootShadowSetup;
                     nix = pkgs.nixVersions.nix_2_8;
                   };
+                  image-gitlab-runner-nix = pkgs.callPackage ./images/gitlab-runner-nix {
+                    inherit nix2container writeTextFiles nonRootShadowSetup;
+                    nix = pkgs.nixVersions.nix_2_8;
+                  };
                   image-kubectl = pkgs.callPackage ./images/kubectl {
                     inherit nix2container;
                   };
