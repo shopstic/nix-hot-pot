@@ -22,15 +22,12 @@ jobs:
           - arch: aarch64-darwin
             runner: arm64-darwin
             size: small
-    defaults:
-      run:
-        shell: nix develop -c bash {0} 2>&1 | { grep -v "^evaluating file '" || true }
     steps:
       - uses: actions/checkout@v3
 
       - name: Build all packages
         run: |
-          nix build -L '.#defaultPackage.${{ matrix.runner.arch }}'
+          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}' 2>&1 | { grep -v "^evaluating file '" || true }
 
       - name: Cache all packages
         env:
