@@ -16,6 +16,8 @@
 , docker
 , openssh
 , git
+, yj
+, jq
 }:
 let
   name = "gitlab-runner-nix";
@@ -65,6 +67,8 @@ let
       curl
       openssh
       git
+      yj
+      jq
     ];
   };
 
