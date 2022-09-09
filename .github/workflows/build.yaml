@@ -24,13 +24,13 @@ jobs:
             size: small
     defaults:
       run:
-        shell: nix develop -v -c bash {0} 2>&1 >/dev/null | grep -v "^evaluating file '" | cat            
+        shell: nix develop -v -c bash {0}   
     steps:
       - uses: actions/checkout@v3
 
       - name: Build all packages
         run: |
-          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}'
+          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}' 2>&1 >/dev/null | { grep -v "^evaluating file '" || true; }
 
       - name: Cache all packages
         env:
@@ -56,7 +56,7 @@ jobs:
         imageArch: [amd64, arm64]
     defaults:
       run:
-        shell: nix develop -v -c bash {0}  2>&1 >/dev/null | grep -v "^evaluating file '" | cat
+        shell: nix develop -v -c bash {0}
     steps:
       - uses: actions/checkout@v3
 
@@ -84,7 +84,7 @@ jobs:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
     defaults:
       run:
-        shell: nix develop -v -c bash {0} 2>&1 >/dev/null | grep -v "^evaluating file '" | cat      
+        shell: nix develop -v -c bash {0}      
     steps:
       - uses: actions/checkout@v3
 
