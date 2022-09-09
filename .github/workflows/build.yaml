@@ -27,7 +27,7 @@ jobs:
 
       - name: Build all packages
         run: |
-          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}' 2>&1 | { grep -v "^evaluating file '" || true }
+          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}' 2>&1 | (grep -v "^evaluating file '" || true)
 
       - name: Cache all packages
         env:
