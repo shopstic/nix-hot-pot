@@ -25,18 +25,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Test
-        run: |
-          cd ./tests
-          nix build -L -v --no-link '.#defaultPackage.${{ matrix.runner.arch }}'
-
       - name: Build all packages
-        run: nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}'
+        run: |
+          nix build -L -v '.#defaultPackage.${{ matrix.runner.arch }}'
 
       - name: Cache all packages
         env:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
-        shell: nix develop -v -c bash {0}
         run: |
           nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
           nix copy -v --to s3://nixed/cache "${NIX_OUTPUT}"
@@ -56,24 +51,23 @@ jobs:
     strategy:
       matrix:
         imageArch: [amd64, arm64]
-
+    defaults:
+      run:
+        shell: nix develop -c bash {0}
     steps:
       - uses: actions/checkout@v3
 
       - name: Build all images
-        shell: nix develop -v -c bash {0}
         run: |
           ./cli.sh build_all_images ${{ matrix.imageArch }}
 
       - name: Login
         if: github.ref == 'refs/heads/main'
-        shell: nix develop -v -c bash {0}
         run: |-
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
 
       - name: Push all images
         if: github.ref == 'refs/heads/main'
-        shell: nix develop -v -c bash {0}
         run: |
           ./cli.sh push_all_single_arch_images ${{ matrix.imageArch }}
 
@@ -85,15 +79,16 @@ jobs:
     if: github.ref == 'refs/heads/main'
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
+    defaults:
+      run:
+        shell: nix develop -c bash {0}      
     steps:
       - uses: actions/checkout@v3
 
       - name: Login
-        shell: nix develop -v -c bash {0}
         run: |-
           aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
 
       - name: Build and push images
-        shell: nix develop -v -c bash {0}
         run: |
           ./cli.sh push_all_manifests

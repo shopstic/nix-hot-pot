@@ -2,6 +2,7 @@
 , lib
 , nonRootShadowSetup
 , writeTextFiles
+, writeShellScriptBin
 , nix2container
 , runCommand
 , github-runner
@@ -9,6 +10,7 @@
 , cacert
 , nodejs-16_x
 , nix
+, gnugrep
 , rsync
 , curl
 , docker
@@ -23,6 +25,10 @@ let
     buildxSupport = false;
     composeSupport = false;
   };
+
+  wrapped-nix = writeShellScriptBin "nix" ''
+    exec ${nix}/bin/nix "$@" 2> >(${gnugrep}/bin/grep -v "^evaluating file '.*'$" >&2)
+  '';
 
   patched-github-runner = github-runner.overrideAttrs (finalAttrs: previousAttrs: {
     postInstall = ''
@@ -55,7 +61,7 @@ let
       mv $out/bin $out/nix-bin
     '';
     paths = [
-      nix
+      wrapped-nix
       docker-slim
       rsync
       dumb-init
