@@ -1,6 +1,6 @@
 { autoPatchelfHook, fetchzip, stdenv, lib, makeWrapper, jre }:
 let
-  version = "0.10.0";
+  version = "0.11.0";
 in
 stdenv.mkDerivation {
   inherit version;
@@ -8,8 +8,8 @@ stdenv.mkDerivation {
 
   src = fetchzip {
     name = "jib-cli-${version}";
-    url = "https://github.com/GoogleContainerTools/jib/releases/download/v0.10.0-cli/jib-jre-0.10.0.zip";
-    sha256 = "sha256-/U8jAvPUX3nsEMSxLoLdOp1MGAXskp0vcv/LwSSccJ0=";
+    url = "https://github.com/GoogleContainerTools/jib/releases/download/v${version}-cli/jib-jre-${version}.zip";
+    sha256 = "sha256-qrf7upBql0DBueN22IcH7mcAQqUi6/ukIfFYVJxnIPY=";
   };
 
   nativeBuildInputs = (lib.optionals (stdenv.isLinux) [ autoPatchelfHook ]) ++ [
