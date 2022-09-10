@@ -29,7 +29,10 @@ let
 
   shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "${bash}/bin/bash"; };
 
-  home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
+  dirs = runCommand "dirs" { } ''
+    mkdir -p $out/home/${user}
+    mkdir -p $out/tmp
+  '';
 
   nix-bin = buildEnv {
     name = "nix-bin";
@@ -55,12 +58,17 @@ let
       inherit name;
       # fromImage = base-image;
       tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
-      copyToRoot = [ nix-bin shadow home-dir usr-bin ];
+      copyToRoot = [ nix-bin shadow dirs usr-bin ];
       maxLayers = 50;
       perms = [
         {
-          path = home-dir;
+          path = dirs;
           regex = "/home/${user}$";
+          mode = "0777";
+        }
+        {
+          path = dirs;
+          regex = "/tmp$";
           mode = "0777";
         }
       ];
