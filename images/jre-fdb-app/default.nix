@@ -6,6 +6,9 @@
 , writeTextFile
 , nix2container
 , coreutils
+, gnugrep
+, gnused
+, gawk
 , bash
 , fdb
 , jre
@@ -31,22 +34,28 @@ let
   nix-bin = buildEnv {
     name = "nix-bin";
     pathsToLink = [ "/bin" ];
-    postBuild = ''
-      mv $out/bin $out/nix-bin
-    '';
     paths = [
       coreutils
+      gnugrep
+      gnused
+      gawk
       bash
       dumb-init
       jre
     ];
   };
+
+  usr-bin = runCommand "usr-bin" { } ''
+    mkdir -p $out/usr/bin
+    ln -s ${coreutils}/bin/env $out/usr/bin/env
+  '';
+
   image = nix2container.buildImage
     {
       inherit name;
       # fromImage = base-image;
       tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
-      copyToRoot = [ nix-bin shadow home-dir ];
+      copyToRoot = [ nix-bin shadow home-dir usr-bin ];
       maxLayers = 50;
       perms = [
         {
@@ -57,7 +66,7 @@ let
       ];
       config = {
         env = [
-          "PATH=/nix-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          "PATH=/bin"
           "FDB_NETWORK_OPTION_EXTERNAL_CLIENT_DIRECTORY=${fdb.lib}"
           "JDK_JAVA_OPTIONS=-DFDB_LIBRARY_PATH_FDB_C=${fdb.lib}/libfdb_c.so -DFDB_LIBRARY_PATH_FDB_JAVA=${fdb.lib}/libfdb_java.so -Djava.security.properties=${javaSecurityOverrides}"
         ];
