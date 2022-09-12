@@ -3,17 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/550179b49da1182c1925b833cb70fbb2fdb11111";
-    fdbPkg.url = "github:shopstic/nix-fdb/7.1.21";
-    flakeUtils = {
-      url = "github:numtide/flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    fdbPkg.url = "github:shopstic/nix-fdb/21ac866940d56f3016c0978f6ddc61f45d0088d6";
+    flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
       url = "github:nix-community/npmlock2nix/master";
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:shopstic/nix2container";
+      url = "github:nlewo/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
