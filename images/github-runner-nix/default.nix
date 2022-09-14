@@ -17,6 +17,7 @@
 , docker
 , openssh
 , git
+, amazon-ecr-credential-helper
 }:
 let
   name = "github-runner-nix";
@@ -52,7 +53,16 @@ let
 
   shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "/bin/bash"; };
 
-  home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
+  home-dir = runCommand "home-dir" { } ''
+    mkdir -p $out/home/${user}/.docker
+    echo << EOF > $out/home/${user}/.docker/config.json
+    {
+      "credHelpers": {
+        "public.ecr.aws": "ecr-login"
+      }
+    }
+    EOF
+  '';
 
   nix-bin = buildEnv {
     name = "nix-bin";
@@ -68,6 +78,7 @@ let
       curl
       openssh
       git
+      amazon-ecr-credential-helper
     ];
   };
 

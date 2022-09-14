@@ -18,6 +18,7 @@
 , git
 , yj
 , jq
+, amazon-ecr-credential-helper
 }:
 let
   name = "gitlab-runner-nix";
@@ -44,7 +45,16 @@ let
 
   shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "/bin/bash"; };
 
-  home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
+  home-dir = runCommand "home-dir" { } ''
+    mkdir -p $out/home/${user}/.docker
+    echo << EOF > $out/home/${user}/.docker/config.json
+    {
+      "credHelpers": {
+        "public.ecr.aws": "ecr-login"
+      }
+    }
+    EOF
+  '';
 
   globalPath = "/nix-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
 
@@ -69,6 +79,7 @@ let
       git
       yj
       jq
+      amazon-ecr-credential-helper
     ];
   };
 
