@@ -5,7 +5,7 @@ let
     (name: value: {
       inherit value;
       dest = name;
-      envName = "file_" + (builtins.replaceStrings [ "/" ] [ "_" ] name);
+      envName = "file_" + (builtins.hashString "sha256" name);
     })
     files;
   commands = builtins.concatStringsSep "\n" (map

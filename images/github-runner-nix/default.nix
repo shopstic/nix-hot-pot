@@ -53,16 +53,13 @@ let
 
   shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "/bin/bash"; };
 
-  home-dir = runCommand "home-dir" { } ''
-    mkdir -p $out/home/${user}/.docker
-    echo << EOF > $out/home/${user}/.docker/config.json
-    {
-      "credHelpers": {
-        "public.ecr.aws": "ecr-login"
-      }
-    }
-    EOF
-  '';
+  home-dir = writeTextFiles {
+    "home/${user}/.docker/config.json" = builtins.toJSON {
+      credHelpers = {
+        "public.ecr.aws" = "ecr-login";
+      };
+    };
+  };
 
   nix-bin = buildEnv {
     name = "nix-bin";
