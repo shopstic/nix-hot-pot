@@ -61,11 +61,6 @@ jobs:
         run: |
           ./cli.sh build_all_images ${{ matrix.imageArch }}
 
-      - name: Login
-        if: github.ref == 'refs/heads/main'
-        run: |-
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
-
       - name: Push all images
         if: github.ref == 'refs/heads/main'
         run: |
@@ -84,10 +79,6 @@ jobs:
         shell: nix develop -c bash {0}      
     steps:
       - uses: actions/checkout@v3
-
-      - name: Login
-        run: |-
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin "${IMAGE_REPOSITORY}"
 
       - name: Build and push images
         run: |
