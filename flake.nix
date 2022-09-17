@@ -201,6 +201,9 @@
                   image-openvpn = pkgs.callPackage ./images/openvpn {
                     inherit nix2container;
                   };
+                  image-openconnect = pkgs.callPackage ./images/openconnect {
+                    inherit nix2container;
+                  };
                   image-caddy = pkgs.callPackage ./images/caddy {
                     inherit nix2container nonRootShadowSetup;
                   };
