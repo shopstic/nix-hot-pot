@@ -9,6 +9,7 @@
 , jre
 , dumb-init
 , bash
+, gnutar
 }:
 let
   name = "jre-fdb-test-base";
@@ -52,6 +53,7 @@ let
       jre
       entrypoint
       bash
+      gnutar
     ];
   };
 
@@ -62,7 +64,7 @@ let
         fromImage = base-image;
         tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
         copyToRoot = [ nix-bin shadow home-dir ];
-        maxLayers = 50;
+        maxLayers = 100;
         perms = [
           {
             path = home-dir;
