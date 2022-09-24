@@ -122,11 +122,12 @@
               jre17 = jdk17Pkg.jre;
               karpenter = pkgs.callPackage ./pkgs/karpenter.nix { };
               oras = pkgs.callPackage ./pkgs/oras.nix { };
+              regclient = pkgs.callPackage ./pkgs/regclient.nix { };
             in
             {
               inherit
                 deno deno_1_23_x deno_1_24_x deno_1_25_x
-                intellij-helper manifest-tool jdk17 jre17
+                intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
