@@ -128,24 +128,20 @@
                 };
               });
               jre17 = jdk17Pkg.jre;
-              gh-runner-token = pkgs.callPackage ./pkgs/gh-runner-token.nix { };
               karpenter = pkgs.callPackage ./pkgs/karpenter.nix { };
               oras = pkgs.callPackage ./pkgs/oras.nix { };
             in
             {
               inherit
                 deno deno_1_13_x deno_1_16_x deno_1_17_x deno_1_18_x deno_1_19_x deno_1_20_x deno_1_21_x deno_1_22_x deno_1_23_x deno_1_24_x deno_1_25_x
-                intellij-helper manifest-tool jdk17 jre17 gh-runner-token
+                intellij-helper manifest-tool jdk17 jre17
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
-              packer = pkgs.callPackage ./pkgs/packer.nix { };
-              regclient = pkgs.callPackage ./pkgs/regclient.nix { };
               openapi-ts = pkgs.callPackage ./pkgs/openapi-ts {
                 inherit npmlock2nix;
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
-              tfmigrate = pkgs.callPackage ./pkgs/tfmigrate.nix { };
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
