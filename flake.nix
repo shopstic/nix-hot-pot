@@ -207,6 +207,9 @@
                   image-caddy = pkgs.callPackage ./images/caddy {
                     inherit nix2container nonRootShadowSetup;
                   };
+                  image-kube-scheduler = pkgs.callPackage ./images/kube-scheduler {
+                    inherit nix2container;
+                  };
                 }; in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
