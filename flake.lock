@@ -130,8 +130,8 @@
       },
       "original": {
         "owner": "nix-community",
-        "ref": "master",
         "repo": "npmlock2nix",
+        "rev": "5c4f247688fc91d665df65f71c81e0726621aaa8",
         "type": "github"
       }
     },
