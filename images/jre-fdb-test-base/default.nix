@@ -9,7 +9,6 @@
 , jre
 , dumb-init
 , bash
-, gnutar
 }:
 let
   name = "jre-fdb-test-base";
@@ -53,7 +52,6 @@ let
       jre
       entrypoint
       bash
-      gnutar
     ];
   };
 
