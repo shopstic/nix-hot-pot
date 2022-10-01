@@ -127,7 +127,7 @@
             in
             {
               inherit
-                deno deno_1_23_x deno_1_24_x deno_1_25_x
+                deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
