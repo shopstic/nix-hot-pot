@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container";
+      url = "github:nlewo/nix2container/06330064b676bd9197f420ece482257f413b0166";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -40,7 +40,8 @@
           deno_1_23_x = pkgs.callPackage ./pkgs/deno-1.23.x.nix { };
           deno_1_24_x = pkgs.callPackage ./pkgs/deno-1.24.x.nix { };
           deno_1_25_x = pkgs.callPackage ./pkgs/deno-1.25.x.nix { };
-          deno = deno_1_25_x.overrideAttrs (oldAttrs: {
+          deno_1_26_x = pkgs.callPackage ./pkgs/deno-1.26.x.nix { };
+          deno = deno_1_26_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
