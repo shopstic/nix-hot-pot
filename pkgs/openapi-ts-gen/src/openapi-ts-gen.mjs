@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import openapiTs from "openapi-typescript";
+import openapiTs from "@shopstic/openapi-typescript";
 
 const schemaFilePath = process.argv[2];
 if (!schemaFilePath) {

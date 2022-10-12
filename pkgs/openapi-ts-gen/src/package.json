@@ -1,0 +1,11 @@
+{
+  "name": "openapi-ts-gen",
+  "version": "5.5.0",
+  "scripts": {
+    "test": "node openapi-ts-gen.mjs ./test/petstorev3.json ./test/formatter.mjs > /dev/null && echo 'All good!'"
+  },
+  "dependencies": {
+    "@shopstic/openapi-typescript": "5.5.0"
+  },
+  "license": "MIT"
+}

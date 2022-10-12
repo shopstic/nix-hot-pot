@@ -1,0 +1,85 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Discriminated Union Test",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/test": {
+      "get": {
+        "summary": "Test",
+        "operationId": "test",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscriminatedUnionTest"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Foo": {
+        "required": [
+          "foo"
+        ],
+        "type": "object",
+        "properties": {
+          "foo": {
+            "type": "string"
+          }
+        }
+      },
+      "Bar": {
+        "required": [
+          "bar"
+        ],
+        "type": "object",
+        "properties": {
+          "bar": {
+            "type": "string"
+          }
+        }
+      },
+      "Baz": {
+        "required": [
+          "baz"
+        ],
+        "type": "object",
+        "properties": {
+          "baz": {
+            "type": "string"
+          }
+        }
+      },
+      "DiscriminatedUnionTest": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/Foo"
+          },
+          {
+            "$ref": "#/components/schemas/Bar"
+          },
+          {
+            "$ref": "#/components/schemas/Baz"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "FOO": "#/components/schemas/Foo",
+            "BAR": "#/components/schemas/Bar",
+            "BAZ": "#/components/schemas/Baz"
+          }
+        }
+      }
+    }
+  }
+}

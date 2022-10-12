@@ -5,7 +5,7 @@ npmlock2nix.build {
   installPhase = ''
     mkdir -p $out/bin
     cp -r . $out/lib
-    chmod +x $out/lib/openapi-ts.mjs
-    ln -s $out/lib/openapi-ts.mjs $out/bin/openapi-ts
+    chmod +x $out/lib/openapi-ts-gen.mjs
+    ln -s $out/lib/openapi-ts-gen.mjs $out/bin/openapi-ts-gen
   '';
 }

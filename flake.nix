@@ -105,6 +105,7 @@
                 nodejs
                 kubectl
                 caddy
+                yq-go
                 ;
             };
             shellHook = ''
@@ -132,7 +133,7 @@
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
-              openapi-ts = pkgs.callPackage ./pkgs/openapi-ts {
+              openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
