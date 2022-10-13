@@ -201,6 +201,9 @@
                   image-kube-scheduler = pkgs.callPackage ./images/kube-scheduler {
                     inherit nix2container;
                   };
+                  image-hasura-cli = pkgs.callPackage ./images/hasura-cli {
+                    inherit nix2container;
+                  };
                 }; in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
