@@ -125,6 +125,7 @@
               karpenter = pkgs.callPackage ./pkgs/karpenter.nix { };
               oras = pkgs.callPackage ./pkgs/oras.nix { };
               regclient = pkgs.callPackage ./pkgs/regclient.nix { };
+              hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
             in
             {
               inherit
@@ -132,7 +133,6 @@
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
-              hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
               };
@@ -202,7 +202,7 @@
                     inherit nix2container;
                   };
                   image-hasura-cli = pkgs.callPackage ./images/hasura-cli {
-                    inherit nix2container;
+                    inherit nix2container hasura-cli;
                   };
                 }; in
               (images // ({
