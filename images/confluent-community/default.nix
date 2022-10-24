@@ -18,7 +18,7 @@ let
       sha256 =
         if stdenv.isx86_64 then
           "sha256-3fD89QIofM94Q3nP8D2LjNQqJ/vVvVfeToPbBKzWtO0=" else
-          "sha256-PVBwkTpsLzT5gPaNeFh+PfffWR93Ry6RgZy4zaQ951I=";
+          "sha256-1Z2Tidb7g6iuJ6pV3BDWIH3mgrQ2nEnEv4BHWxDnykk=";
     };
 
   confluent-community = fetchzip {
