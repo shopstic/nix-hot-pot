@@ -10,20 +10,20 @@
 let
   name = "confluent-community";
   minorVersion = "7.2";
-  version = "7.2.1";
+  version = "7.2.2";
   base-image = nix2container.pullImage
     {
-      imageName = "docker.io/eclipse-temurin"; # 11.0.16_8-jdk
-      imageDigest = "sha256:fd9eadffb87df27b63c1670d250eef5a86be1b3a05787ba4b11d0b2308c4b6fe";
+      imageName = "docker.io/eclipse-temurin"; # 11.0.16.1_1-jdk-focal
+      imageDigest = "sha256:8d77cbc386f4c1c84b3cf11d8265e1e86524806e487e24d176ccd7ef55769323";
       sha256 =
         if stdenv.isx86_64 then
-          "sha256-gA4RCyivmlN971G3lG6YGQdaRfLGbxOFnx4xOJOMDqM=" else
-          "sha256-BC8XswWSymocCfIXGnpwB/dFcmfRFTS6Xo7eSbyTzqc=";
+          "sha256-3fD89QIofM94Q3nP8D2LjNQqJ/vVvVfeToPbBKzWtO0=" else
+          "sha256-PVBwkTpsLzT5gPaNeFh+PfffWR93Ry6RgZy4zaQ951I=";
     };
 
   confluent-community = fetchzip {
     url = "https://packages.confluent.io/archive/${minorVersion}/confluent-community-${version}.zip";
-    sha256 = "sha256-y2wODaLRBmWpsG7NyEY3/DFzQGEvV56Mvh7OqaG1kZk=";
+    sha256 = "sha256-PVBwkTpsLzT5gPaNeFh+PfffWR93Ry6RgZy4zaQ951I=";
   };
 
   image = nix2container.buildImage
