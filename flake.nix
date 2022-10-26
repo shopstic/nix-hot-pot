@@ -138,6 +138,7 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
+              mizu = pkgs.callPackage ./pkgs/mizu.nix { };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
