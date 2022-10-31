@@ -73,17 +73,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1664048188,
-        "narHash": "sha256-gTEXSYUSNuidgo2XoxF001bR0f5/e3g1oWSDKsZFET8=",
+        "lastModified": 1666977919,
+        "narHash": "sha256-5lO0pGvenoLqTn8HoqlZTcignsGC23zyB9PN9fe94Lk=",
         "owner": "nlewo",
         "repo": "nix2container",
-        "rev": "06330064b676bd9197f420ece482257f413b0166",
+        "rev": "37f96bfcfef87db53e9b17be8d2bbe187111be1d",
         "type": "github"
       },
       "original": {
         "owner": "nlewo",
+        "ref": "case-hack",
         "repo": "nix2container",
-        "rev": "06330064b676bd9197f420ece482257f413b0166",
         "type": "github"
       }
     },

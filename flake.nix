@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/06330064b676bd9197f420ece482257f413b0166";
+      url = "github:nlewo/nix2container/case-hack";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -41,7 +41,8 @@
           deno_1_24_x = pkgs.callPackage ./pkgs/deno-1.24.x.nix { };
           deno_1_25_x = pkgs.callPackage ./pkgs/deno-1.25.x.nix { };
           deno_1_26_x = pkgs.callPackage ./pkgs/deno-1.26.x.nix { };
-          deno = deno_1_26_x.overrideAttrs (oldAttrs: {
+          deno_1_27_x = pkgs.callPackage ./pkgs/deno-1.27.x.nix { };
+          deno = deno_1_27_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -129,7 +130,7 @@
             in
             {
               inherit
-                deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x
+                deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
                 karpenter oras;
