@@ -25,9 +25,9 @@
               # permittedInsecurePackages = [
               #   "dhcp-4.4.3"
               # ];
-              # allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
-              #   "redpanda"
-              # ];
+              allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
+                "redpanda"
+              ];
             };
           };
           npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
