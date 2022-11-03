@@ -26,7 +26,7 @@
               #   "dhcp-4.4.3"
               # ];
               # allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
-              #   "zerotierone"
+              #   "redpanda"
               # ];
             };
           };
@@ -95,11 +95,12 @@
           buildahBuild = pkgs.callPackage ./lib/buildah-build.nix;
           writeTextFiles = pkgs.callPackage ./lib/write-text-files.nix { };
           nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix { inherit writeTextFiles; };
+          redpanda = pkgs.callPackage ./pkgs/redpanda.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
-              inherit skopeo-nix2container;
+              inherit skopeo-nix2container redpanda;
               inherit (pkgs)
                 awscli2
                 parallel
@@ -133,7 +134,7 @@
                 deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
-                karpenter oras;
+                karpenter oras redpanda;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
               };
@@ -141,6 +142,9 @@
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
               mizu = pkgs.callPackage ./pkgs/mizu.nix { };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
+              edgedb = pkgs.callPackage ./pkgs/edgedb.nix {
+                inherit (pkgs.darwin.apple_sdk.frameworks) CoreServices Security;
+              };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {
