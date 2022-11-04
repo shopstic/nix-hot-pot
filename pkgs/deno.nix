@@ -1,4 +1,12 @@
-{ autoPatchelfHook, fetchzip, stdenv, lib, version, downloadMap, priority }:
+{ autoPatchelfHook
+, fetchzip
+, stdenv
+, lib
+, version
+, downloadMap
+, priority
+, makeWrapper
+}:
 stdenv.mkDerivation {
   inherit version;
   pname = "deno";
@@ -10,10 +18,11 @@ stdenv.mkDerivation {
       sha256 = download.hash;
     };
 
-  nativeBuildInputs = lib.optionals (stdenv.isLinux) [ autoPatchelfHook ];
+  nativeBuildInputs = [ makeWrapper ] ++ (lib.optionals (stdenv.isLinux) [ autoPatchelfHook ]);
 
   installPhase = ''
     install -m755 -D deno $out/bin/deno
+    wrapProgram "$out/bin/deno" --set DENO_NO_UPDATE_CHECK 1
     ln -s $out/bin/deno $out/bin/deno-${version}
   '';
 
