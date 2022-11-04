@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container";
+      url = "github:nlewo/nix2container/case-hack";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
