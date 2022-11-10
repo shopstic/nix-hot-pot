@@ -1,18 +1,18 @@
 { fetchurl, stdenv }:
 let
-  version = "2.13.0";
+  version = "2.15.0";
   downloadMap = {
     x86_64-linux = {
       url = "https://github.com/hasura/graphql-engine/releases/download/v${version}/cli-hasura-linux-amd64";
-      hash = "sha256-rqhTR2Fk5w39exLMhZM7wKzLZ0fkdEIMs8bprwBb5NQ=";
+      hash = "sha256-Zx2OkzPZ1ftr6HUFabtcPDn2BAT71aVMzxbcutDLgtQ=";
     };
     aarch64-darwin = {
       url = "https://github.com/hasura/graphql-engine/releases/download/v${version}/cli-hasura-darwin-arm64";
-      hash = "sha256-RtXB2E7IEiBaUr0WWQUo0Y73A1DshQ0ssPotSjVTnfA=";
+      hash = "sha256-p4XtHHa8BdIXtW7nUOKD1Zqg8jY0R/qde9jrwksoh9Q=";
     };
     aarch64-linux = {
       url = "https://github.com/hasura/graphql-engine/releases/download/v${version}/cli-hasura-linux-arm64";
-      hash = "sha256-rsH8FgSYI+UBI8QtzMpwC9SQkMmmBTuwPLKU0vrEACY=";
+      hash = "sha256-Z97xTJCUInR038x5NeFaF8CJagNAqUcFakf8Ef7sxU8=";
     };
   };
 in
