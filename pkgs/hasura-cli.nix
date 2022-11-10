@@ -1,4 +1,4 @@
-{ fetchurl, stdenv }:
+{ fetchurl, stdenv, makeWrapper }:
 let
   version = "2.15.0";
   downloadMap = {
@@ -31,10 +31,12 @@ stdenv.mkDerivation rec {
   dontPatch = true;
   dontStrip = true;
   dontFixup = true;
+  nativeBuildInputs = [ makeWrapper ];
 
   installPhase = ''
     mkdir -p $out/bin
     install -m+x ${binary} $out/bin/hasura
+    wrapProgram $out/bin/hasura --add-flags --skip-update-check
   '';
 
   meta = with stdenv.lib; {
