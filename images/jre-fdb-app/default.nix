@@ -63,12 +63,12 @@ let
       perms = [
         {
           path = dirs;
-          regex = "/home/${user}$";
+          regex = "/home/${user}";
           mode = "0777";
         }
         {
           path = dirs;
-          regex = "/tmp$";
+          regex = "/tmp";
           mode = "0777";
         }
       ];
