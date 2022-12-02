@@ -2,7 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/878ccf08c5bbba3bf06e48379a3887adfc54927f";
+    nixpkgs.url = "github:nixos/nixpkgs/22.11";
     fdbPkg.url = "github:shopstic/nix-fdb/21ac866940d56f3016c0978f6ddc61f45d0088d6";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/case-hack";
+      url = "github:nlewo/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -125,7 +125,6 @@
                 };
               });
               jre17 = jdk17Pkg.jre;
-              karpenter = pkgs.callPackage ./pkgs/karpenter.nix { };
               oras = pkgs.callPackage ./pkgs/oras.nix { };
               regclient = pkgs.callPackage ./pkgs/regclient.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
@@ -135,7 +134,7 @@
                 deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x deno_1_28_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
-                karpenter oras redpanda hasura-cli;
+                oras redpanda hasura-cli;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
               };
@@ -169,12 +168,6 @@
                   };
                   image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
                     inherit writeTextFiles nonRootShadowSetup nix2container;
-                  };
-                  image-karpenter-controller = pkgs.callPackage ./images/karpenter-controller {
-                    inherit karpenter nix2container;
-                  };
-                  image-karpenter-webhook = pkgs.callPackage ./images/karpenter-webhook {
-                    inherit karpenter nix2container;
                   };
                   image-pvc-autoresizer = pkgs.callPackage ./images/pvc-autoresizer {
                     inherit nix2container;
