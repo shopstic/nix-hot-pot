@@ -3,7 +3,7 @@ on: [push]
 jobs:
   build-packages:
     name: Build packages
-    timeout-minutes: 20
+    timeout-minutes: 30
     runs-on:
       - self-hosted
       - nix
