@@ -4,10 +4,10 @@ if stdenv.isDarwin then
     dist = {
       aarch64-darwin = {
         arch = "aarch64";
-        zuluVersion = "17.36.17";
-        jdkVersion = "17.0.4.1";
-        jdkSha256 = "sha256-R+J+OO0JJ52CbhTK5LW/kd2Tw+/CodGiAjW433SWTzQ=";
-        jreSha256 = "sha256-liE+cpAH5QYQ2QyhvNTHvIM4+P4rb2z8JwKtAn6ANdE=";
+        zuluVersion = "17.38.21";
+        jdkVersion = "17.0.5";
+        jdkSha256 = "sha256-UV3Vbsmbta6JZmIaIIiq375yYxgY/7um5Dh7fuKSqwk=";
+        jreSha256 = "sha256-ML+9kmRtsZVekTEi5kwQ873FAm6usc+xhCZVHUeB3p0=";
       };
     }."${stdenv.hostPlatform.system}";
   in
