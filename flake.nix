@@ -98,6 +98,7 @@
           nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix { inherit writeTextFiles; };
           redpanda = pkgs.callPackage ./pkgs/redpanda.nix { };
           kubesess = pkgs.callPackage ./pkgs/kubesess.nix { };
+          graphjin = pkgs.callPackage ./pkgs/graphjin.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -135,7 +136,7 @@
                 deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x deno_1_28_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
-                oras redpanda hasura-cli kubesess;
+                oras redpanda hasura-cli kubesess graphjin;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
