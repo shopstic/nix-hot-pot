@@ -30,7 +30,12 @@
               ];
             };
           };
-          npmlock2nix = import npmlock2nixPkg { inherit pkgs; };
+          npmlock2nix = import npmlock2nixPkg {
+            inherit pkgs;
+            lib = pkgs.lib // {
+              warn = _: v: v;
+            };
+          };
           nix2containerPkgs = nix2containerPkg.packages.${system};
           nix2container = nix2containerPkgs.nix2container;
           skopeo-nix2container = nix2containerPkgs.skopeo-nix2container;
