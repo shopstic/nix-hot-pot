@@ -1,6 +1,6 @@
 { autoPatchelfHook, fetchzip, stdenv, lib, makeWrapper, jre }:
 let
-  version = "0.11.0";
+  version = "0.12.0";
 in
 stdenv.mkDerivation {
   inherit version;
@@ -9,7 +9,7 @@ stdenv.mkDerivation {
   src = fetchzip {
     name = "jib-cli-${version}";
     url = "https://github.com/GoogleContainerTools/jib/releases/download/v${version}-cli/jib-jre-${version}.zip";
-    sha256 = "sha256-qrf7upBql0DBueN22IcH7mcAQqUi6/ukIfFYVJxnIPY=";
+    sha256 = "sha256-47kNpi6O+v7EP/R8FOrsrlnoKKEN64W0kx9FXjoaugM=";
   };
 
   nativeBuildInputs = (lib.optionals (stdenv.isLinux) [ autoPatchelfHook ]) ++ [
@@ -19,7 +19,7 @@ stdenv.mkDerivation {
   installPhase = ''
     mkdir -p $out
     cp -r . $out/
-    wrapProgram $out/bin/jib --set JAVA_HOME ${jre}
+    wrapProgram $out/bin/jib --set JAVA_HOME ${jre} --set JIB_OPTS "-Djib.disableUpdateChecks=true"
   '';
 
   meta = {
