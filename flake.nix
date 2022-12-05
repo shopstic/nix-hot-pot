@@ -6,7 +6,7 @@
     fdbPkg.url = "github:shopstic/nix-fdb/21ac866940d56f3016c0978f6ddc61f45d0088d6";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
-      url = "github:nix-community/npmlock2nix/5c4f247688fc91d665df65f71c81e0726621aaa8";
+      url = "github:nix-community/npmlock2nix/45faec611d6bfd5c63f3aaaeabe0b65f5a069407";
       flake = false;
     };
     nix2containerPkg = {
@@ -142,6 +142,7 @@
                 inherit npmlock2nix;
               };
               kysely-codegen = pkgs.callPackage ./pkgs/kysely-codegen {
+                nodejs = pkgs.nodejs-18_x;
                 inherit npmlock2nix;
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
