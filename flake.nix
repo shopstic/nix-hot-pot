@@ -141,6 +141,9 @@
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
               };
+              kysely-codegen = pkgs.callPackage ./pkgs/kysely-codegen {
+                inherit npmlock2nix;
+              };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
               mizu = pkgs.callPackage ./pkgs/mizu.nix { };

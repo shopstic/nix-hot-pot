@@ -1,0 +1,16 @@
+{
+  "name": "kysely-codegen-bin",
+  "version": "0.8.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo ok"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "kysely": "^0.22.0",
+    "kysely-codegen": "0.8.0",
+    "pg": "^8.8.0"
+  }
+}
