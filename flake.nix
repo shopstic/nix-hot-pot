@@ -136,13 +136,14 @@
               oras = pkgs.callPackage ./pkgs/oras.nix { };
               regclient = pkgs.callPackage ./pkgs/regclient.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
+              k9s = pkgs.callPackage ./pkgs/k9s.nix { };
             in
             {
               inherit
                 deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x deno_1_28_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
-                oras redpanda hasura-cli kubesess graphjin atlas;
+                oras redpanda hasura-cli kubesess graphjin atlas k9s;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
