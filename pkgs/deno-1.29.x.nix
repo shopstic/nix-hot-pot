@@ -13,7 +13,7 @@
     };
     aarch64-linux = {
       url = "https://github.com/LukeChannings/deno-arm64/releases/download/v${version}/deno-linux-arm64.zip";
-      hash = "sha256-UUhFJNiz+XZNB3EIIGeYU3xeRSKI3fpe+kZ0V3zdids=";
+      hash = "sha256-k09jNY4ZVdYxKD2QgGs2AFs6ymHdp+Bv6qu4BZw83Fo=";
     };
   };
   priority = 10;

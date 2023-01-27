@@ -16,6 +16,7 @@ stdenv.mkDerivation {
       name = "deno-${version}";
       url = download.url;
       sha256 = download.hash;
+      stripRoot = false;
     };
 
   nativeBuildInputs = [ makeWrapper ] ++ (lib.optionals (stdenv.isLinux) [ autoPatchelfHook ]);
