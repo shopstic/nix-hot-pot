@@ -2,7 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/22.11";
+    nixpkgs.url = "github:nixos/nixpkgs/33afbf39f6f2a6b37e99f070ba7d17a28c416d02";
     fdbPkg.url = "github:shopstic/nix-fdb/21ac866940d56f3016c0978f6ddc61f45d0088d6";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
@@ -189,11 +189,11 @@
                   };
                   image-github-runner-nix = pkgs.callPackage ./images/github-runner-nix {
                     inherit nix2container writeTextFiles nonRootShadowSetup;
-                    nix = pkgs.nixVersions.nix_2_8;
+                    nix = pkgs.nixVersions.nix_2_13;
                   };
                   image-gitlab-runner-nix = pkgs.callPackage ./images/gitlab-runner-nix {
                     inherit nix2container writeTextFiles nonRootShadowSetup;
-                    nix = pkgs.nixVersions.nix_2_8;
+                    nix = pkgs.nixVersions.nix_2_13;
                   };
                   image-kubectl = pkgs.callPackage ./images/kubectl {
                     inherit nix2container;
