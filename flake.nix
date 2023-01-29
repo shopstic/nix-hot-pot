@@ -49,7 +49,8 @@
           deno_1_27_x = pkgs.callPackage ./pkgs/deno-1.27.x.nix { };
           deno_1_28_x = pkgs.callPackage ./pkgs/deno-1.28.x.nix { };
           deno_1_29_x = pkgs.callPackage ./pkgs/deno-1.29.x.nix { };
-          deno = deno_1_29_x.overrideAttrs (oldAttrs: {
+          deno_1_30_x = pkgs.callPackage ./pkgs/deno-1.30.x.nix { };
+          deno = deno_1_30_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -141,7 +142,7 @@
             in
             {
               inherit
-                deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x deno_1_28_x deno_1_29_x
+                deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x deno_1_28_x deno_1_29_x deno_1_30_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
                 oras redpanda hasura-cli kubesess graphjin atlas k9s;
