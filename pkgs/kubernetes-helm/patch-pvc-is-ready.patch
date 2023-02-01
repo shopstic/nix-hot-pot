@@ -1,0 +1,19 @@
+diff --git a/pkg/kube/ready.go b/pkg/kube/ready.go
+index b214c479..9cbc3062 100644
+--- a/pkg/kube/ready.go
++++ b/pkg/kube/ready.go
+@@ -127,13 +127,10 @@ func (c *ReadyChecker) IsReady(ctx context.Context, v *resource.Info) (bool, err
+ 			return false, nil
+ 		}
+ 	case *corev1.PersistentVolumeClaim:
+-		claim, err := c.client.CoreV1().PersistentVolumeClaims(v.Namespace).Get(ctx, v.Name, metav1.GetOptions{})
++		_, err := c.client.CoreV1().PersistentVolumeClaims(v.Namespace).Get(ctx, v.Name, metav1.GetOptions{})
+ 		if err != nil {
+ 			return false, err
+ 		}
+-		if !c.volumeReady(claim) {
+-			return false, nil
+-		}
+ 	case *corev1.Service:
+ 		svc, err := c.client.CoreV1().Services(v.Namespace).Get(ctx, v.Name, metav1.GetOptions{})
+ 		if err != nil {

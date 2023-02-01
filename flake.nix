@@ -108,6 +108,7 @@
           graphjin = pkgs.callPackage ./pkgs/graphjin.nix { };
           atlas = pkgs.callPackage ./pkgs/atlas.nix { };
           gitlab-runner = pkgs.callPackage ./pkgs/gitlab-runner { };
+          kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -146,7 +147,8 @@
                 deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x deno_1_28_x deno_1_29_x deno_1_30_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
-                oras redpanda hasura-cli kubesess graphjin atlas k9s gitlab-runner;
+                oras redpanda hasura-cli kubesess graphjin atlas
+                k9s gitlab-runner kubernetes-helm;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
