@@ -11,12 +11,13 @@ code_quality() {
 }
 
 update_cache() {
-  deno cache --lock=lock.json "${DIR_PATH}"/src/intellij-helper.ts
+  deno cache --lock=deno.lock "${DIR_PATH}"/src/intellij-helper.ts
 }
 
 update_lock() {
+  rm -f deno.lock
   deno cache --reload "${DIR_PATH}"/src/intellij-helper.ts
-  deno cache "${DIR_PATH}"/src/intellij-helper.ts --lock "${DIR_PATH}"/lock.json --lock-write
+  deno cache "${DIR_PATH}"/src/intellij-helper.ts --lock "${DIR_PATH}"/deno.lock --lock-write
 }
 
 "$@"
