@@ -7,16 +7,16 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "kubesess";
-  version = "1.2.8";
+  version = "1.2.9";
 
   src = fetchFromGitHub {
     owner = "Ramilito";
     repo = "kubesess";
     rev = "${version}";
-    sha256 = "sha256-zwgj9BmrrfRcRg8ZLbqLkoCSVWvQ/HwR+gbsIoOvcWM=";
+    sha256 = "sha256-xA1WHLeNz7dh235wBM8TNwaB1CgdIh5BphOFIL0jR3w=";
   };
 
-  cargoSha256 = "sha256-TeN+De8RJAA4vytQ0YAwU7yQjpOTAn9W9QvdGa4yMXU=";
+  cargoSha256 = "sha256-SutK45Mqd5LPIsBaienEGO8rTqwD6gTiAT/sU9R38LU=";
 
   nativeBuildInputs = [ installShellFiles ];
 
