@@ -15,7 +15,7 @@ let
     aarch64-linux = {
       os = "linux";
       arch = "arm64";
-      hash = "sha256-NnMb3ZRZ91/6wEDxnGxQJNfHJxIfgtIEiDN2u7Oi3X8=";
+      hash = "sha256-wIZyNx1pwHLo5vJUPzAdQzDEAu6K7G9vf162khDQ2R0=";
     };
   };
   download = downloadMap."${stdenv.hostPlatform.system}";
