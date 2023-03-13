@@ -223,6 +223,9 @@
                   image-hasura-cli = pkgs.callPackage ./images/hasura-cli {
                     inherit nix2container hasura-cli;
                   };
+                  image-rpk = pkgs.callPackage ./images/rpk {
+                    inherit nix2container nonRootShadowSetup redpanda;
+                  };
                 }; in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
