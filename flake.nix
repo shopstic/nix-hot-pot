@@ -161,9 +161,6 @@
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
               mizu = pkgs.callPackage ./pkgs/mizu.nix { };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
-              edgedb = pkgs.callPackage ./pkgs/edgedb.nix {
-                inherit (pkgs.darwin.apple_sdk.frameworks) CoreServices Security;
-              };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {
