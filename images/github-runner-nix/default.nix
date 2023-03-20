@@ -33,7 +33,8 @@ let
 
   patched-github-runner = github-runner.overrideAttrs (finalAttrs: previousAttrs: {
     postInstall = ''
-      install -m755 src/Misc/layoutroot/safe_sleep.sh $out/lib/
+      ${previousAttrs.postInstall}
+      install -m755 src/Misc/layoutroot/safe_sleep.sh $out/lib/github-runner
     '';
     checkPhase = ''
       echo "Skipping tests"
