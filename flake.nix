@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container";
+      url = "github:nlewo/nix2container/6800fff45afecc7e47c334d14cf2b2f4f25601a0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
