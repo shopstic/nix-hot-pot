@@ -5,7 +5,7 @@ let
     x86_64-linux = {
       os = "linux";
       arch = "amd64";
-      hash = "";
+      hash = "sha256-QLbPc3Mtb8cqSk4lUfcpyTBcsTQUQznd8Qn5fcDlbEI=";
     };
     aarch64-darwin = {
       os = "darwin";
@@ -15,7 +15,7 @@ let
     aarch64-linux = {
       os = "linux";
       arch = "arm64";
-      hash = "";
+      hash = "sha256-zvvSOw6bkhj+oXQrRR+9TJhbvG+Suhes16JGPburSiU=";
     };
   };
   download = downloadMap."${stdenv.hostPlatform.system}";
