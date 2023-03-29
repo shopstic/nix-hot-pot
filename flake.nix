@@ -42,15 +42,11 @@
           nix2containerUtil = nix2containerPkgs.nix2containerUtil;
           fdb = fdbPkg.packages.${system}.fdb_7;
           fdbLib = fdb.lib;
-          deno_1_23_x = pkgs.callPackage ./pkgs/deno-1.23.x.nix { };
-          deno_1_24_x = pkgs.callPackage ./pkgs/deno-1.24.x.nix { };
-          deno_1_25_x = pkgs.callPackage ./pkgs/deno-1.25.x.nix { };
-          deno_1_26_x = pkgs.callPackage ./pkgs/deno-1.26.x.nix { };
-          deno_1_27_x = pkgs.callPackage ./pkgs/deno-1.27.x.nix { };
           deno_1_28_x = pkgs.callPackage ./pkgs/deno-1.28.x.nix { };
           deno_1_29_x = pkgs.callPackage ./pkgs/deno-1.29.x.nix { };
           deno_1_30_x = pkgs.callPackage ./pkgs/deno-1.30.x.nix { };
-          deno = deno_1_30_x.overrideAttrs (oldAttrs: {
+          deno_1_31_x = pkgs.callPackage ./pkgs/deno-1.31.x.nix { };
+          deno = deno_1_31_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -58,7 +54,7 @@
 
           jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
 
-          intellij-helper = pkgs.callPackage ./lib/deno-app-build.nix
+          intellij-helper = pkgs.callPackage ./lib/deno-app-compile.nix
             {
               inherit deno;
               name = "intellij-helper";
@@ -144,7 +140,7 @@
             in
             {
               inherit
-                deno deno_1_23_x deno_1_24_x deno_1_25_x deno_1_26_x deno_1_27_x deno_1_28_x deno_1_29_x deno_1_30_x
+                deno deno_1_28_x deno_1_29_x deno_1_30_x deno_1_31_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
                 oras redpanda hasura-cli kubesess graphjin atlas
@@ -159,7 +155,7 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
-              mizu = pkgs.callPackage ./pkgs/mizu.nix { };
+              kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let

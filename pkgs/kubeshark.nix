@@ -1,31 +1,31 @@
 { autoPatchelfHook, fetchurl, stdenv, lib }:
 let
-  version = "36.0";
+  version = "39.4";
   downloadMap = {
     x86_64-linux = {
       os = "linux";
       arch = "amd64";
-      hash = "sha256-RCmJx8Y196kDluBqehE54otbZJzJyCtE/t4Ujx/yJcE=";
+      hash = "";
     };
     aarch64-darwin = {
       os = "darwin";
       arch = "arm64";
-      hash = "sha256-mdHQXdzqt7V4isfgwwV56vlP98VmXywRlkZnfvFBpUU=";
+      hash = "sha256-09UartWLhjFKds9M3tR8g8eqB0wPXLS0KBh+dXNUr/U=";
     };
     aarch64-linux = {
       os = "linux";
       arch = "arm64";
-      hash = "sha256-71dB+0ugkKQUBAfNHVy9QaUnsWeNPgvEtc4EUUT6I8I=";
+      hash = "";
     };
   };
   download = downloadMap."${stdenv.hostPlatform.system}";
 in
 stdenv.mkDerivation rec {
   inherit version;
-  pname = "mizu";
+  pname = "kubeshark";
 
   src = fetchurl {
-    url = "https://github.com/up9inc/mizu/releases/download/${version}/mizu_${download.os}_${download.arch}";
+    url = "https://github.com/kubeshark/kubeshark/releases/download/${version}/kubeshark_${download.os}_${download.arch}";
     sha256 = download.hash;
   };
 
@@ -34,11 +34,11 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = lib.optionals (stdenv.isLinux) [ autoPatchelfHook ];
 
   installPhase = ''
-    install -m755 -D ${src} $out/bin/mizu
+    install -m755 -D ${src} $out/bin/${pname}
   '';
 
   meta = with stdenv.lib; {
-    homepage = https://github.com/up9inc/mizu/;
+    homepage = https://github.com/kubeshark/kubeshark;
     platforms = builtins.attrNames downloadMap;
   };
 }
