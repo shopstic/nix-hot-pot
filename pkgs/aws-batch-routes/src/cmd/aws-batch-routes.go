@@ -130,7 +130,6 @@ func manageRoutes(svc *ec2.EC2, rtbID, cidrBlock, networkInterfaceId string) err
 		return err
 	}
 
-	fmt.Println(1)
 	fmt.Printf("Created route for %s in %s\n", cidrBlock, rtbID)
 	return nil
 }
