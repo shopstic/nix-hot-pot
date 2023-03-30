@@ -14,6 +14,7 @@
 , inetutils
 , iptables
 , curl
+, kubectl
 }:
 let
   name = "tailscale-router-init";
@@ -43,6 +44,7 @@ let
       inetutils
       iptables
       curl
+      kubectl
     ];
   };
 
