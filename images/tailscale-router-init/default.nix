@@ -15,6 +15,7 @@
 , iptables
 , curl
 , kubectl
+, cacert
 }:
 let
   name = "tailscale-router-init";
@@ -67,6 +68,7 @@ let
       config = {
         Env = [
           "PATH=/nix-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
         ];
       };
     };
