@@ -1,4 +1,6 @@
 /.zsh_history
 /result
-/.vscode
+.vscode
 /tests/result
+.go
+.gotools

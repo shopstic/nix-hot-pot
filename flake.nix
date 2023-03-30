@@ -53,6 +53,7 @@
           });
 
           jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
+          aws-batch-routes = pkgs.callPackage ./pkgs/aws-batch-routes { };
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-compile.nix
             {
@@ -69,6 +70,7 @@
                 };
               appSrcPath = "./src/intellij-helper.ts";
             };
+
           vscodeSettings = pkgs.writeTextFile {
             name = "vscode-settings.json";
             text = builtins.toJSON {
@@ -144,7 +146,7 @@
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2containerUtil
                 oras redpanda hasura-cli kubesess graphjin atlas
-                k9s gitlab-runner kubernetes-helm;
+                k9s gitlab-runner kubernetes-helm aws-batch-routes;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
@@ -179,7 +181,7 @@
                     inherit nix2container;
                   };
                   image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
-                    inherit writeTextFiles nonRootShadowSetup nix2container;
+                    inherit writeTextFiles nonRootShadowSetup nix2container aws-batch-routes;
                   };
                   image-pvc-autoresizer = pkgs.callPackage ./images/pvc-autoresizer {
                     inherit nix2container;

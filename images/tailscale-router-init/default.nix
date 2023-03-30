@@ -16,6 +16,7 @@
 , curl
 , kubectl
 , cacert
+, aws-batch-routes
 }:
 let
   name = "tailscale-router-init";
@@ -46,6 +47,7 @@ let
       iptables
       curl
       kubectl
+      aws-batch-routes
     ];
   };
 
