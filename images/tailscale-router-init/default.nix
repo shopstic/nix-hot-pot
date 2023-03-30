@@ -13,6 +13,7 @@
 , dig
 , inetutils
 , iptables
+, curl
 }:
 let
   name = "tailscale-router-init";
@@ -41,6 +42,7 @@ let
       dig
       inetutils
       iptables
+      curl
     ];
   };
 
