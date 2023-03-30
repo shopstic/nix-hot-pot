@@ -13,11 +13,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const maxRetries = 5
-
 var routeTableIdsParam string
 var cidrBlocksParam string
 var networkInterfaceId string
+var maxConcurrency int
+var maxRetries int
 
 func main() {
 	var rootCmd = &cobra.Command{
@@ -30,6 +30,9 @@ func main() {
 	rootCmd.Flags().StringVarP(&routeTableIdsParam, "routeTableIds", "r", "", "Comma-separated list of Route Table IDs (required)")
 	rootCmd.Flags().StringVarP(&cidrBlocksParam, "cidrBlocks", "c", "", "Comma-separated list of CIDR Blocks (required)")
 	rootCmd.Flags().StringVarP(&networkInterfaceId, "networkInterfaceId", "n", "", "Network Interface ID (required)")
+	rootCmd.Flags().IntVarP(&maxConcurrency, "maxConcurrency", "p", 20, "Max concurrency for AWS API requests (default: 20)")
+	rootCmd.Flags().IntVarP(&maxRetries, "maxRetries", "t", 5, "Max retries for AWS API requests (default: 5)")
+
 	rootCmd.MarkFlagRequired("routeTableIds")
 	rootCmd.MarkFlagRequired("cidrBlocks")
 	rootCmd.MarkFlagRequired("networkInterfaceId")
@@ -54,9 +57,12 @@ func execute(cmd *cobra.Command, args []string) {
 	ec2Svc := ec2.New(sess)
 
 	var wg sync.WaitGroup
+	sem := make(chan struct{}, maxConcurrency)
+
 	for _, rtbID := range routeTableIds {
 		for _, cidrBlock := range cidrBlocks {
 			wg.Add(1)
+			sem <- struct{}{} // Acquire a semaphore
 			go func(rtbID, cidrBlock string) {
 				defer wg.Done()
 				fmt.Printf("Starting manageRoutes for RouteTable: %s and CIDR: %s\n", rtbID, cidrBlock)
@@ -66,6 +72,7 @@ func execute(cmd *cobra.Command, args []string) {
 				})
 				elapsedTime := time.Since(startTime)
 				fmt.Printf("Finished manageRoutes for RouteTable: %s and CIDR: %s in %s\n", rtbID, cidrBlock, elapsedTime)
+				<-sem // Release a semaphore
 			}(rtbID, cidrBlock)
 		}
 	}
