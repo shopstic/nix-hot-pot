@@ -37,9 +37,8 @@
             };
           };
           nix2containerPkgs = nix2containerPkg.packages.${system};
-          nix2container = nix2containerPkgs.nix2container;
           skopeo-nix2container = nix2containerPkgs.skopeo-nix2container;
-          nix2containerUtil = nix2containerPkgs.nix2containerUtil;
+          nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
           fdbLib = fdb.lib;
           deno_1_28_x = pkgs.callPackage ./pkgs/deno-1.28.x.nix { };
@@ -144,8 +143,8 @@
               inherit
                 deno deno_1_28_x deno_1_29_x deno_1_30_x deno_1_31_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
-                skopeo-nix2container nix2containerUtil
-                oras redpanda hasura-cli kubesess graphjin atlas
+                skopeo-nix2container oras redpanda hasura-cli 
+                kubesess graphjin atlas
                 k9s gitlab-runner kubernetes-helm aws-batch-routes;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
