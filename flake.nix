@@ -105,6 +105,7 @@
           kubesess = pkgs.callPackage ./pkgs/kubesess.nix { };
           graphjin = pkgs.callPackage ./pkgs/graphjin.nix { };
           atlas = pkgs.callPackage ./pkgs/atlas.nix { };
+          kwok = pkgs.callPackage ./pkgs/kwok.nix { };
           gitlab-runner = pkgs.callPackage ./pkgs/gitlab-runner { };
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
         in
@@ -145,7 +146,7 @@
                 deno deno_1_28_x deno_1_29_x deno_1_30_x deno_1_31_x deno_1_32_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container oras redpanda hasura-cli 
-                kubesess graphjin atlas
+                kubesess graphjin atlas kwok
                 k9s gitlab-runner kubernetes-helm aws-batch-routes;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
