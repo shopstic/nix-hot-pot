@@ -4,13 +4,13 @@
 }:
 buildGoModule rec {
   pname = "manifest-tool";
-  version = "2.0.6";
+  version = "2.0.8";
 
   src = fetchFromGitHub {
     owner = "estesp";
     repo = "manifest-tool";
     rev = "v${version}";
-    sha256 = "sha256-EdO3UPQmRDedKl4RC+kOtAPBgzqVMdrnnqaoCzkvIMM=";
+    sha256 = "sha256-sApg6qsnpyg7D4x/SMgTdTtgpVNvMt1l6mHszmLqFtE=";
   };
 
   vendorSha256 = null;
