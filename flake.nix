@@ -222,6 +222,9 @@
                   image-rpk = pkgs.callPackage ./images/rpk {
                     inherit nix2container nonRootShadowSetup redpanda;
                   };
+                  image-kwok = pkgs.callPackage ./images/kwok {
+                    inherit nix2container kwok;
+                  };
                 }; in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
