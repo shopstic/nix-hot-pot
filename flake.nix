@@ -2,15 +2,15 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/f9758c35680a2b197291f06a321d1d6a0894c947";
+    nixpkgs.url = "github:nixos/nixpkgs/76786cd4fc7b52d842d2d3813163167867eca0f0";
     fdbPkg.url = "github:shopstic/nix-fdb/21ac866940d56f3016c0978f6ddc61f45d0088d6";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
-      url = "github:nix-community/npmlock2nix/45faec611d6bfd5c63f3aaaeabe0b65f5a069407";
+      url = "github:nix-community/npmlock2nix/9197bbf397d76059a76310523d45df10d2e4ca81";
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/6800fff45afecc7e47c334d14cf2b2f4f25601a0";
+      url = "github:nlewo/nix2container/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
