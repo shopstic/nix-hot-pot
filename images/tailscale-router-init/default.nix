@@ -22,12 +22,12 @@ let
   name = "tailscale-router-init";
 
   base-image = nix2container.pullImage {
-    imageName = "docker.io/library/ubuntu";
-    imageDigest = "sha256:27cb6e6ccef575a4698b66f5de06c7ecd61589132d5a91d098f7f3f9285415a9";
+    imageName = "docker.io/library/ubuntu"; # 22.04
+    imageDigest = "sha256:67211c14fa74f070d27cc59d69a7fa9aeff8e28ea118ef3babc295a0428a6d21";
     sha256 =
       if stdenv.isx86_64 then
-        "sha256-84QvvklWwCznsS87GjFXZCRnPV8flsO/IogG4boiO/8=" else
-        "sha256-k8pwaN4RtDPOZkYFePe6ZSGAFxGABOYqDHBM2PE0g3Q=";
+        "sha256-5wTf3mcLVje0+pM4Q2aNd64BfsG4Xb1X3Vd6COyX01k=" else
+        "sha256-tM8tB6aJQFUGos1PnsWmVRb80k3IkWd8+HRS3AK83Ds=";
   };
 
   nix-bin = buildEnv {
