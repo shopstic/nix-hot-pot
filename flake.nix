@@ -41,12 +41,11 @@
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
           fdbLib = fdb.lib;
-          deno_1_28_x = pkgs.callPackage ./pkgs/deno-1.28.x.nix { };
-          deno_1_29_x = pkgs.callPackage ./pkgs/deno-1.29.x.nix { };
           deno_1_30_x = pkgs.callPackage ./pkgs/deno-1.30.x.nix { };
           deno_1_31_x = pkgs.callPackage ./pkgs/deno-1.31.x.nix { };
           deno_1_32_x = pkgs.callPackage ./pkgs/deno-1.32.x.nix { };
-          deno = deno_1_32_x.overrideAttrs (oldAttrs: {
+          deno_1_33_x = pkgs.callPackage ./pkgs/deno-1.33.x.nix { };
+          deno = deno_1_33_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -143,7 +142,7 @@
             in
             {
               inherit
-                deno deno_1_28_x deno_1_29_x deno_1_30_x deno_1_31_x deno_1_32_x
+                deno deno_1_30_x deno_1_31_x deno_1_32_x deno_1_33_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container oras redpanda hasura-cli 
                 kubesess graphjin atlas kwok
