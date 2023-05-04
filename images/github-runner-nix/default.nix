@@ -18,6 +18,7 @@
 , openssh
 , git
 , amazon-ecr-credential-helper
+, fetchFromGitHub
 }:
 let
   name = "github-runner-nix";
@@ -32,6 +33,13 @@ let
   '';
 
   patched-github-runner = github-runner.overrideAttrs (finalAttrs: previousAttrs: {
+    src = fetchFromGitHub {
+      owner = "actions";
+      repo = "runner";
+      rev = "v${previousAttrs.version}";
+      hash = "sha256-w5MqFIPTCAqQjdsWdscNnH2KNwUOp5SPFesyprXUvNE=";
+      leaveDotGit = true;
+    };
     postInstall = ''
       ${previousAttrs.postInstall}
       install -m755 src/Misc/layoutroot/safe_sleep.sh $out/lib/github-runner
