@@ -37,7 +37,7 @@ let
       owner = "actions";
       repo = "runner";
       rev = "v${previousAttrs.version}";
-      hash = "sha256-w5MqFIPTCAqQjdsWdscNnH2KNwUOp5SPFesyprXUvNE=";
+      hash = "sha256-auz7At+2iyG2++BmguuvvwVz4zw/5ts/IGfRVyt/qEI=";
       leaveDotGit = true;
     };
     postInstall = ''
