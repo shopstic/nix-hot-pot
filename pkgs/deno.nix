@@ -19,7 +19,7 @@ stdenv.mkDerivation {
       stripRoot = false;
     };
 
-  nativeBuildInputs = [ makeWrapper ] ++ (lib.optionals (stdenv.isLinux) [ autoPatchelfHook ]);
+  nativeBuildInputs = [ makeWrapper ] ++ (lib.optionals (stdenv.isLinux) [ autoPatchelfHook stdenv.cc.cc.libgcc ]);
 
   installPhase = ''
     install -m755 -D deno $out/bin/deno
