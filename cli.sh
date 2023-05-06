@@ -27,7 +27,7 @@ push_all_single_arch_images() {
   local IMAGE_ARCH=${1:?"Arch is required (amd64 | arm64)"}
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
-  parallel -j8 --tagstring "[{}]" --line-buffer --retries=2 \
+  parallel -j8 --tagstring "[{}]" --line-buffer --retries=5 \
     "$0" push_single_arch {} "${IMAGE_ARCH}" ::: "${IMAGES[@]}"
 
   docker image prune -f
@@ -36,7 +36,7 @@ push_all_single_arch_images() {
 push_all_manifests() {
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
-  parallel -j8 --tagstring "[{}]" --line-buffer --retries=2 \
+  parallel -j8 --tagstring "[{}]" --line-buffer --retries=5 \
     "$0" push_manifest {} ::: "${IMAGES[@]}"
 }
 
