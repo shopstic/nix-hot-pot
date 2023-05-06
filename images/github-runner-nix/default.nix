@@ -33,13 +33,6 @@ let
   '';
 
   patched-github-runner = github-runner.overrideAttrs (finalAttrs: previousAttrs: {
-    src = fetchFromGitHub {
-      owner = "actions";
-      repo = "runner";
-      rev = "v${previousAttrs.version}";
-      hash = "sha256-a/qh25mhI8wQE6PSsLhVFeTsfWL7iTFUhny+qvwy4fo=";
-      leaveDotGit = true;
-    };
     postInstall = ''
       ${previousAttrs.postInstall}
       install -m755 src/Misc/layoutroot/safe_sleep.sh $out/lib/github-runner
