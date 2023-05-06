@@ -53,6 +53,7 @@
 
           jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
           aws-batch-routes = pkgs.callPackage ./pkgs/aws-batch-routes { };
+          symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-compile.nix
             {
@@ -146,7 +147,7 @@
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container oras redpanda hasura-cli 
                 kubesess graphjin atlas kwok
-                k9s gitlab-runner kubernetes-helm aws-batch-routes;
+                k9s gitlab-runner kubernetes-helm aws-batch-routes symlink-mirror;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
