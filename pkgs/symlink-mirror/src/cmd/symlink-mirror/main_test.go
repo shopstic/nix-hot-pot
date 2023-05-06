@@ -27,6 +27,7 @@ func TestSymlinkCopyIntegration(t *testing.T) {
 		"dir1/file2.txt",
 		"dir1/dir2/file3.txt",
 		"dir3/file4.txt",
+		"restrictedDir/file5.txt",
 	}
 
 	for _, file := range testFiles {
@@ -40,6 +41,13 @@ func TestSymlinkCopyIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error creating test file: %v", err)
 		}
+	}
+
+	// Set restricted permissions on the "restrictedDir" directory.
+	restrictedDir := filepath.Join(srcDir, "restrictedDir")
+	err = os.Chmod(restrictedDir, 0500)
+	if err != nil {
+		t.Fatalf("Error setting restricted permissions on test directory: %v", err)
 	}
 
 	// Run symlinkCopy function.

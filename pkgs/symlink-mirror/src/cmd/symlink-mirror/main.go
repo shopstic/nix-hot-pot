@@ -34,7 +34,7 @@ func symlinkCopy(srcDir, dstDir string) error {
 		dstPath := filepath.Join(dstDir, relPath)
 
 		if info.IsDir() {
-			err = os.MkdirAll(dstPath, info.Mode())
+			err = os.MkdirAll(dstPath, info.Mode()|0200) // Ensure owner write permission
 			if err != nil {
 				return err
 			}
