@@ -113,11 +113,15 @@ let
       (nix2container.buildLayer { deps = [ patched-github-runner ]; })
     ];
     maxLayers = 100;
+    initializeNixDatabase = true;
+    nixUid = 1000;
+    nixGid = 1000;
     perms = [
       {
         path = home-dir;
         regex = "/home/${user}";
-        mode = "0777";
+        uid = 1000;
+        gid = 1000;
       }
     ];
   };
