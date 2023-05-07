@@ -26,8 +26,9 @@ let
   };
 
   user = "app";
+  userUid = 1000;
 
-  shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "${bash}/bin/bash"; };
+  shadow = nonRootShadowSetup { inherit user; uid = userUid; shellBin = "${bash}/bin/bash"; };
 
   dirs = runCommand "dirs" { } ''
     mkdir -p $out/home/${user}
@@ -64,12 +65,16 @@ let
         {
           path = dirs;
           regex = "/home/${user}";
-          mode = "0777";
+          gid = userUid;
+          uid = userUid;
+          mode = "0755";
         }
         {
           path = dirs;
           regex = "/tmp";
-          mode = "0777";
+          gid = userUid;
+          uid = userUid;
+          mode = "0755";
         }
       ];
       config = {
