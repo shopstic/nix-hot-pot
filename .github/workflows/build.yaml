@@ -64,7 +64,6 @@ jobs:
       - name: Push all images
         if: github.ref == 'refs/heads/main'
         run: |
-          sleep 1000000
           ./cli.sh push_all_single_arch_images ${{ matrix.imageArch }}
 
   push-manifests:
