@@ -30,7 +30,7 @@ push_all_single_arch_images() {
   parallel -j8 --tagstring "[{}]" --line-buffer --retries=5 \
     "$0" push_single_arch {} "${IMAGE_ARCH}" ::: "${IMAGES[@]}"
 
-  docker image prune -f
+  # docker image prune -f
 }
 
 push_all_manifests() {
@@ -59,13 +59,9 @@ push_single_arch() {
 
   >&2 echo "Pushing ${TARGET_IMAGE}"
 
-  skopeo --insecure-policy copy \
+  skopeo --insecure-policy copy --dest-tls-verify=false \
     nix:"./result/${FILE_NAME}" \
-    "docker-daemon:${TARGET_IMAGE}"
-
-  docker push "${TARGET_IMAGE}"
-  docker tag "${TARGET_IMAGE}" "${IMAGE_REPOSITORY}/${IMAGE}:____prior____"
-  docker rmi "${TARGET_IMAGE}"
+    "docker://${TARGET_IMAGE}"
 }
 
 push_manifest() {
