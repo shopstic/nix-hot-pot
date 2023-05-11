@@ -93,7 +93,7 @@ nix_copy_path_to_s3_cache() {
 
 nix_copy_to_s3_cache() {
   readarray -t STORE_PATHS < <(nix path-info -r "$@" | xargs -I{} basename {})
-  parallel -j$((`nproc`-2)) --tagstring "[{}]" --line-buffer \
+  parallel -j"$(nproc)" --tagstring "[{}]" --line-buffer \
     "$0" nix_copy_path_to_s3_cache '/nix/store/{}' ::: "${STORE_PATHS[@]}"
 }
 
