@@ -190,11 +190,11 @@
                   };
                   image-github-runner-nix = pkgs.callPackage ./images/github-runner-nix {
                     inherit nix2container writeTextFiles nonRootShadowSetup;
-                    nix = pkgs.nixVersions.nix_2_13;
+                    nix = pkgs.nixVersions.nix_2_15;
                   };
                   image-gitlab-runner-nix = pkgs.callPackage ./images/gitlab-runner-nix {
                     inherit nix2container writeTextFiles nonRootShadowSetup gitlab-runner;
-                    nix = pkgs.nixVersions.nix_2_13;
+                    nix = pkgs.nixVersions.nix_2_15;
                   };
                   image-kubectl = pkgs.callPackage ./images/kubectl {
                     inherit nix2container;
