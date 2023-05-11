@@ -32,6 +32,7 @@ jobs:
       - name: Cache all packages
         env:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
+        shell: nix develop -c bash {0}
         run: |
           nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
           # nix copy -v --to s3://nixed/cache "${NIX_OUTPUT}"
