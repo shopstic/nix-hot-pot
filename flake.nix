@@ -45,7 +45,8 @@
           deno_1_31_x = pkgs.callPackage ./pkgs/deno-1.31.x.nix { };
           deno_1_32_x = pkgs.callPackage ./pkgs/deno-1.32.x.nix { };
           deno_1_33_x = pkgs.callPackage ./pkgs/deno-1.33.x.nix { };
-          deno = deno_1_33_x.overrideAttrs (oldAttrs: {
+          deno_1_34_x = pkgs.callPackage ./pkgs/deno-1.34.x.nix { };
+          deno = deno_1_34_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
