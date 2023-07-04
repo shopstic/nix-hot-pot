@@ -2,7 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/f06d24a512ca4a470877938a746cd9af410c5c3f";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
     fdbPkg.url = "github:shopstic/nix-fdb/21ac866940d56f3016c0978f6ddc61f45d0088d6";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/v1.0.0";
+      url = "github:nlewo/nix2container/56e249151911e3d3928b578f5b6c01b16f55c308";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -22,9 +22,9 @@
           pkgs = import nixpkgs {
             inherit system;
             config = {
-              # permittedInsecurePackages = [
-              #   "dhcp-4.4.3"
-              # ];
+              permittedInsecurePackages = [
+                "nodejs-16.20.1"
+              ];
               allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
                 "redpanda"
               ];

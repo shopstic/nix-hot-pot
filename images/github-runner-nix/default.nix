@@ -9,7 +9,6 @@
 , github-runner
 , dumb-init
 , cacert
-, nodejs-16_x
 , nix
 , gnugrep
 , rsync
@@ -44,11 +43,11 @@ let
 
   base-image = nix2container.pullImage {
     imageName = "docker.io/library/ubuntu"; # 22.04
-    imageDigest = "sha256:67211c14fa74f070d27cc59d69a7fa9aeff8e28ea118ef3babc295a0428a6d21";
+    imageDigest = "sha256:6120be6a2b7ce665d0cbddc3ce6eae60fe94637c6a66985312d1f02f63cc0bcd";
     sha256 =
       if stdenv.isx86_64 then
-        "sha256-5wTf3mcLVje0+pM4Q2aNd64BfsG4Xb1X3Vd6COyX01k=" else
-        "sha256-tM8tB6aJQFUGos1PnsWmVRb80k3IkWd8+HRS3AK83Ds=";
+        "sha256-REVWq8ROIm3GrRWXcNJqFkCLVKbVXKxuTAMgn7bqscQ=" else
+        "sha256-w8Gtg9+5jXNyk1tnn85cNzz57OXrK1X/KW9qv+InX3k=";
   };
 
   user = "runner";
