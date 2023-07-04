@@ -137,7 +137,6 @@
                 };
               });
               jre17 = jdk17Pkg.jre;
-              oras = pkgs.callPackage ./pkgs/oras.nix { };
               regclient = pkgs.callPackage ./pkgs/regclient.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               k9s = pkgs.callPackage ./pkgs/k9s.nix { };
@@ -146,7 +145,7 @@
               inherit
                 deno deno_1_30_x deno_1_31_x deno_1_32_x deno_1_33_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
-                skopeo-nix2container oras redpanda hasura-cli 
+                skopeo-nix2container redpanda hasura-cli 
                 kubesess graphjin atlas kwok
                 k9s gitlab-runner kubernetes-helm aws-batch-routes symlink-mirror;
               inherit (pkgs) kubectx;
@@ -158,7 +157,6 @@
                 inherit npmlock2nix;
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
-              mimirtool = pkgs.callPackage ./pkgs/mimirtool.nix { };
               kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
               gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };

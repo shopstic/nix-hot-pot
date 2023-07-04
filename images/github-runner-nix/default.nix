@@ -47,7 +47,7 @@ let
     sha256 =
       if stdenv.isx86_64 then
         "sha256-REVWq8ROIm3GrRWXcNJqFkCLVKbVXKxuTAMgn7bqscQ=" else
-        "sha256-w8Gtg9+5jXNyk1tnn85cNzz57OXrK1X/KW9qv+InX3k=";
+        "sha256-tM8tB6aJQFUGos1PnsWmVRb80k3IkWd8+HRS3AK83Ds=";
   };
 
   user = "runner";

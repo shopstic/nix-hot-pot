@@ -1,16 +1,17 @@
-# Forked from https://github.com/NixOS/nixpkgs/blob/60a2901f84a3eec243ebb575b3867c051cbdd9ed/pkgs/applications/networking/cluster/helm/default.nix
-{ lib, stdenv, buildGoModule, fetchFromGitHub, installShellFiles }:
+# Forked from https://github.com/NixOS/nixpkgs/blob/475f2428cbf185aa28abeac87bb11b52f8591f5f/pkgs/applications/networking/cluster/helm/default.nix
+{ lib, buildGoModule, fetchFromGitHub, installShellFiles, testers, kubernetes-helm }:
+
 buildGoModule rec {
   pname = "kubernetes-helm";
-  version = "3.11.3";
+  version = "3.12.1";
 
   src = fetchFromGitHub {
     owner = "helm";
     repo = "helm";
     rev = "v${version}";
-    sha256 = "sha256-BIjbSHs0sOLYB+26EHy9f3YJtUYnzgdADIXB4n45Rv0=";
+    sha256 = "sha256-vhBxs/EjJ+X3jT1799VqC4NF8To5N5nfcsE/Jc5mYM8=";
   };
-  vendorSha256 = "sha256-uz3ZqCcT+rmhNCO+y3PuCXWjTxUx8u3XDgcJxt7A37g=";
+  vendorHash = "sha256-kNdrfNcUQ6EMbYNV+ZRi+ylwbLZsVyKMdPVH/r3yhgM=";
 
   subPackages = [ "cmd/helm" ];
   ldflags = [
@@ -20,12 +21,13 @@ buildGoModule rec {
     "-X helm.sh/helm/v3/internal/version.gitCommit=${src.rev}"
   ];
 
+  __darwinAllowLocalNetworking = true;
+
   preCheck = ''
     # skipping version tests because they require dot git directory
     substituteInPlace cmd/helm/version_test.go \
       --replace "TestVersion" "SkipVersion"
-  '' + lib.optionalString stdenv.isLinux ''
-    # skipping plugin tests on linux
+    # skipping plugin tests
     substituteInPlace cmd/helm/plugin_test.go \
       --replace "TestPluginDynamicCompletion" "SkipPluginDynamicCompletion" \
       --replace "TestLoadPlugins" "SkipLoadPlugins"
@@ -44,6 +46,12 @@ buildGoModule rec {
   patches = [
     ./patch-pvc-is-ready.patch
   ];
+
+  passthru.tests.version = testers.testVersion {
+    package = kubernetes-helm;
+    command = "helm version";
+    version = "v${version}";
+  };
 
   meta = with lib; {
     homepage = "https://github.com/kubernetes/helm";

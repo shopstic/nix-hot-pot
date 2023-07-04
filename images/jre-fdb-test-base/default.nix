@@ -14,12 +14,12 @@ let
   name = "jre-fdb-test-base";
 
   base-image = nix2container.pullImage {
-    imageName = "docker.io/docker"; # 20.10.17-cli
-    imageDigest = "sha256:6c5c8b70d0de524ff092921c05ebe9c1b0d05c29962d6717666b29049e52aefe";
+    imageName = "docker.io/docker"; # 20.10.24-cli
+    imageDigest = "sha256:2967f0819c84dd589ed0a023b9d25dcfe7a3c123d5bf784ffbb77edf55335f0c";
     sha256 =
       if stdenv.isx86_64 then
-        "sha256-cpuJL4DL9Ebv+Uf5GBlWZL5olpgWoOZnDKvxfqvao/U=" else
-        "sha256-6DCXLBYvQP9g1WSroGskPcK0KNDYol37jck/9XRH4So=";
+        "sha256-lp2BUGOJ72bJ0EEuTbr8dGcIjLn6GbnOfTBYRLISaM8=" else
+        "sha256-SsnV1E8R60qF8sKF7ZIQHrpz0wA6CIQyJ5KEfpsjVDY=";
   };
 
   user = "app";

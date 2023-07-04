@@ -4,16 +4,16 @@
 }:
 buildGoModule rec {
   pname = "kwok";
-  version = "0.2.0";
+  version = "0.3.0";
 
   src = fetchFromGitHub {
     owner = "kubernetes-sigs";
     repo = "kwok";
     rev = "v${version}";
-    sha256 = "sha256-ClKQTxcib8bXI+fFoFSOX/0rw3h4+Cb6M96ZDt6xWp4=";
+    sha256 = "sha256-u+CGMGBSrQOlUBLt4ZSakts1ZBPbNxuyz4GxoVxoBFI=";
   };
 
-  vendorSha256 = "sha256-r6v6LnmVeeRX2rESu4a4SppTcUWwL8Orwr+Q6I8YzgU=";
+  vendorSha256 = "sha256-5ssgS7K4tX25aS2tfApKNUi510aUdQ6PGFKuHVoxL/c=";
 
   excludedPackages = [ "gen_cmd_docs" "verify_boilerplate" ];
 
