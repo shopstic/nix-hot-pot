@@ -109,11 +109,12 @@
           kwok = pkgs.callPackage ./pkgs/kwok.nix { };
           gitlab-runner = pkgs.callPackage ./pkgs/gitlab-runner { };
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
+          kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
-              inherit skopeo-nix2container redpanda;
+              inherit skopeo-nix2container redpanda kubeshark;
               inherit (pkgs)
                 awscli2
                 parallel
@@ -145,7 +146,7 @@
               inherit
                 deno deno_1_30_x deno_1_31_x deno_1_32_x deno_1_33_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
-                skopeo-nix2container redpanda hasura-cli 
+                skopeo-nix2container redpanda hasura-cli
                 kubesess graphjin atlas kwok
                 k9s gitlab-runner kubernetes-helm aws-batch-routes symlink-mirror;
               inherit (pkgs) kubectx;
@@ -157,7 +158,6 @@
                 inherit npmlock2nix;
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
-              kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
               gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
