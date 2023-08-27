@@ -1,17 +1,17 @@
-# Forked from https://github.com/NixOS/nixpkgs/blob/475f2428cbf185aa28abeac87bb11b52f8591f5f/pkgs/applications/networking/cluster/helm/default.nix
+# Forked from https://github.com/NixOS/nixpkgs/blob/3fabe187426a3c69899b09347a11a6ec2c01e3a0/pkgs/applications/networking/cluster/helm/default.nix
 { lib, buildGoModule, fetchFromGitHub, installShellFiles, testers, kubernetes-helm }:
 
 buildGoModule rec {
   pname = "kubernetes-helm";
-  version = "3.12.1";
+  version = "3.12.2";
 
   src = fetchFromGitHub {
     owner = "helm";
     repo = "helm";
     rev = "v${version}";
-    sha256 = "sha256-vhBxs/EjJ+X3jT1799VqC4NF8To5N5nfcsE/Jc5mYM8=";
+    sha256 = "sha256-nUkUb41UX9kCIjBrz3AMnaHZSgNoEc+lS6J8Edy6lVA=";
   };
-  vendorHash = "sha256-kNdrfNcUQ6EMbYNV+ZRi+ylwbLZsVyKMdPVH/r3yhgM=";
+  vendorHash = "sha256-4NsGosKFyl3T3bIndYRP0hhJQ5oj6KuSv4kYH9b83WE=";
 
   subPackages = [ "cmd/helm" ];
   ldflags = [

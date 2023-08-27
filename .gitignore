@@ -4,3 +4,4 @@
 /tests/result
 .go
 .gotools
+/gitlab-copy.yml

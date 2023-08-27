@@ -23,7 +23,7 @@
             inherit system;
             config = {
               permittedInsecurePackages = [
-                "nodejs-16.20.1"
+                "nodejs-16.20.2"
               ];
               allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
                 "redpanda"
@@ -46,7 +46,9 @@
           deno_1_32_x = pkgs.callPackage ./pkgs/deno-1.32.x.nix { };
           deno_1_33_x = pkgs.callPackage ./pkgs/deno-1.33.x.nix { };
           deno_1_34_x = pkgs.callPackage ./pkgs/deno-1.34.x.nix { };
-          deno = deno_1_34_x.overrideAttrs (oldAttrs: {
+          deno_1_35_x = pkgs.callPackage ./pkgs/deno-1.35.x.nix { };
+          deno_1_36_x = pkgs.callPackage ./pkgs/deno-1.36.x.nix { };
+          deno = deno_1_36_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -147,7 +149,7 @@
                 deno deno_1_30_x deno_1_31_x deno_1_32_x deno_1_33_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
-                kubesess graphjin atlas kwok
+                kubesess kubeshark graphjin atlas kwok
                 k9s gitlab-runner kubernetes-helm aws-batch-routes symlink-mirror;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {

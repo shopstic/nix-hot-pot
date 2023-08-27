@@ -34,11 +34,11 @@ let
 
   base-image = nix2container.pullImage {
     imageName = "docker.io/library/ubuntu"; # 22.04
-    imageDigest = "sha256:6120be6a2b7ce665d0cbddc3ce6eae60fe94637c6a66985312d1f02f63cc0bcd";
+    imageDigest = "sha256:ec050c32e4a6085b423d36ecd025c0d3ff00c38ab93a3d71a460ff1c44fa6d77";
     sha256 =
       if stdenv.isx86_64 then
-        "sha256-REVWq8ROIm3GrRWXcNJqFkCLVKbVXKxuTAMgn7bqscQ=" else
-        "sha256-tM8tB6aJQFUGos1PnsWmVRb80k3IkWd8+HRS3AK83Ds=";
+        "sha256-NMY1kmECmRCrxjPkcXwWAjVjwQsV1rUamtUhoAmYabc=" else
+        "sha256-e3Mko4Y03OX8cxSjDu/PynPViawUem3BBNLUJst6g78=";
   };
 
   user = "runner";

@@ -1,9 +1,8 @@
 # Forked from nixpkgs to pin to a particular version 
-# (https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/continuous-integration/gitlab-runner/default.nix)
+# https://github.com/NixOS/nixpkgs/blob/3fabe187426a3c69899b09347a11a6ec2c01e3a0/pkgs/development/tools/continuous-integration/gitlab-runner/default.nix
 { lib, buildGoModule, fetchFromGitLab, fetchurl, bash }:
-
 let
-  version = "15.7.3";
+  version = "16.3.0";
 in
 buildGoModule rec {
   inherit version;
@@ -19,13 +18,13 @@ buildGoModule rec {
   # For patchShebangs
   buildInputs = [ bash ];
 
-  vendorSha256 = "sha256-lZAESAJ7ZRjHW6MD/xm3rOczK0h8EfmRAAVxRbVLu/k=";
+  vendorHash = "sha256-tMhzq9ygUmNi9+mlI9Gvr2nDyG9HQbs8PVusSgadZIE=";
 
   src = fetchFromGitLab {
     owner = "gitlab-org";
     repo = "gitlab-runner";
     rev = "v${version}";
-    sha256 = "sha256-E5bM/vsDxq9gToJ1dgvbNdgenck/ObIj8rVpm13jzug=";
+    sha256 = "sha256-YAnHOIpUN1OuNefjCIccZOLwPNMxVBuCRQgX0Tb5bos=";
   };
 
   patches = [
@@ -35,18 +34,27 @@ buildGoModule rec {
 
   prePatch = ''
     # Remove some tests that can't work during a nix build
+
     # Requires to run in a git repo
     sed -i "s/func TestCacheArchiverAddingUntrackedFiles/func OFF_TestCacheArchiverAddingUntrackedFiles/" commands/helpers/file_archiver_test.go
     sed -i "s/func TestCacheArchiverAddingUntrackedUnicodeFiles/func OFF_TestCacheArchiverAddingUntrackedUnicodeFiles/" commands/helpers/file_archiver_test.go
+
     # No writable developer environment
     rm common/build_test.go
     rm executors/custom/custom_test.go
+
     # No docker during build
     rm executors/docker/terminal_test.go
     rm executors/docker/docker_test.go
     rm helpers/docker/auth/auth_test.go
     rm executors/docker/services_test.go
   '';
+
+  excludedPackages = [
+    # CI helper script for pushing images to Docker and ECR registries
+    # https://gitlab.com/gitlab-org/gitlab-runner/-/merge_requests/4139
+    "./scripts/sync-docker-images"
+  ];
 
   postInstall = ''
     install packaging/root/usr/share/gitlab-runner/clear-docker-cache $out/bin
@@ -62,6 +70,6 @@ buildGoModule rec {
     license = licenses.mit;
     homepage = "https://about.gitlab.com/gitlab-ci/";
     platforms = platforms.unix ++ platforms.darwin;
-    maintainers = with maintainers; [ bachp zimbatm globin yayayayaka ];
+    maintainers = with maintainers; [ bachp zimbatm globin ] ++ teams.gitlab.members;
   };
 }
