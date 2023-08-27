@@ -1,5 +1,5 @@
 # Forked from nixpkgs to pin to a particular version 
-# https://github.com/NixOS/nixpkgs/blob/3fabe187426a3c69899b09347a11a6ec2c01e3a0/pkgs/development/tools/continuous-integration/gitlab-runner/default.nix
+# https://github.com/NixOS/nixpkgs/blob/f155f0cf4ea43c4e3c8918d2d327d44777b6cad4/pkgs/development/tools/continuous-integration/gitlab-runner/default.nix
 { lib, buildGoModule, fetchFromGitLab, fetchurl, bash }:
 let
   version = "16.3.0";
@@ -70,6 +70,6 @@ buildGoModule rec {
     license = licenses.mit;
     homepage = "https://about.gitlab.com/gitlab-ci/";
     platforms = platforms.unix ++ platforms.darwin;
-    maintainers = with maintainers; [ bachp zimbatm globin ] ++ teams.gitlab.members;
+    maintainers = with maintainers; [ bachp zimbatm globin yayayayaka ];
   };
 }
