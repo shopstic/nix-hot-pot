@@ -56,6 +56,7 @@
 
           jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
           aws-batch-routes = pkgs.callPackage ./pkgs/aws-batch-routes { };
+          pcap-ws = pkgs.callPackage ./pkgs/pcap-ws { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-compile.nix
@@ -150,7 +151,8 @@
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin atlas kwok
-                k9s gitlab-runner kubernetes-helm aws-batch-routes symlink-mirror;
+                k9s gitlab-runner kubernetes-helm
+                aws-batch-routes symlink-mirror pcap-ws;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
@@ -226,6 +228,9 @@
                   };
                   image-kwok = pkgs.callPackage ./images/kwok {
                     inherit nix2container kwok;
+                  };
+                  image-pcap-ws = pkgs.callPackage ./images/pcap-ws {
+                    inherit nix2container pcap-ws;
                   };
                 }; in
               (images // ({
