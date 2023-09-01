@@ -57,6 +57,7 @@
           jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
           aws-batch-routes = pkgs.callPackage ./pkgs/aws-batch-routes { };
           pcap-ws = pkgs.callPackage ./pkgs/pcap-ws { };
+          ng-server = pkgs.callPackage ./pkgs/ng-server { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
 
           intellij-helper = pkgs.callPackage ./lib/deno-app-compile.nix
@@ -152,7 +153,7 @@
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin atlas kwok
                 k9s gitlab-runner kubernetes-helm
-                aws-batch-routes symlink-mirror pcap-ws;
+                aws-batch-routes symlink-mirror pcap-ws ng-server;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
@@ -231,6 +232,9 @@
                   };
                   image-pcap-ws = pkgs.callPackage ./images/pcap-ws {
                     inherit nix2container pcap-ws;
+                  };
+                  image-ng-server = pkgs.callPackage ./images/ng-server {
+                    inherit nix2container ng-server nonRootShadowSetup;
                   };
                 }; in
               (images // ({
