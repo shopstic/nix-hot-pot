@@ -5,11 +5,11 @@
   downloadMap = {
     x86_64-linux = {
       url = "https://github.com/oven-sh/bun/releases/download/bun-v${version}/bun-linux-x64-baseline.zip";
-      hash = "sha256-Q1Kf1KTGm30ESAaUk7d/B3BG4WKHfMsgjWWtf5BiDng=";
+      hash = "sha256-S12kaVOmH6wIj9YrAumKaCR3lD4sht09BP82KRJ+Rps=";
     };
     aarch64-darwin = {
       url = "https://github.com/oven-sh/bun/releases/download/bun-v${version}/bun-darwin-aarch64.zip";
-      hash = "sha256-LYNB+grgy5u19RSqtHcqNRgeP6lIK8RaZNS0ofMRAPc=";
+      hash = "sha256-NVDOrVmJgyHYtr+EVZTDgHNLBuGmT8JnfPZf8rX+x5o=";
     };
     aarch64-linux = {
       url = "https://github.com/oven-sh/bun/releases/download/bun-v${version}/bun-linux-aarch64.zip";
