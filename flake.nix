@@ -53,6 +53,12 @@
               priority = 0;
             };
           });
+          bun_1_0_x = pkgs.callPackage ./pkgs/bun-1.0.x.nix { };
+          bun = bun_1_0_x.overrideAttrs (oldAttrs: {
+            meta = oldAttrs.meta // {
+              priority = 0;
+            };
+          });
 
           jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
           aws-batch-routes = pkgs.callPackage ./pkgs/aws-batch-routes { };
@@ -149,6 +155,7 @@
             {
               inherit
                 deno deno_1_30_x deno_1_31_x deno_1_32_x deno_1_33_x
+                bun bun_1_0_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin atlas kwok
