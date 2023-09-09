@@ -21,7 +21,11 @@ stdenv.mkDerivation {
   nativeBuildInputs = [ makeWrapper ] ++ (lib.optionals (stdenv.isLinux) [ autoPatchelfHook stdenv.cc.cc.libgcc ]);
 
   installPhase = ''
-    install -m755 -D ./bun-*/bun $out/bin/bun
+    if [ -f ./bun ]; then
+      install -m755 -D ./bun $out/bin/bun
+    else
+      install -m755 -D ./bun-*/bun $out/bin/bun
+    fi
     ln -s $out/bin/bun $out/bin/bun-${version}
   '';
 
