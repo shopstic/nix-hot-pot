@@ -120,6 +120,7 @@
           gitlab-runner = pkgs.callPackage ./pkgs/gitlab-runner { };
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
           kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
+          dive = pkgs.callPackage ./pkgs/dive.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -160,6 +161,7 @@
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin atlas kwok
                 k9s gitlab-runner kubernetes-helm
+                dive 
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
