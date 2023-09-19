@@ -133,6 +133,7 @@
                 kubectl
                 caddy
                 yq-go
+                fzf
                 ;
             };
             shellHook = ''
@@ -207,6 +208,10 @@
                   };
                   image-gitlab-runner-nix = pkgs.callPackage ./images/gitlab-runner-nix {
                     inherit nix2container writeTextFiles nonRootShadowSetup gitlab-runner;
+                    nix = pkgs.nixVersions.nix_2_17;
+                  };
+                  image-remote-dev = pkgs.callPackage ./images/remote-dev {
+                    inherit nix2container writeTextFiles nonRootShadowSetup;
                     nix = pkgs.nixVersions.nix_2_17;
                   };
                   image-kubectl = pkgs.callPackage ./images/kubectl {
