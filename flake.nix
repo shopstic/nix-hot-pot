@@ -121,6 +121,7 @@
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
           kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
           dive = pkgs.callPackage ./pkgs/dive.nix { };
+          caddy = pkgs.callPackage ./pkgs/caddy.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -131,7 +132,6 @@
                 parallel
                 nodejs
                 kubectl
-                caddy
                 yq-go
                 fzf
                 ;
@@ -230,7 +230,7 @@
                     inherit nix2container;
                   };
                   image-caddy = pkgs.callPackage ./images/caddy {
-                    inherit nix2container nonRootShadowSetup;
+                    inherit nix2container nonRootShadowSetup caddy;
                   };
                   image-kube-scheduler = pkgs.callPackage ./images/kube-scheduler {
                     inherit nix2container;
