@@ -39,6 +39,11 @@ func fallbackToIndexHtml(w http.ResponseWriter, req *http.Request) {
 
 	modifiedHtmlContent := indexHtmlContent
 	baseTagRegex := regexp.MustCompile(`\<base.*href=.*?\>`)
+
+	// Strip existing script that matches the following regex.
+	// <script>window["baseHref"] = ...;</script>
+	modifiedHtmlContent = regexp.MustCompile(`<script>window\["baseHref"\] = .*?</script>`).ReplaceAllString(modifiedHtmlContent, "")
+
 	if baseTagRegex.MatchString(indexHtmlContent) {
 		modifiedHtmlContent = baseTagRegex.ReplaceAllString(indexHtmlContent, fmt.Sprintf(`<base href="%s"><script>window["baseHref"] = "%s";</script>`, basePath, basePath))
 	} else {
