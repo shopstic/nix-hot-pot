@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -18,6 +19,7 @@ import (
 var basePathHeader string
 var indexHtmlContent string
 var immutableExts map[string]bool
+var injectGlobalVars map[string]string
 
 var basePathRegex = regexp.MustCompile("^[a-zA-Z0-9/_-]+$")
 
@@ -50,6 +52,20 @@ func fallbackToIndexHtml(w http.ResponseWriter, req *http.Request) {
 		modifiedHtmlContent = strings.Replace(modifiedHtmlContent, "<head>", fmt.Sprintf(`<head><base href="%s"><script>window["baseHref"] = "%s";</script>`, basePath, basePath), 1)
 	}
 
+	// Convert the injectGlobalVars map to script tags
+	globalVarScripts := ""
+	for key, value := range injectGlobalVars {
+		jsonValue, err := json.Marshal(value)
+		if err != nil {
+			log.Printf("Error marshaling value for key %s: %v", key, err)
+			continue
+		}
+		globalVarScripts += fmt.Sprintf("\n<script>window[\"%s\"] = %s;</script>", key, jsonValue)
+	}
+
+	// Insert globalVarScripts before </head>
+	modifiedHtmlContent = strings.Replace(modifiedHtmlContent, "</head>", globalVarScripts+"</head>", 1)
+
 	log.Printf("Fallback url=%s basePath=%s\n", req.URL, basePath)
 
 	w.Header().Set("Content-Type", "text/html")
@@ -68,6 +84,18 @@ func (lw *logWriter) Write(p []byte) (n int, err error) {
 	return fmt.Printf("%s %s", time.Now().Format(time.RFC3339), p)
 }
 
+func parseInjectGlobalVars(kvPairs string) map[string]string {
+	vars := make(map[string]string)
+	pairs := strings.Split(kvPairs, ",")
+	for _, pair := range pairs {
+		kv := strings.Split(pair, "=")
+		if len(kv) == 2 {
+			vars[kv[0]] = kv[1]
+		}
+	}
+	return vars
+}
+
 func main() {
 	// Set log timestamp format to ISO format
 	log.SetFlags(0)   // Disable default flags
@@ -80,6 +108,7 @@ func main() {
 	dir := flag.String("dir", ".", "Set the root directory for serving files")
 	immutableExtsFlag := flag.String("immutable-exts", "", "Comma-separated list of immutable file extensions")
 	basePathHeaderFlag := flag.String("base-path-header", "X-App-Base-Path", "The header name that contains the base path")
+	injectGlobalVarsFlag := flag.String("inject-global-vars", "", "Comma-separated list of key=value pairs to inject as global variables")
 
 	flag.Parse()
 
@@ -89,6 +118,8 @@ func main() {
 		immutableExts[ext] = true
 	}
 
+	injectGlobalVars = parseInjectGlobalVars(*injectGlobalVarsFlag)
+
 	// Debugging: Print out all parsed command-line arguments
 	fmt.Printf("Effective CLI Arguments:\n")
 	fmt.Printf("  Host: %s\n", *host)
@@ -96,6 +127,7 @@ func main() {
 	fmt.Printf("  Dir: %s\n", *dir)
 	fmt.Printf("  Immutable Extensions: %s\n", *immutableExtsFlag)
 	fmt.Printf("  Base Path Header: %s\n", basePathHeader)
+	fmt.Printf("  Inject Global Vars: %s\n", *injectGlobalVarsFlag)
 
 	absoluteDir, err := filepath.Abs(*dir)
 	if err != nil {
