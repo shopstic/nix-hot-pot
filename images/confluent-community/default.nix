@@ -8,9 +8,9 @@
 , cacert
 , bashInteractive
 , coreutils
-, findutils
 , nonRootShadowSetup
 , jre17
+, curl
 }:
 let
   name = "confluent-community";
@@ -36,8 +36,8 @@ let
       dumb-init
       bashInteractive
       coreutils
-      findutils
       jre17
+      curl
     ];
   };
 
