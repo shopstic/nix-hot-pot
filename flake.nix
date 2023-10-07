@@ -191,7 +191,7 @@
                     inherit fdb nix2container nonRootShadowSetup;
                   };
                   image-confluent-community = pkgs.callPackage ./images/confluent-community {
-                    inherit nix2container;
+                    inherit nix2container nonRootShadowSetup jre17;
                   };
                   image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
                     inherit writeTextFiles nonRootShadowSetup nix2container aws-batch-routes;
