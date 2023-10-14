@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
-    fdbPkg.url = "github:shopstic/nix-fdb/7.1.37-3";
+    fdbPkg.url = "github:shopstic/nix-fdb/7.1.41";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
       url = "github:nix-community/npmlock2nix/9197bbf397d76059a76310523d45df10d2e4ca81";
@@ -119,11 +119,12 @@
           kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
           dive = pkgs.callPackage ./pkgs/dive.nix { };
           caddy = pkgs.callPackage ./pkgs/caddy.nix { };
+          gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
-              inherit skopeo-nix2container redpanda kubeshark;
+              inherit skopeo-nix2container redpanda kubeshark gitlab-copy;
               inherit (pkgs)
                 awscli2
                 parallel
@@ -159,7 +160,7 @@
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin atlas kwok
                 k9s gitlab-runner kubernetes-helm
-                dive 
+                dive gitlab-copy
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
@@ -171,7 +172,6 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
-              gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {

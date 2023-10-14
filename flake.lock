@@ -6,16 +6,16 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1697115637,
-        "narHash": "sha256-6TVDZrt8UhbhxZp3NyihFV5SZ+uPOPR0LwjZORmcPUk=",
+        "lastModified": 1697316411,
+        "narHash": "sha256-S8SH7k2KISISzgEdGeHbFC4Lwwxi52d8P1DYqCZX1h0=",
         "owner": "shopstic",
         "repo": "nix-fdb",
-        "rev": "7b88718ce165606893eea53b90674d57c7306ce0",
+        "rev": "fea7efdb1f070cbdcaf0504a23479befffa9c6a5",
         "type": "github"
       },
       "original": {
         "owner": "shopstic",
-        "ref": "7.1.37-3",
+        "ref": "7.1.41",
         "repo": "nix-fdb",
         "type": "github"
       }
