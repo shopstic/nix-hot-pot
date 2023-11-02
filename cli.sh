@@ -88,7 +88,7 @@ push_manifest() {
 }
 
 nix_copy_path_to_s3_cache() {
-  nix copy --no-recursive -v --to s3://nixed/cache "$@"
+  nix copy --no-recursive -v --to 's3://nixed/cache?parallel-compression=true' "$@"
 }
 
 nix_copy_to_s3_cache() {
