@@ -168,7 +168,7 @@
               inherit (deno-rust)
                 cargo rustc;
               inherit
-                deno deno_1_34_x deno_1_35_x deno_1_36_x deno_1_37_x
+                deno deno_1_34_x deno_1_35_x deno_1_36_x deno_1_37_x deno_1_38_x
                 bun bun_1_0_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
