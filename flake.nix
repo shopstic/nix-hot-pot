@@ -45,13 +45,14 @@
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
           fdbLib = fdb.lib;
+          deno-rust = fenix.packages.${system}.stable;
           deno_1_34_x = pkgs.callPackage ./pkgs/deno-1.34.x.nix { };
           deno_1_35_x = pkgs.callPackage ./pkgs/deno-1.35.x.nix { };
           deno_1_36_x = pkgs.callPackage ./pkgs/deno-1.36.x.nix { };
           deno_1_37_x = pkgs.callPackage ./pkgs/deno-1.37.x.nix { };
           deno_1_38_x = pkgs.callPackage ./pkgs/deno/default.nix {
             rustPlatform = pkgs.makeRustPlatform {
-              inherit (fenix.packages.${system}.stable) 
+              inherit (deno-rust)
                 cargo
                 rustc;
             };
@@ -164,6 +165,8 @@
               k9s = pkgs.callPackage ./pkgs/k9s.nix { };
             in
             {
+              inherit (deno-rust)
+                cargo rustc;
               inherit
                 deno deno_1_34_x deno_1_35_x deno_1_36_x deno_1_37_x
                 bun bun_1_0_x
