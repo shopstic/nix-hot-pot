@@ -10,12 +10,13 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/56e249151911e3d3928b578f5b6c01b16f55c308";
+      url = "github:nlewo/nix2container/9d7f33ef0058f4df4c0912025f43c758a3289d76";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rustOverlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg }:
+  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg, rustOverlay }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ]
       (system:
         let
@@ -29,6 +30,7 @@
                 "redpanda"
               ];
             };
+            overlays = [ (import rustOverlay) ];
           };
           npmlock2nix = import npmlock2nixPkg {
             inherit pkgs;
@@ -45,7 +47,13 @@
           deno_1_35_x = pkgs.callPackage ./pkgs/deno-1.35.x.nix { };
           deno_1_36_x = pkgs.callPackage ./pkgs/deno-1.36.x.nix { };
           deno_1_37_x = pkgs.callPackage ./pkgs/deno-1.37.x.nix { };
-          deno = deno_1_37_x.overrideAttrs (oldAttrs: {
+          deno_1_38_x = pkgs.callPackage ./pkgs/deno/default.nix {
+            rustPlatform = pkgs.makeRustPlatform {
+              cargo = pkgs.rust-bin.stable.latest.minimal;
+              rustc = pkgs.rust-bin.stable.latest.minimal;
+            };
+          };
+          deno = deno_1_38_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -154,7 +162,7 @@
             in
             {
               inherit
-                deno deno_1_34_x deno_1_35_x deno_1_36_x
+                deno deno_1_34_x deno_1_35_x deno_1_36_x deno_1_37_x
                 bun bun_1_0_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
