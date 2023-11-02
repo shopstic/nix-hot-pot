@@ -13,10 +13,13 @@
       url = "github:nlewo/nix2container/9d7f33ef0058f4df4c0912025f43c758a3289d76";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    rustOverlay.url = "github:oxalica/rust-overlay";
+    fenix = {
+      url = "github:nix-community/fenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg, rustOverlay }:
+  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg, fenix }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ]
       (system:
         let
@@ -30,7 +33,6 @@
                 "redpanda"
               ];
             };
-            overlays = [ (import rustOverlay) ];
           };
           npmlock2nix = import npmlock2nixPkg {
             inherit pkgs;
@@ -49,8 +51,9 @@
           deno_1_37_x = pkgs.callPackage ./pkgs/deno-1.37.x.nix { };
           deno_1_38_x = pkgs.callPackage ./pkgs/deno/default.nix {
             rustPlatform = pkgs.makeRustPlatform {
-              cargo = pkgs.rust-bin.stable.latest.minimal;
-              rustc = pkgs.rust-bin.stable.latest.minimal;
+              inherit (fenix.packages.${system}.stable) 
+                cargo
+                rustc;
             };
           };
           deno = deno_1_38_x.overrideAttrs (oldAttrs: {
