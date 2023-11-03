@@ -23,6 +23,7 @@
 , nix-direnv
 , fzf
 , amazon-ecr-credential-helper
+, glibcLocales
 }:
 let
   name = "remote-dev";
@@ -158,6 +159,7 @@ let
   env = [
     "PATH=${globalPath}"
     "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
+    "LOCALE_ARCHIVE=${glibcLocales}/lib/locale/locale-archive"
   ];
 
   image = nix2container.buildImage {
