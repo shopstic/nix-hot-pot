@@ -16,6 +16,7 @@
 , bash
 , cacert
 , fetchurl
+, oath-toolkit
 }:
 let
   openconnect-8 = openconnect.overrideAttrs (final: prev: rec {
@@ -48,6 +49,7 @@ let
             gnugrep
             gnused
             bash
+            oath-toolkit
           ];
         };
         maxLayers = 100;
