@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
-    fdbPkg.url = "github:shopstic/nix-fdb/7.1.41";
+    fdbPkg.url = "github:shopstic/nix-fdb/7.1.43";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
       url = "github:nix-community/npmlock2nix/9197bbf397d76059a76310523d45df10d2e4ca81";
@@ -62,13 +62,6 @@
               priority = 0;
             };
           });
-          bun_1_0_x = pkgs.callPackage ./pkgs/bun-1.0.x.nix { };
-          bun = bun_1_0_x.overrideAttrs (oldAttrs: {
-            meta = oldAttrs.meta // {
-              priority = 0;
-            };
-          });
-
           jdk17Pkg = pkgs.callPackage ./pkgs/jdk17 { };
           aws-batch-routes = pkgs.callPackage ./pkgs/aws-batch-routes { };
           pcap-ws = pkgs.callPackage ./pkgs/pcap-ws { };
@@ -124,9 +117,7 @@
           redpanda = pkgs.callPackage ./pkgs/redpanda.nix { };
           kubesess = pkgs.callPackage ./pkgs/kubesess.nix { };
           graphjin = pkgs.callPackage ./pkgs/graphjin.nix { };
-          atlas = pkgs.callPackage ./pkgs/atlas.nix { };
           kwok = pkgs.callPackage ./pkgs/kwok.nix { };
-          gitlab-runner = pkgs.callPackage ./pkgs/gitlab-runner { };
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
           kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
           dive = pkgs.callPackage ./pkgs/dive.nix { };
@@ -169,11 +160,10 @@
                 cargo rustc;
               inherit
                 deno deno_1_34_x deno_1_35_x deno_1_36_x deno_1_37_x
-                bun bun_1_0_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
-                kubesess kubeshark graphjin atlas kwok
-                k9s gitlab-runner kubernetes-helm
+                kubesess kubeshark graphjin kwok
+                k9s kubernetes-helm
                 dive gitlab-copy
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
               inherit (pkgs) kubectx;
@@ -218,7 +208,7 @@
                     nix = pkgs.nixVersions.nix_2_17;
                   };
                   image-gitlab-runner-nix = pkgs.callPackage ./images/gitlab-runner-nix {
-                    inherit nix2container writeTextFiles nonRootShadowSetup gitlab-runner;
+                    inherit nix2container writeTextFiles nonRootShadowSetup;
                     nix = pkgs.nixVersions.nix_2_17;
                   };
                   image-remote-dev = pkgs.callPackage ./images/remote-dev {

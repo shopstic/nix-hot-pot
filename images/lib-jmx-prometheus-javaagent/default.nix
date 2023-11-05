@@ -4,11 +4,11 @@
 , writeShellScript
 }:
 let
-  version = "0.17.0";
+  version = "0.20.0";
   jar = fetchurl {
     name = "jmx-prometheus-javaagent-${version}";
     url = "https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${version}/jmx_prometheus_javaagent-${version}.jar";
-    sha256 = "sha256-eQNkblHzQMAo5YSuhYv6jzLA5IWmSri9ZtR+yJEOJIM=";
+    sha256 = "sha256-vkqzg/guqweRExLO1GRckaVlUm4WI9fP+RhZP0yElkI=";
     downloadToTemp = true;
     recursiveHash = true;
     postFetch = ''
