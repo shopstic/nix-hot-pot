@@ -1,9 +1,9 @@
-{ buildGo118Module
+{ buildGo119Module
 , fetchFromGitHub
 , lib
 }:
 let
-  grpc-health-probe = buildGo118Module rec {
+  grpc-health-probe = buildGo119Module rec {
     pname = "grpc-health-probe";
     version = "0.4.22";
 
