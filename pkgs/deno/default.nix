@@ -8,6 +8,7 @@
 , installShellFiles
 , libiconv
 , darwin
+, makeWrapper
 , librusty_v8 ? callPackage ./librusty_v8.nix { }
 }:
 
@@ -38,6 +39,7 @@ rustPlatform.buildRustPackage rec {
     # required by deno_kv crate
     protobuf
     installShellFiles
+    makeWrapper
   ];
   buildInputs = lib.optionals stdenv.isDarwin (
     [ libiconv darwin.libobjc ] ++
@@ -59,6 +61,7 @@ rustPlatform.buildRustPackage rec {
   '';
 
   postInstall = ''
+    wrapProgram "$out/bin/deno" --set DENO_NO_UPDATE_CHECK 1
     installShellCompletion --cmd deno \
       --bash <($out/bin/deno completions bash) \
       --fish <($out/bin/deno completions fish) \
