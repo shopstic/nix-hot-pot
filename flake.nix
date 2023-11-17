@@ -123,6 +123,7 @@
           dive = pkgs.callPackage ./pkgs/dive.nix { };
           caddy = pkgs.callPackage ./pkgs/caddy.nix { };
           gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
+          docker-credential-helpers = pkgs.callPackage ./pkgs/docker-credential-helpers.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -164,7 +165,7 @@
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin kwok
                 k9s kubernetes-helm
-                dive gitlab-copy
+                dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
               inherit (pkgs) kubectx;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
