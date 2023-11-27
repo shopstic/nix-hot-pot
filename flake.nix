@@ -164,7 +164,7 @@
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin kwok
-                k9s kubernetes-helm
+                caddy k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
               inherit (pkgs) kubectx;
