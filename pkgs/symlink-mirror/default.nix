@@ -18,5 +18,5 @@ buildGoModule rec {
       );
     };
 
-  vendorSha256 = null;
+  vendorHash = null;
 }

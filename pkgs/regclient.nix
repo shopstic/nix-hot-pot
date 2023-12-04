@@ -11,7 +11,7 @@ buildGoModule rec {
     rev = tag;
     sha256 = "sha256-cYfQ27QPdx3TA7zUZ7x0+kIr//EXL+a2APK5pnlupJM=";
   };
-  vendorSha256 = "sha256-UbzMkHpmIfJoCToAT1vOYJvqkhxSGogohT2aemegZ94=";
+  vendorHash = "sha256-UbzMkHpmIfJoCToAT1vOYJvqkhxSGogohT2aemegZ94=";
 
   outputs = [ "out" ] ++ bins;
 

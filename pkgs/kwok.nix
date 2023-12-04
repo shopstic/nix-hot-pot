@@ -13,7 +13,7 @@ buildGoModule rec {
     sha256 = "sha256-u+CGMGBSrQOlUBLt4ZSakts1ZBPbNxuyz4GxoVxoBFI=";
   };
 
-  vendorSha256 = "sha256-5ssgS7K4tX25aS2tfApKNUi510aUdQ6PGFKuHVoxL/c=";
+  vendorHash = "sha256-5ssgS7K4tX25aS2tfApKNUi510aUdQ6PGFKuHVoxL/c=";
 
   excludedPackages = [ "gen_cmd_docs" "verify_boilerplate" ];
 

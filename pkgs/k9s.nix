@@ -21,7 +21,7 @@ buildGoModule rec {
   # https://github.com/derailed/k9s/issues/780
   tags = [ "netcgo" ];
 
-  vendorSha256 = "sha256-wh4WjfDBX9xdtF9fBjSLPBbqb6k8H/LpWO9eTn86le4=";
+  vendorHash = "sha256-wh4WjfDBX9xdtF9fBjSLPBbqb6k8H/LpWO9eTn86le4=";
 
   # TODO investigate why some config tests are failing
   doCheck = !(stdenv.isDarwin && stdenv.isAarch64);

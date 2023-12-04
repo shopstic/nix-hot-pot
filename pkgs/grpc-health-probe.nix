@@ -14,7 +14,7 @@ let
       sha256 = "sha256-BTLesBDRbkYW6e6fCKAuLlHOba1zMlX+gonj3tJzCXk=";
     };
 
-    vendorSha256 = "sha256-qmG3ejJERHLvrhSHCmAui7/n0cV5L6UNjD5oHDDfmHE=";
+    vendorHash = "sha256-qmG3ejJERHLvrhSHCmAui7/n0cV5L6UNjD5oHDDfmHE=";
 
     meta = with lib; {
       description = "A command-line tool to perform health-checks for gRPC applications in Kubernetes etc.";

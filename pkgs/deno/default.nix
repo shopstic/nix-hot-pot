@@ -20,10 +20,10 @@ rustPlatform.buildRustPackage rec {
     owner = "denoland";
     repo = pname;
     rev = "v${version}";
-    hash = "";
+    hash = "sha256-Jve2aKfnWZotgzfzUJ+ez+9sainmQiUg3x8FIWnr6/o=";
   };
 
-  cargoHash = "";
+  cargoHash = "sha256-pDDi0Xm1o61Ng308MeTVoVp+cYVFt34Kh4sj2idH+9s=";
 
   postPatch = ''
     # upstream uses lld on aarch64-darwin for faster builds

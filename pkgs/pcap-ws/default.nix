@@ -17,5 +17,5 @@ buildGoModule rec {
         hasSuffix "/go.sum" path
       );
     };
-  vendorSha256 = "sha256-FBMdZ+M6zLEpQ/4C92GTFESjiSA0UoP2gA+YucQ+scQ=";
+  vendorHash = "sha256-FBMdZ+M6zLEpQ/4C92GTFESjiSA0UoP2gA+YucQ+scQ=";
 }

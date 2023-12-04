@@ -13,7 +13,7 @@ buildGoModule rec {
     sha256 = "sha256-36pma5P0HNKG8FxQmtQH+Q5YQ8n1v0Xnm57Zjzc6EGk=";
   };
 
-  vendorSha256 = null;
+  vendorHash = null;
 
   modRoot = "./v2";
 
