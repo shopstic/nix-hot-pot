@@ -13,13 +13,9 @@
       url = "github:nlewo/nix2container/4400b77e14f3095ee3215a9a5e0f9143bc0e8f2d";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    fenix = {
-      url = "github:nix-community/fenix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg, fenix }:
+  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ]
       (system:
         let
@@ -45,14 +41,14 @@
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
           fdbLib = fdb.lib;
-          deno-rust = fenix.packages.${system}.stable;
+          # deno-rust = fenix.packages.${system}.stable;
           deno_1_34_x = pkgs.callPackage ./pkgs/deno-1.34.x.nix { };
           deno_1_35_x = pkgs.callPackage ./pkgs/deno-1.35.x.nix { };
           deno_1_36_x = pkgs.callPackage ./pkgs/deno-1.36.x.nix { };
           deno_1_37_x = pkgs.callPackage ./pkgs/deno-1.37.x.nix { };
           deno_1_38_x = pkgs.callPackage ./pkgs/deno/default.nix {
             rustPlatform = pkgs.makeRustPlatform {
-              inherit (deno-rust)
+              inherit (pkgs)
                 cargo
                 rustc;
             };
@@ -157,8 +153,6 @@
               k9s = pkgs.callPackage ./pkgs/k9s.nix { };
             in
             {
-              inherit (deno-rust)
-                cargo rustc;
               inherit
                 deno deno_1_34_x deno_1_35_x deno_1_36_x deno_1_37_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
