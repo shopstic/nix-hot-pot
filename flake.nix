@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
-    fdbPkg.url = "github:shopstic/nix-fdb/7.1.43";
+    fdbPkg.url = "github:shopstic/nix-fdb/7.1.45";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
       url = "github:nix-community/npmlock2nix/9197bbf397d76059a76310523d45df10d2e4ca81";
