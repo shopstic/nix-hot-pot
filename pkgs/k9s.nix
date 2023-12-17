@@ -1,13 +1,13 @@
 { stdenv, lib, buildGoModule, fetchFromGitHub, installShellFiles, testers, k9s }:
 buildGoModule rec {
   pname = "k9s";
-  version = "0.27.4";
+  version = "0.29.1";
 
   src = fetchFromGitHub {
     owner = "derailed";
     repo = "k9s";
     rev = "v${version}";
-    sha256 = "sha256-SMdpjeMerIEc0oeNe0SfZyc3yQTq6eif1fDLICNceKY=";
+    sha256 = "sha256-agGayZ20RMAcGOx+owwDbUUDsjF3FZajhwDZ5wtE93k=";
   };
 
   ldflags = [
@@ -21,7 +21,7 @@ buildGoModule rec {
   # https://github.com/derailed/k9s/issues/780
   tags = [ "netcgo" ];
 
-  vendorHash = "sha256-wh4WjfDBX9xdtF9fBjSLPBbqb6k8H/LpWO9eTn86le4=";
+  vendorHash = "sha256-1BgWQsS28pxc3bgKrCc1GPgo7U3Tp8Qi3gAqinAvUiQ=";
 
   # TODO investigate why some config tests are failing
   doCheck = !(stdenv.isDarwin && stdenv.isAarch64);
