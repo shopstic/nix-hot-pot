@@ -1,13 +1,14 @@
-{ stdenv, lib, buildGoModule, fetchFromGitHub, installShellFiles, testers, k9s }:
+{ stdenv, lib, buildGoModule, fetchFromGitHub, installShellFiles, testers, nix-update-script, k9s }:
+
 buildGoModule rec {
   pname = "k9s";
-  version = "0.29.1";
+  version = "0.30.8";
 
   src = fetchFromGitHub {
     owner = "derailed";
     repo = "k9s";
     rev = "v${version}";
-    sha256 = "sha256-agGayZ20RMAcGOx+owwDbUUDsjF3FZajhwDZ5wtE93k=";
+    hash = "sha256-RIk3e/rySYev5n0NLN6ZYHIx3ssfdUXnzBJ2y6Y/n5U=";
   };
 
   ldflags = [
@@ -21,10 +22,9 @@ buildGoModule rec {
   # https://github.com/derailed/k9s/issues/780
   tags = [ "netcgo" ];
 
-  vendorHash =
-    if stdenv.isDarwin
-    then "sha256-1BgWQsS28pxc3bgKrCc1GPgo7U3Tp8Qi3gAqinAvUiQ=" else
-      "sha256-Wn/9vIyw99BudhhTnoN81Np70VInV6uo7Sru64nhPgk=";
+  proxyVendor = true;
+
+  vendorHash = "sha256-Exn4NYegZWrItBoGVb97GUDRhhfeSJUEdr7xJnxcRMI=";
 
   # TODO investigate why some config tests are failing
   doCheck = !(stdenv.isDarwin && stdenv.isAarch64);
@@ -32,10 +32,13 @@ buildGoModule rec {
   preCheck = "export HOME=$(mktemp -d)";
   # For arch != x86
   # {"level":"fatal","error":"could not create any of the following paths: /homeless-shelter/.config, /etc/xdg","time":"2022-06-28T15:52:36Z","message":"Unable to create configuration directory for k9s"}
-  passthru.tests.version = testers.testVersion {
-    package = k9s;
-    command = "HOME=$(mktemp -d) k9s version -s";
-    inherit version;
+  passthru = {
+    tests.version = testers.testVersion {
+      package = k9s;
+      command = "HOME=$(mktemp -d) k9s version -s";
+      inherit version;
+    };
+    updateScript = nix-update-script { };
   };
 
   nativeBuildInputs = [ installShellFiles ];
@@ -49,7 +52,9 @@ buildGoModule rec {
   meta = with lib; {
     description = "Kubernetes CLI To Manage Your Clusters In Style";
     homepage = "https://github.com/derailed/k9s";
+    changelog = "https://github.com/derailed/k9s/releases/tag/v${version}";
     license = licenses.asl20;
-    maintainers = with maintainers; [ Gonzih markus1189 bryanasdev000 ];
+    mainProgram = "k9s";
+    maintainers = with maintainers; [ Gonzih markus1189 bryanasdev000 qjoly ];
   };
 }
