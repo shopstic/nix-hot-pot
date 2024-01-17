@@ -41,12 +41,9 @@
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
           fdbLib = fdb.lib;
-          # deno-rust = fenix.packages.${system}.stable;
-          deno_1_34_x = pkgs.callPackage ./pkgs/deno-1.34.x.nix { };
-          deno_1_35_x = pkgs.callPackage ./pkgs/deno-1.35.x.nix { };
-          deno_1_36_x = pkgs.callPackage ./pkgs/deno-1.36.x.nix { };
           deno_1_37_x = pkgs.callPackage ./pkgs/deno-1.37.x.nix { };
-          deno_1_38_x = pkgs.callPackage ./pkgs/deno/default.nix {
+          deno_1_38_x = pkgs.callPackage ./pkgs/deno-1.38.x.nix { };
+          deno_1_39_x = pkgs.callPackage ./pkgs/deno/default.nix {
             rustPlatform = pkgs.makeRustPlatform {
               inherit (pkgs)
                 cargo
@@ -154,7 +151,7 @@
             in
             {
               inherit
-                deno deno_1_34_x deno_1_35_x deno_1_36_x deno_1_37_x
+                deno deno_1_37_x deno_1_38_x deno_1_39_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin kwok
