@@ -114,7 +114,6 @@
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
           kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
           dive = pkgs.callPackage ./pkgs/dive.nix { };
-          caddy = pkgs.callPackage ./pkgs/caddy.nix { };
           gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
           docker-credential-helpers = pkgs.callPackage ./pkgs/docker-credential-helpers.nix { };
         in
@@ -155,7 +154,7 @@
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin kwok
-                caddy k9s kubernetes-helm
+                k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
               inherit (pkgs) kubectx;
@@ -220,7 +219,7 @@
                     inherit nix2container;
                   };
                   image-caddy = pkgs.callPackage ./images/caddy {
-                    inherit nix2container nonRootShadowSetup caddy;
+                    inherit nix2container nonRootShadowSetup;
                   };
                   image-kube-scheduler = pkgs.callPackage ./images/kube-scheduler {
                     inherit nix2container;
