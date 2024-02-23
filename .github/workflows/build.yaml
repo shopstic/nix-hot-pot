@@ -11,6 +11,7 @@ jobs:
       - ${{ matrix.runner.runner }}
       - ${{ matrix.runner.size }}
     strategy:
+     fail-fast: false
       matrix:
         runner:
           - arch: x86_64-linux
