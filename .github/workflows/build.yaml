@@ -50,6 +50,7 @@ jobs:
     env:
       IMAGE_REPOSITORY: public.ecr.aws/shopstic
     strategy:
+      fail-fast: false
       matrix:
         imageArch: [amd64, arm64]
     defaults:
