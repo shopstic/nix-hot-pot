@@ -50,6 +50,8 @@
                 rustc;
             };
           };
+          deno_1_40_x = pkgs.callPackage ./pkgs/deno-1.40.x.nix { };
+          deno_1_41_x = pkgs.callPackage ./pkgs/deno-1.41.x.nix { };
           deno = deno_1_38_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
@@ -150,7 +152,7 @@
             in
             {
               inherit
-                deno deno_1_37_x deno_1_38_x deno_1_39_x
+                deno deno_1_37_x deno_1_38_x deno_1_39_x deno_1_40_x deno_1_41_x 
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin kwok
