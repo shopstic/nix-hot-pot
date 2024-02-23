@@ -43,7 +43,7 @@
           fdbLib = fdb.lib;
           deno_1_37_x = pkgs.callPackage ./pkgs/deno-1.37.x.nix { };
           deno_1_38_x = pkgs.callPackage ./pkgs/deno-1.38.x.nix { };
-          deno_1_39_x = pkgs.callPackage ./pkgs/deno/default.nix {
+          deno_1_39_x = pkgs.callPackage ./pkgs/deno-1.39.x/default.nix {
             rustPlatform = pkgs.makeRustPlatform {
               inherit (pkgs)
                 cargo
