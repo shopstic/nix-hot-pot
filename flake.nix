@@ -10,8 +10,8 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/3680aaa3cec382e8e114c5ab6212b11df4b194c8";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nlewo/nix2container/c891f90d2e3c48a6b33466c96e4851e0fc0cf455";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     };
   };
 
@@ -122,7 +122,8 @@
         rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
-              inherit skopeo-nix2container redpanda kubeshark gitlab-copy;
+              inherit 
+                skopeo-nix2container redpanda kubeshark gitlab-copy;
               inherit (pkgs)
                 awscli2
                 parallel
