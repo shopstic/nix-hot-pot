@@ -11,7 +11,7 @@
     };
     nix2containerPkg = {
       url = "github:nlewo/nix2container/c891f90d2e3c48a6b33466c96e4851e0fc0cf455";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/1536926ef5621b09bba54035ae2bb6d806d72ac8";
     };
   };
 
