@@ -5,7 +5,7 @@
 }:
 let
   name = "lib-yourkit-agent";
-  version = "2022.3-b103";
+  version = "2023.9-b109";
   agentLib =
     if stdenv.isx86_64 then
       ./libs/amd64-libyjpagent.so else
