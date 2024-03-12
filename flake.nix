@@ -27,6 +27,7 @@
               ];
               allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
                 "redpanda"
+                "terraform"
               ];
             };
           };
