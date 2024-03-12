@@ -161,7 +161,7 @@
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
-              inherit (pkgs) kubectx;
+              inherit (pkgs) kubectx terraform;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
               };
