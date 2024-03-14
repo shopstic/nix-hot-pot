@@ -115,7 +115,6 @@
           redpanda = pkgs.callPackage ./pkgs/redpanda.nix { };
           kubesess = pkgs.callPackage ./pkgs/kubesess.nix { };
           graphjin = pkgs.callPackage ./pkgs/graphjin.nix { };
-          kwok = pkgs.callPackage ./pkgs/kwok.nix { };
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
           kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
           dive = pkgs.callPackage ./pkgs/dive.nix { };
@@ -159,7 +158,7 @@
                 deno deno_1_37_x deno_1_38_x deno_1_39_x deno_1_40_x deno_1_41_x denort_1_41_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
-                kubesess kubeshark graphjin kwok
+                kubesess kubeshark graphjin
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server;
@@ -235,9 +234,6 @@
                   };
                   image-rpk = pkgs.callPackage ./images/rpk {
                     inherit nix2container nonRootShadowSetup redpanda;
-                  };
-                  image-kwok = pkgs.callPackage ./images/kwok {
-                    inherit nix2container kwok;
                   };
                   image-pcap-ws = pkgs.callPackage ./images/pcap-ws {
                     inherit nix2container pcap-ws;
