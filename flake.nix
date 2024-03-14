@@ -11,7 +11,7 @@
     };
     nix2containerPkg = {
       url = "github:nlewo/nix2container/c891f90d2e3c48a6b33466c96e4851e0fc0cf455";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs/1536926ef5621b09bba54035ae2bb6d806d72ac8";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/0ad13a6833440b8e238947e47bea7f11071dc2b2";
     };
   };
 
@@ -22,10 +22,6 @@
           pkgs = import nixpkgs {
             inherit system;
             config = {
-              permittedInsecurePackages = [
-                # "nodejs-16.20.2"
-                # "nix-2.15.3"
-              ];
               allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
                 "redpanda"
                 "terraform"
