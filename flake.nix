@@ -23,8 +23,8 @@
             inherit system;
             config = {
               permittedInsecurePackages = [
-                "nodejs-16.20.2"
-                "nix-2.15.3"
+                # "nodejs-16.20.2"
+                # "nix-2.15.3"
               ];
               allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
                 "redpanda"
