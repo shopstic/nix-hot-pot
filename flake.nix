@@ -101,7 +101,6 @@
               };
               "nix.enableLanguageServer" = true;
               "nix.formatterPath" = pkgs.nixpkgs-fmt + "/bin/nixpkgs-fmt";
-              "nix.serverPath" = pkgs.rnix-lsp + "/bin/rnix-lsp";
             };
           };
           manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
@@ -134,6 +133,7 @@
             shellHook = ''
               echo 'will cite' | parallel --citation >/dev/null 2>&1
               mkdir -p ./.vscode
+              # vscode settings
               cat ${vscodeSettings} > ./.vscode/settings.json
             '';
           };
