@@ -22,6 +22,9 @@
           pkgs = import nixpkgs {
             inherit system;
             config = {
+              permittedInsecurePackages = [
+                "nix-2.15.3"
+              ];
               allowUnfreePredicate = pkg: builtins.elem (pkgs.lib.getName pkg) [
                 "redpanda"
                 "terraform"
