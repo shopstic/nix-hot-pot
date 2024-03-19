@@ -28,7 +28,7 @@ stdenv.mkDerivation {
 
   meta = with stdenv.lib; {
     inherit priority;
-    homepage = https://deno.land;
+    homepage = "https://deno.land";
     description = "A secure runtime for JavaScript and TypeScript";
     platforms = builtins.attrNames downloadMap;
   };

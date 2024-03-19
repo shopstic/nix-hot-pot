@@ -38,17 +38,7 @@
           skopeo-nix2container = nix2containerPkgs.skopeo-nix2container;
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
-          fdbLib = fdb.lib;
-          deno_1_37_x = pkgs.callPackage ./pkgs/deno-1.37.x.nix { };
           deno_1_38_x = pkgs.callPackage ./pkgs/deno-1.38.x.nix { };
-          deno_1_39_x = pkgs.callPackage ./pkgs/deno-1.39.x/default.nix {
-            rustPlatform = pkgs.makeRustPlatform {
-              inherit (pkgs)
-                cargo
-                rustc;
-            };
-          };
-          deno_1_40_x = pkgs.callPackage ./pkgs/deno-1.40.x.nix { };
           deno_1_41_x = pkgs.callPackage ./pkgs/deno-1.41.x.nix { };
           denort_1_41_x = pkgs.callPackage ./pkgs/denort-1.41.x.nix { };
           deno = deno_1_38_x.overrideAttrs (oldAttrs: {
@@ -101,10 +91,17 @@
               };
               "nix.enableLanguageServer" = true;
               "nix.formatterPath" = pkgs.nixpkgs-fmt + "/bin/nixpkgs-fmt";
+              "nix.serverPath" = pkgs.nil + "/bin/nil";
+              "nix.serverSettings" = {
+                "nil" = {
+                  "formatting" = {
+                    "command" = [ "nixpkgs-fmt" ];
+                  };
+                };
+              };
             };
           };
           manifest-tool = pkgs.callPackage ./pkgs/manifest-tool.nix { };
-          buildahBuild = pkgs.callPackage ./lib/buildah-build.nix;
           writeTextFiles = pkgs.callPackage ./lib/write-text-files.nix { };
           nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix { inherit writeTextFiles; };
           redpanda = pkgs.callPackage ./pkgs/redpanda.nix { };
@@ -119,7 +116,7 @@
         rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
-              inherit 
+              inherit
                 skopeo-nix2container redpanda kubeshark gitlab-copy;
               inherit (pkgs)
                 awscli2
@@ -151,7 +148,7 @@
             in
             {
               inherit
-                deno deno_1_37_x deno_1_38_x deno_1_39_x deno_1_40_x deno_1_41_x denort_1_41_x
+                deno deno_1_38_x deno_1_41_x denort_1_41_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin
@@ -237,7 +234,8 @@
                   image-ng-server = pkgs.callPackage ./images/ng-server {
                     inherit nix2container ng-server nonRootShadowSetup;
                   };
-                }; in
+                };
+              in
               (images // ({
                 all-images = pkgs.linkFarmFromDrvs "all-images" (pkgs.lib.attrValues images);
               }))
