@@ -105,11 +105,11 @@ nix_copy_to_public_bin_cache() {
 
   DESTINATION="${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}"
 
-  if ! aws s3 ls "s3://bin-cache/${DESTINATION}" >/dev/null 2>&1; then
-    echo "Uploading ${DESTINATION} to bin-cache"
-    aws s3 cp "${PACKAGE_PATH}/bin/"* "s3://bin-cache/${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}/"
+  if ! aws s3 ls "s3://nix.wok.run/${DESTINATION}" >/dev/null 2>&1; then
+    echo "Uploading ${DESTINATION} to bin cache"
+    aws s3 cp "${PACKAGE_PATH}/bin/"* "s3://nix.wok.run/${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}/"
   else
-    echo "${DESTINATION} already exists in bin-cache, skipping..."
+    echo "${DESTINATION} already exists in bin cache, skipping..."
   fi
 }
 
