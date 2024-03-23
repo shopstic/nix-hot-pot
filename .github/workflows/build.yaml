@@ -54,8 +54,6 @@ jobs:
       - ${{ matrix.imageArch }}-linux
       - medium
     needs: [build-packages]
-    env:
-      IMAGE_REPOSITORY: public.ecr.aws/${{ env.AWS_ECR_PUBLIC_ALIAS }}
     strategy:
       fail-fast: false
       matrix:
@@ -81,8 +79,6 @@ jobs:
     runs-on: [self-hosted, nix, general, arm64-linux, small]
     needs: [build-push-images]
     if: github.ref == 'refs/heads/main'
-    env:
-      IMAGE_REPOSITORY: public.ecr.aws/${{ env.AWS_ECR_PUBLIC_ALIAS }}
     defaults:
       run:
         shell: nix develop -c bash {0}      
