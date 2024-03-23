@@ -88,7 +88,7 @@ push_manifest() {
 }
 
 nix_copy_path_to_s3_cache() {
-  nix copy --no-recursive -v --to 's3://nixed/cache?parallel-compression=true' "$@"
+  nix copy --no-recursive -v --to 's3://nix.wok.run/cache?parallel-compression=true' "$@"
 }
 
 nix_copy_to_s3_cache() {
@@ -104,10 +104,11 @@ nix_copy_to_public_bin_cache() {
   PACKAGE_PATH=$(nix path-info ".#packages.${PACKAGE_ARCH}.${PACKAGE_NAME}-${PACKAGE_VERSION}") || exit $?
 
   DESTINATION="${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}"
+  S3_DESTINATION="s3://nix.wok.run/bin/${DESTINATION}"
 
-  if ! aws s3 ls "s3://nix.wok.run/${DESTINATION}" >/dev/null 2>&1; then
+  if ! aws s3 ls "${S3_DESTINATION}" >/dev/null 2>&1; then
     echo "Uploading ${DESTINATION} to bin cache"
-    aws s3 cp "${PACKAGE_PATH}/bin/"* "s3://nix.wok.run/${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}/"
+    aws s3 cp "${PACKAGE_PATH}/bin/"* "${S3_DESTINATION}/"
   else
     echo "${DESTINATION} already exists in bin cache, skipping..."
   fi
