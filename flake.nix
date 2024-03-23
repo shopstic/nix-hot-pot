@@ -112,6 +112,7 @@
           dive = pkgs.callPackage ./pkgs/dive.nix { };
           gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
           docker-credential-helpers = pkgs.callPackage ./pkgs/docker-credential-helpers.nix { };
+          ecr-credential-provider-1_24 = pkgs.callPackage ./pkgs/ecr-credential-provider-1.24.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -154,7 +155,9 @@
                 kubesess kubeshark graphjin
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
-                aws-batch-routes symlink-mirror pcap-ws ng-server;
+                aws-batch-routes symlink-mirror pcap-ws ng-server
+                ecr-credential-provider-1_24
+                ;
               inherit (pkgs) kubectx terraform;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
