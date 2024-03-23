@@ -9,8 +9,8 @@ image_arch_to_nix_arch() {
   elif [[ "${IMAGE_ARCH}" == "amd64" ]]; then
     echo "x86_64"
   else
-     >&2 echo "Invalid image arch of ${IMAGE_ARCH}"
-     exit 1
+    echo >&2 "Invalid image arch of ${IMAGE_ARCH}"
+    exit 1
   fi
 }
 
@@ -45,7 +45,7 @@ push_single_arch() {
 
   local IMAGE=${1:?"Image name is required"}
   local ARCH=${2:?"Arch is required (amd64 | arm64)"}
-  
+
   local NIX_ARCH
   NIX_ARCH=$("$0" image_arch_to_nix_arch "${ARCH}") || exit $?
 
@@ -57,7 +57,7 @@ push_single_arch() {
 
   local TARGET_IMAGE="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-${ARCH}"
 
-  >&2 echo "Pushing ${TARGET_IMAGE}"
+  echo >&2 "Pushing ${TARGET_IMAGE}"
 
   skopeo --insecure-policy copy --dest-tls-verify=false \
     nix:"./result/${FILE_NAME}" \
@@ -78,8 +78,8 @@ push_manifest() {
   IMAGE_TAG=$(nix eval --raw ".#packages.${NIX_ARCH}-linux.image-${IMAGE}.imageTag") || exit $?
 
   local TARGET="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}"
-  
-  >&2 echo "Writing manifest for ${TARGET}"
+
+  echo >&2 "Writing manifest for ${TARGET}"
 
   manifest-tool push from-args \
     --platforms linux/amd64,linux/arm64 \
@@ -95,6 +95,22 @@ nix_copy_to_s3_cache() {
   readarray -t STORE_PATHS < <(nix path-info -r "$@" | xargs -I{} basename {})
   parallel -j"$(nproc)" --tagstring "[{}]" --line-buffer \
     "$0" nix_copy_path_to_s3_cache '/nix/store/{}' ::: "${STORE_PATHS[@]}"
+}
+
+nix_copy_to_public_bin_cache() {
+  PACKAGE_ARCH=${1:?"Package arch is required"}
+  PACKAGE_NAME=${2:?"Package name is required"}
+  PACKAGE_VERSION=${3:?"Package version is required"}
+  PACKAGE_PATH=$(nix path-info ".#packages.${PACKAGE_ARCH}.${PACKAGE_NAME}-${PACKAGE_VERSION}") || exit $?
+
+  DESTINATION="${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}"
+
+  if ! aws s3 ls "s3://bin-cache/${DESTINATION}" >/dev/null 2>&1; then
+    echo "Uploading ${DESTINATION} to bin-cache"
+    aws s3 cp "${PACKAGE_PATH}/bin/"* "s3://bin-cache/${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}/"
+  else
+    echo "${DESTINATION} already exists in bin-cache, skipping..."
+  fi
 }
 
 "$@"
