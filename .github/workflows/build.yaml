@@ -35,7 +35,7 @@ jobs:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
         run: |
           nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
-          nix copy -v --to "s3://nix.wok.run/cache?region=${AWS_REGION}&compression=zstd&parallel-compression=true" "${NIX_OUTPUT}"
+          nix copy -v --to "s3://${NIX_CACHE_BUCKET_NAME}?region=${NIX_CACHE_BUCKET_REGION}&compression=zstd&parallel-compression=true" "${NIX_OUTPUT}"
 
       - name: Cache some packages in S3
         env:

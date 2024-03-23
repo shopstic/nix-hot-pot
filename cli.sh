@@ -87,24 +87,15 @@ push_manifest() {
     --target "${TARGET}"
 }
 
-nix_copy_path_to_s3_cache() {
-  nix copy --no-recursive -v --to 's3://nix.wok.run/cache?parallel-compression=true' "$@"
-}
-
-nix_copy_to_s3_cache() {
-  readarray -t STORE_PATHS < <(nix path-info -r "$@" | xargs -I{} basename {})
-  parallel -j"$(nproc)" --tagstring "[{}]" --line-buffer \
-    "$0" nix_copy_path_to_s3_cache '/nix/store/{}' ::: "${STORE_PATHS[@]}"
-}
-
 nix_copy_to_public_bin_cache() {
+  NIX_CACHE_BUCKET_NAME=${NIX_CACHE_BUCKET_NAME:?"NIX_CACHE_BUCKET_NAME env var is required"}
   PACKAGE_ARCH=${1:?"Package arch is required"}
   PACKAGE_NAME=${2:?"Package name is required"}
   PACKAGE_VERSION=${3:?"Package version is required"}
   PACKAGE_PATH=$(nix path-info ".#packages.${PACKAGE_ARCH}.${PACKAGE_NAME}-${PACKAGE_VERSION}") || exit $?
 
   DESTINATION="${PACKAGE_NAME}/${PACKAGE_VERSION}/${PACKAGE_ARCH}"
-  S3_DESTINATION="s3://nix.wok.run/bin/${DESTINATION}"
+  S3_DESTINATION="s3://${NIX_CACHE_BUCKET_NAME}/bin/${DESTINATION}"
 
   if ! aws s3 ls "${S3_DESTINATION}" >/dev/null 2>&1; then
     echo "Uploading ${DESTINATION} to bin cache"
