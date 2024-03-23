@@ -55,7 +55,7 @@ jobs:
       - medium
     needs: [build-packages]
     env:
-      IMAGE_REPOSITORY: public.ecr.aws/shopstic
+      IMAGE_REPOSITORY: public.ecr.aws/${{ env.AWS_ECR_PUBLIC_ALIAS }}
     strategy:
       fail-fast: false
       matrix:
@@ -82,7 +82,7 @@ jobs:
     needs: [build-push-images]
     if: github.ref == 'refs/heads/main'
     env:
-      IMAGE_REPOSITORY: public.ecr.aws/shopstic
+      IMAGE_REPOSITORY: public.ecr.aws/${{ env.AWS_ECR_PUBLIC_ALIAS }}
     defaults:
       run:
         shell: nix develop -c bash {0}      
