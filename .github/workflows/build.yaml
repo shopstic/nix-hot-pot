@@ -42,6 +42,7 @@ jobs:
           BIN_ARCH: ${{ matrix.runner.arch }}
         shell: nix develop -c bash {0}
         run: |
+          sleep 10000
           ./cli.sh nix_copy_to_public_bin_cache "${BIN_ARCH}" ecr-credential-provider 1_24
 
   build-push-images:
