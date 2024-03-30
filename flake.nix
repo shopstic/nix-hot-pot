@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
-    fdbPkg.url = "github:shopstic/nix-fdb/7.1.53";
+    fdbPkg.url = "github:shopstic/nix-fdb/7.1.57";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
       url = "github:nix-community/npmlock2nix/9197bbf397d76059a76310523d45df10d2e4ca81";
@@ -40,7 +40,9 @@
           fdb = fdbPkg.packages.${system}.fdb_7;
           deno_1_38_x = pkgs.callPackage ./pkgs/deno-1.38.x.nix { };
           deno_1_41_x = pkgs.callPackage ./pkgs/deno-1.41.x.nix { };
+          deno_1_42_x = pkgs.callPackage ./pkgs/deno-1.42.x.nix { };
           denort_1_41_x = pkgs.callPackage ./pkgs/denort-1.41.x.nix { };
+          denort_1_42_x = pkgs.callPackage ./pkgs/denort-1.42.x.nix { };
           deno = deno_1_38_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
@@ -149,7 +151,7 @@
             in
             {
               inherit
-                deno deno_1_38_x deno_1_41_x denort_1_41_x
+                deno deno_1_38_x deno_1_41_x denort_1_41_x deno_1_42_x denort_1_42_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin
