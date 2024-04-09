@@ -1,44 +1,33 @@
 { name
 , src
 , appSrcPath
+, denoCompileFlags ? "--no-config --no-lock --no-prompt --no-remote --cached-only -A"
 , stdenv
 , deno
-, denoRunFlags ? "--cached-only --unstable -A"
+, denort
+, deno-app-build
+, lib
 }:
 let
-  deps = stdenv.mkDerivation
-    {
-      inherit src;
-      name = "${name}-deps";
-      nativeBuildInputs = [ deno ];
-      __noChroot = true;
-      phases = [ "unpackPhase" "installPhase" ];
-
-      installPhase =
-        ''
-          mkdir $out
-          export DENO_DIR=$out
-          deno cache --lock=lock.json "${appSrcPath}"
-        '';
-    };
-
-  output = stdenv.mkDerivation
-    {
-      inherit src name;
-      nativeBuildInputs = [ deno ];
-
-      phases = [ "unpackPhase" "installPhase" ];
-
-      installPhase =
-        ''
-          export DENO_DIR=$(mktemp -d)
-          echo "DENO_DIR=$DENO_DIR"
-          ln -s ${deps}/deps "$DENO_DIR/"
-          cp -R ${deps}/gen "$DENO_DIR/"
-          chmod -R +w "$DENO_DIR/gen"
-          mkdir -p $out/bin
-          deno compile --lock=lock.json ${denoRunFlags} --output=$out/bin/${name} "${appSrcPath}" 
-        '';
-    };
+  replaceTsExtension = str:
+    if lib.hasSuffix ".ts" str then
+      lib.substring 0 (lib.stringLength str - 3) str + ".js"
+    else
+      str;
 in
-output
+stdenv.mkDerivation
+{
+  inherit src;
+  name = "${name}-build";
+  nativeBuildInputs = [ deno ];
+  __noChroot = true;
+  phases = [ "unpackPhase" "installPhase" ];
+  installPhase = ''
+    export DENO_DIR=$(mktemp -d)
+    TEMP_OUT=$(mktemp -d)
+    mkdir -p $out/bin
+    ${deno-app-build}/bin/deno-app-build "${appSrcPath}" "$TEMP_OUT"
+    export DENORT_BIN="${denort}/bin/denort"
+    deno compile ${denoCompileFlags} -o "$out/bin/${name}" "$TEMP_OUT/${replaceTsExtension appSrcPath}"
+  '';
+}

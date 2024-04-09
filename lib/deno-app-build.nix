@@ -1,47 +1,34 @@
 { name
 , src
 , appSrcPath
+, denoRunFlags ? "--no-config --no-lock --no-prompt --no-remote --cached-only -A"
 , stdenv
 , deno
-, denoRunFlags ? "--no-remote --cached-only --unstable -A"
+, deno-app-build
 , writeShellScriptBin
+, lib
 }:
 let
-  deps = stdenv.mkDerivation
+  app-build = stdenv.mkDerivation
     {
       inherit src;
-      name = "${name}-deps";
+      name = "${name}-build";
       nativeBuildInputs = [ deno ];
       __noChroot = true;
       phases = [ "unpackPhase" "installPhase" ];
-
-      installPhase =
-        ''
-          mkdir $out
-          export DENO_DIR=$out
-          deno cache --lock=lock.json "${appSrcPath}"
-        '';
-    };
-
-  jsBundle = stdenv.mkDerivation
-    {
-      inherit src;
-      name = "${name}.js";
-      nativeBuildInputs = [ deno ];
-
-      phases = [ "unpackPhase" "installPhase" ];
-
       installPhase =
         ''
           export DENO_DIR=$(mktemp -d)
-          echo "DENO_DIR=$DENO_DIR"
-          ln -s ${deps}/deps "$DENO_DIR/"
-          cp -R ${deps}/gen "$DENO_DIR/"
-          chmod -R +w "$DENO_DIR/gen"
-          deno bundle --lock=lock.json "${appSrcPath}" $out
+          mkdir $out
+          ${deno-app-build}/bin/deno-app-build "${appSrcPath}" $out
         '';
     };
+  replaceTsExtension = str:
+    if lib.hasSuffix ".ts" str then
+      lib.substring 0 (lib.stringLength str - 3) str + ".js"
+    else
+      str;
 in
 writeShellScriptBin name ''
-  exec ${deno}/bin/deno run ${denoRunFlags} "${jsBundle}" "$@"
+  exec ${deno}/bin/deno run ${denoRunFlags} "${app-build}/${replaceTsExtension appSrcPath}" "$@"
 ''

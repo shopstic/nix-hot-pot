@@ -43,7 +43,12 @@
           deno_1_42_x = pkgs.callPackage ./pkgs/deno-1.42.x.nix { };
           denort_1_41_x = pkgs.callPackage ./pkgs/denort-1.41.x.nix { };
           denort_1_42_x = pkgs.callPackage ./pkgs/denort-1.42.x.nix { };
-          deno = deno_1_38_x.overrideAttrs (oldAttrs: {
+          deno = deno_1_42_x.overrideAttrs (oldAttrs: {
+            meta = oldAttrs.meta // {
+              priority = 0;
+            };
+          });
+          denort = denort_1_42_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -53,10 +58,12 @@
           pcap-ws = pkgs.callPackage ./pkgs/pcap-ws { };
           ng-server = pkgs.callPackage ./pkgs/ng-server { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
-
+          deno-app-build = pkgs.callPackage ./pkgs/deno-app-build {
+            inherit deno denort;
+          };
           intellij-helper = pkgs.callPackage ./lib/deno-app-compile.nix
             {
-              inherit deno;
+              inherit deno denort deno-app-build;
               name = "intellij-helper";
               src = builtins.path
                 {
@@ -151,14 +158,14 @@
             in
             {
               inherit
-                deno deno_1_38_x deno_1_41_x denort_1_41_x deno_1_42_x denort_1_42_x
+                deno denort deno_1_38_x deno_1_41_x denort_1_41_x deno_1_42_x denort_1_42_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server
-                ecr-credential-provider-1_24
+                ecr-credential-provider-1_24 deno-app-build
                 ;
               inherit (pkgs) kubectx terraform;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
