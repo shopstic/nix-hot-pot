@@ -186,7 +186,7 @@ const promises = Array.from(result).map(async ([key, content]) => {
   } finally {
     sem.release();
   }
-  console.log(`Wrote ${newPath}`);
+  console.error(`Wrote ${newPath}`);
 });
 await Promise.all(promises);
 
@@ -201,7 +201,12 @@ if (toCopyAssetFiles.length > 0) {
     } finally {
       sem.release();
     }
-    console.log(`Copied ${path} to ${newPath}`);
+    console.error(`Copied ${path} to ${newPath}`);
   });
   await Promise.all(promises);
 }
+
+console.log(join(
+  absoluteOutPath,
+  relative(rootPath, absoluteAppPath).replace(/\.ts$/, ".js"),
+));
