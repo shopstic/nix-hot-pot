@@ -16,6 +16,7 @@ import { exists } from "jsr:@std/fs@0.221.0";
 import { inheritExec } from "jsr:@wok/utils@1.2.0/exec";
 import { createCache } from "https://deno.land/x/deno_cache@0.7.1/mod.ts";
 import { parseFromJson } from "https://deno.land/x/import_map@v0.19.1/mod.ts";
+import { Semaphore } from "jsr:@wok/utils@1.2.0/semaphore";
 
 const [appPath, outPath] = Deno.args;
 
@@ -170,6 +171,7 @@ function transformFile(filePath: string, sourceCode: string) {
   return printer.printFile(ret.transformed[0]);
 }
 
+const sem = new Semaphore(32);
 const promises = Array.from(result).map(async ([key, content]) => {
   const path = fromFileUrl(key);
   const newPath = join(
@@ -177,8 +179,13 @@ const promises = Array.from(result).map(async ([key, content]) => {
     relative(rootPath, path).replace(/\.ts$/, ".js"),
   );
   const newParentDir = dirname(newPath);
-  await Deno.mkdir(newParentDir, { recursive: true });
-  await Deno.writeTextFile(newPath, transformFile(path, content));
+  await sem.acquire();
+  try {
+    await Deno.mkdir(newParentDir, { recursive: true });
+    await Deno.writeTextFile(newPath, transformFile(path, content));
+  } finally {
+    sem.release();
+  }
   console.log(`Wrote ${newPath}`);
 });
 await Promise.all(promises);
@@ -187,8 +194,13 @@ if (toCopyAssetFiles.length > 0) {
   const promises = toCopyAssetFiles.map(async (path) => {
     const newPath = join(absoluteOutPath, relative(rootPath, path));
     const newParentDir = dirname(newPath);
-    await Deno.mkdir(newParentDir, { recursive: true });
-    await Deno.copyFile(path, newPath);
+    await sem.acquire();
+    try {
+      await Deno.mkdir(newParentDir, { recursive: true });
+      await Deno.copyFile(path, newPath);
+    } finally {
+      sem.release();
+    }
     console.log(`Copied ${path} to ${newPath}`);
   });
   await Promise.all(promises);
