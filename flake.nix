@@ -61,6 +61,21 @@
           deno-app-build = pkgs.callPackage ./pkgs/deno-app-build {
             inherit deno denort;
           };
+          intellij-helper2 = pkgs.callPackage ./lib/deno-app-build.nix
+            {
+              inherit deno deno-app-build;
+              name = "intellij-helper";
+              src = builtins.path
+                {
+                  path = ./pkgs/intellij-helper;
+                  name = "intellij-helper-src";
+                  filter = with pkgs.lib; (path: /* type */_:
+                    hasInfix "/src" path ||
+                    hasSuffix "/deno.lock" path
+                  );
+                };
+              appSrcPath = "./src/intellij-helper.ts";
+            };
           intellij-helper = pkgs.callPackage ./lib/deno-app-compile.nix
             {
               inherit deno denort deno-app-build;
@@ -159,7 +174,7 @@
             {
               inherit
                 deno denort deno_1_38_x deno_1_41_x denort_1_41_x deno_1_42_x denort_1_42_x
-                intellij-helper manifest-tool jdk17 jre17 regclient
+                intellij-helper intellij-helper2 manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark graphjin
                 k9s kubernetes-helm

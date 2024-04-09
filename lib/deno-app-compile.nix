@@ -6,15 +6,7 @@
 , deno
 , denort
 , deno-app-build
-, lib
 }:
-let
-  replaceTsExtension = str:
-    if lib.hasSuffix ".ts" str then
-      lib.substring 0 (lib.stringLength str - 3) str + ".js"
-    else
-      str;
-in
 stdenv.mkDerivation
 {
   inherit src;
@@ -26,8 +18,8 @@ stdenv.mkDerivation
     export DENO_DIR=$(mktemp -d)
     TEMP_OUT=$(mktemp -d)
     mkdir -p $out/bin
-    ${deno-app-build}/bin/deno-app-build "${appSrcPath}" "$TEMP_OUT"
+    RESULT=$(${deno-app-build}/bin/deno-app-build "${appSrcPath}" "$TEMP_OUT") || exit $?
     export DENORT_BIN="${denort}/bin/denort"
-    deno compile ${denoCompileFlags} -o "$out/bin/${name}" "$TEMP_OUT/${replaceTsExtension appSrcPath}"
+    deno compile ${denoCompileFlags} -o "$out/bin/${name}" "$RESULT"
   '';
 }

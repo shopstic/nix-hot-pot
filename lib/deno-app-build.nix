@@ -6,7 +6,6 @@
 , deno
 , deno-app-build
 , writeShellScriptBin
-, lib
 }:
 let
   app-build = stdenv.mkDerivation
@@ -16,19 +15,16 @@ let
       nativeBuildInputs = [ deno ];
       __noChroot = true;
       phases = [ "unpackPhase" "installPhase" ];
+      outputs = [ "out" "entry" ];
       installPhase =
         ''
           export DENO_DIR=$(mktemp -d)
           mkdir $out
-          ${deno-app-build}/bin/deno-app-build "${appSrcPath}" $out
+          RESULT=$(${deno-app-build}/bin/deno-app-build "${appSrcPath}" $out) || exit $?
+          echo "$RESULT" > $entry
         '';
     };
-  replaceTsExtension = str:
-    if lib.hasSuffix ".ts" str then
-      lib.substring 0 (lib.stringLength str - 3) str + ".js"
-    else
-      str;
 in
 writeShellScriptBin name ''
-  exec ${deno}/bin/deno run ${denoRunFlags} "${app-build}/${replaceTsExtension appSrcPath}" "$@"
+  exec ${deno}/bin/deno run ${denoRunFlags} "$(cat ${app-build.entry})" "$@"
 ''
