@@ -12,6 +12,7 @@ import {
 } from "jsr:@std/path@0.221.0";
 import ts from "https://esm.sh/typescript@5.4.4";
 import { assert } from "jsr:@std/assert@0.221.0";
+import { exists } from "jsr:@std/fs@0.221.0";
 import { inheritExec } from "jsr:@wok/utils@1.2.0/exec";
 import { createCache } from "https://deno.land/x/deno_cache@0.7.1/mod.ts";
 import { parseFromJson } from "https://deno.land/x/import_map@v0.19.1/mod.ts";
@@ -28,6 +29,7 @@ if (!outPath) {
   throw new Error("Output path is required");
 }
 const absoluteOutPath = resolve(outPath);
+const outToAppRelativePath = relative(absoluteAppPath, absoluteOutPath);
 const rootPath = Deno.cwd();
 
 await inheritExec({
@@ -35,6 +37,7 @@ await inheritExec({
 });
 
 const importMapUrl = toFileUrl(resolve("./vendor/import_map.json"));
+const hasImportMap = await exists(importMapUrl);
 
 type Load = NonNullable<TranspileOptions["load"]>;
 type LoadParams = Parameters<Load>;
@@ -42,7 +45,7 @@ type LoadParams = Parameters<Load>;
 const cache = createCache({ allowRemote: false });
 
 const result = await transpile(absoluteAppPath, {
-  importMap: importMapUrl,
+  importMap: hasImportMap ? importMapUrl : undefined,
   allowRemote: false,
   async load(
     specifier: string,
@@ -60,26 +63,42 @@ const result = await transpile(absoluteAppPath, {
   },
 });
 
-const importMap = await parseFromJson(
-  importMapUrl,
-  await Deno.readTextFile(importMapUrl),
-);
+const importMap = hasImportMap
+  ? await parseFromJson(
+    importMapUrl,
+    await Deno.readTextFile(importMapUrl),
+  )
+  : undefined;
+
+function isRelativePath(path: string) {
+  return path.startsWith("./") || path.startsWith("../");
+}
+
+const toCopyAssetFiles: string[] = [];
 
 function rewriteModuleSpecifier(path: string, specifier: string) {
   if (
-    !specifier.startsWith("./") && !specifier.startsWith("../") &&
+    importMap &&
+    !isRelativePath(specifier) &&
     !specifier.startsWith("node:")
   ) {
     const parentPath = dirname(path);
     const resolved = importMap.resolve(specifier, toFileUrl(path));
+
     const resolvedRelative = relative(parentPath, fromFileUrl(resolved))
       .replace(/\.ts$/, ".js");
 
-    if (!resolvedRelative.startsWith(".")) {
+    if (!isRelativePath(resolvedRelative)) {
       return `./${resolvedRelative}`;
     }
 
     return resolvedRelative;
+  }
+
+  if (isRelativePath(specifier) && specifier.endsWith(".json")) {
+    toCopyAssetFiles.push(
+      resolve(outToAppRelativePath, resolve(dirname(path), specifier)),
+    );
   }
 
   return specifier.replace(/\.ts$/, ".js");
@@ -163,3 +182,14 @@ const promises = Array.from(result).map(async ([key, content]) => {
   console.log(`Wrote ${newPath}`);
 });
 await Promise.all(promises);
+
+if (toCopyAssetFiles.length > 0) {
+  const promises = toCopyAssetFiles.map(async (path) => {
+    const newPath = join(absoluteOutPath, relative(rootPath, path));
+    const newParentDir = dirname(newPath);
+    await Deno.mkdir(newParentDir, { recursive: true });
+    await Deno.copyFile(path, newPath);
+    console.log(`Copied ${path} to ${newPath}`);
+  });
+  await Promise.all(promises);
+}
