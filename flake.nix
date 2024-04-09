@@ -177,6 +177,10 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
+              typescript-eslint = pkgs.callPackage ./pkgs/typescript-eslint {
+                inherit npmlock2nix;
+                nodejs = pkgs.nodejs_20;
+              };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {
