@@ -49,7 +49,11 @@ try {
   });
 
   if (backupDenoJson !== undefined) {
-    await Deno.writeTextFile(join(rootPath, "deno.json"), backupDenoJson);
+    try {
+      await Deno.writeTextFile(join(rootPath, "deno.json"), backupDenoJson);
+    } catch {
+      // Ignore
+    }
   }
 
   const importMapUrl = toFileUrl(join(vendorDir, "import_map.json"));
