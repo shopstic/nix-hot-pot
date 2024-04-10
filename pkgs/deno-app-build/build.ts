@@ -101,7 +101,13 @@ if (await exists(join(rootPath, "deno.json"))) {
 
 try {
   await inheritExec({
-    cmd: ["deno", "vendor", `--output=${vendorDir}`, absoluteAppPath],
+    cmd: [
+      "deno",
+      "vendor",
+      "--node-modules-dir=false",
+      `--output=${vendorDir}`,
+      absoluteAppPath,
+    ],
   });
 
   if (backupDenoJson !== undefined) {
