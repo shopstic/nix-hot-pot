@@ -13,26 +13,82 @@ import {
 import ts from "https://esm.sh/typescript@5.4.4";
 import { assert } from "jsr:@std/assert@0.221.0";
 import { exists } from "jsr:@std/fs@0.221.0";
-import { captureExec, inheritExec } from "jsr:@wok/utils@1.2.0/exec";
+import { parseArgs } from "jsr:@std/cli@0.221.0/parse-args";
+import { captureExec, inheritExec } from "jsr:@wok/utils@1.1.5/exec";
+import {
+  NonEmptyString,
+  Static,
+  Type,
+  TypeGuard,
+  Value,
+} from "jsr:@wok/utils@1.1.5/typebox";
+import { paramCase } from "jsr:@wok/case@1.0.1/param-case";
 import { createCache } from "https://deno.land/x/deno_cache@0.7.1/mod.ts";
 import { parseFromJson } from "https://deno.land/x/import_map@v0.19.1/mod.ts";
-import { Semaphore } from "jsr:@wok/utils@1.2.0/semaphore";
+import { Semaphore } from "jsr:@wok/utils@1.1.5/semaphore";
+
+const argsSchema = {
+  _: Type.Array(Type.String()),
+  allowNpmSpecifier: Type.Optional(Type.Boolean()),
+  appPath: NonEmptyString(),
+  outPath: NonEmptyString(),
+};
+
+const argToParamCaseMap: Map<string, string> = new Map(
+  Object.keys(argsSchema).map((
+    key,
+  ) => [key, key !== "_" ? paramCase(key) : key]),
+);
+
+const argFromParamCaseMap: Map<string, string> = new Map(
+  Array.from(argToParamCaseMap.entries()).map(([key, value]) => [value, key]),
+);
+
+const ParamCaseArgsSchema = Type.Object(Object.fromEntries(
+  Object.entries(argsSchema).map((
+    [key, value],
+  ) => [argToParamCaseMap.get(key)!, value]),
+));
+
+const ArgsSchema = Type.Object(argsSchema);
+type Args = Static<typeof ArgsSchema>;
+
+const parsedArgs = Value.Convert(
+  ParamCaseArgsSchema,
+  parseArgs(Deno.args, {
+    collect: Object.entries(ParamCaseArgsSchema.properties)
+      .filter(([_, value]) => TypeGuard.IsArray(value))
+      .map(([key]) => key),
+  }),
+);
+
+if (!Value.Check(ParamCaseArgsSchema, parsedArgs)) {
+  const errors = Value.Errors(ParamCaseArgsSchema, parsedArgs);
+  console.error(
+    "Invalid CLI arguments\n" +
+      Array.from(errors).map((e) =>
+        `  - ${e.path.replace(/^\//, "")}: Invalid value ${
+          JSON.stringify(e.value)
+        }. ${e.message}`
+      ).join("\n"),
+  );
+  Deno.exit(1);
+}
+
+const paramCaseArgs = Value.Decode(ParamCaseArgsSchema, parsedArgs);
+const args = Object.fromEntries(
+  Object.entries(paramCaseArgs).map((
+    [key, value],
+  ) => [argFromParamCaseMap.get(key) ?? key, value]),
+) as Args;
+
+const { allowNpmSpecifier = false, appPath, outPath } = args;
 
 function isRelativePath(path: string) {
   return path.startsWith("./") || path.startsWith("../");
 }
 
-const [appPath, outPath] = Deno.args;
-
-if (!appPath) {
-  throw new Error("App path is required");
-}
-
 const absoluteAppPath = resolve(appPath);
-
-if (!outPath) {
-  throw new Error("Output path is required");
-}
 const absoluteOutPath = resolve(outPath);
 const outToAppRelativePath = relative(absoluteAppPath, absoluteOutPath);
 const rootPath = Deno.cwd();
@@ -94,7 +150,10 @@ try {
           cacheSetting?: LoadParams[2],
           checksum?: string,
         ) {
-          if (specifier.startsWith("node:")) {
+          if (
+            specifier.startsWith("node:") ||
+            (allowNpmSpecifier && specifier.startsWith("npm:"))
+          ) {
             return {
               kind: "external",
               specifier,
@@ -151,7 +210,8 @@ try {
     if (
       importMap &&
       !isRelativePath(specifier) &&
-      !specifier.startsWith("node:")
+      !specifier.startsWith("node:") &&
+      !(allowNpmSpecifier && specifier.startsWith("npm:"))
     ) {
       const parentPath = dirname(path);
       const resolved = importMap.resolve(specifier, toFileUrl(path));

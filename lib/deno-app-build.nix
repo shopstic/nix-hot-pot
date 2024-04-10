@@ -34,7 +34,7 @@ let
           }
           mkdir $out
           ${preBuild}
-          RESULT=$(${deno-app-build}/bin/deno-app-build "${appSrcPath}" $out) || exit $?
+          RESULT=$(${deno-app-build}/bin/deno-app-build --app-path="${appSrcPath}" --out-path=$out) || exit $?
           ${postBuild}
           echo "$RESULT" > $entry
         '';

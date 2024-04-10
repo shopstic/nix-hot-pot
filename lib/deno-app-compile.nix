@@ -31,7 +31,7 @@ stdenv.mkDerivation {
     TEMP_OUT=$(mktemp -d)
     mkdir -p $out/bin
     ${preBuild}
-    RESULT=$(${deno-app-build}/bin/deno-app-build "${appSrcPath}" "$TEMP_OUT") || exit $?
+    RESULT=$(${deno-app-build}/bin/deno-app-build --allow-npm-specifier --app-path="${appSrcPath}" --out-path="$TEMP_OUT") || exit $?
     ${postBuild}
     export DENORT_BIN="${denort}/bin/denort"
     deno compile ${denoCompileFlags} -o "$out/bin/${name}" "$RESULT"
