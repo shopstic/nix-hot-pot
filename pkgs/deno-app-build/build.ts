@@ -13,7 +13,7 @@ import {
 import ts from "https://esm.sh/typescript@5.4.4";
 import { assert } from "jsr:@std/assert@0.221.0";
 import { exists } from "jsr:@std/fs@0.221.0";
-import { inheritExec } from "jsr:@wok/utils@1.2.0/exec";
+import { captureExec, inheritExec } from "jsr:@wok/utils@1.2.0/exec";
 import { createCache } from "https://deno.land/x/deno_cache@0.7.1/mod.ts";
 import { parseFromJson } from "https://deno.land/x/import_map@v0.19.1/mod.ts";
 import { Semaphore } from "jsr:@wok/utils@1.2.0/semaphore";
@@ -56,45 +56,87 @@ try {
     }
   }
 
-  // macOS somehow has a disk read-after-write consistency bug after running "deno vendor"
-  if (Deno.build.os === "darwin") {
-    await inheritExec({
-      cmd: ["find", vendorDir],
-      stdout: {
-        ignore: true,
-      },
-      stderr: {
-        ignore: true,
-      },
-    });
-  }
-
   const importMapUrl = toFileUrl(join(vendorDir, "import_map.json"));
   const hasImportMap = await exists(importMapUrl);
+
+  // macOS somehow has a disk read-after-write consistency bug after running "deno vendor"
+  // if (hasImportMap && Deno.build.os === "darwin") {
+  //   await inheritExec({
+  //     cmd: ["find", vendorDir],
+  //     stdout: {
+  //       ignore: true,
+  //     },
+  //     stderr: {
+  //       ignore: true,
+  //     },
+  //   });
+  // }
 
   type Load = NonNullable<TranspileOptions["load"]>;
   type LoadParams = Parameters<Load>;
 
-  const cache = createCache({ allowRemote: false });
-
-  const result = await transpile(absoluteAppPath, {
-    importMap: hasImportMap ? importMapUrl : undefined,
+  const cache = createCache({
     allowRemote: false,
-    async load(
-      specifier: string,
-      isDynamic?: boolean,
-      cacheSetting?: LoadParams[2],
-      checksum?: string,
-    ) {
-      if (specifier.startsWith("node:")) {
-        return {
-          kind: "external",
-          specifier,
-        };
-      }
-      return await cache.load(specifier, isDynamic, cacheSetting, checksum);
-    },
+    vendorRoot: hasImportMap ? vendorDir : undefined,
+    readOnly: true,
+    cacheSetting: "only",
   });
+
+  const attemptToTranspile = async (): Promise<Map<string, string>> => {
+    try {
+      return await transpile(absoluteAppPath, {
+        importMap: hasImportMap ? importMapUrl : undefined,
+        cacheSetting: "only",
+        allowRemote: false,
+        async load(
+          specifier: string,
+          isDynamic?: boolean,
+          cacheSetting?: LoadParams[2],
+          checksum?: string,
+        ) {
+          if (specifier.startsWith("node:")) {
+            return {
+              kind: "external",
+              specifier,
+            };
+          }
+
+          return await cache.load(specifier, isDynamic, cacheSetting, checksum);
+        },
+      });
+    } catch (e) {
+      // macOS has a mysterious disk read-after-write consistency bug
+      if (Deno.build.os === "darwin") {
+        const match = e.message.match(/^Module not found "([^"]+)"/);
+
+        if (match) {
+          const location = match[1];
+          console.error(
+            "Under darwin: got module not found error for",
+            location,
+          );
+
+          try {
+            await captureExec({
+              cmd: ["ls", fromFileUrl(location)],
+              stderr: {
+                ignore: true,
+              },
+            });
+          } catch {
+            throw e;
+          }
+
+          console.error("File actually exists at", location, "going to retry");
+          return await attemptToTranspile();
+        }
+      }
+
+      throw e;
+    }
+  };
+
+  const result = await attemptToTranspile();
 
   const importMap = hasImportMap
     ? await parseFromJson(
