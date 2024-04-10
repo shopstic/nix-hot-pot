@@ -15,6 +15,7 @@ stdenv.mkDerivation
     ''
       mkdir $out
       export DENO_DIR=$out
+      shopt -s globstar
       deno cache ${cacheArgs}
     '';
 }
