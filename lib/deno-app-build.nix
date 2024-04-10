@@ -6,6 +6,8 @@
 , deno
 , deno-app-build
 , deno-cache ? null
+, preBuild ? ""
+, postBuild ? ""
 , writeShellScriptBin
 }:
 let
@@ -31,7 +33,9 @@ let
             else ""
           }
           mkdir $out
+          ${preBuild}
           RESULT=$(${deno-app-build}/bin/deno-app-build "${appSrcPath}" $out) || exit $?
+          ${postBuild}
           echo "$RESULT" > $entry
         '';
     };

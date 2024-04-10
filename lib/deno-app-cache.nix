@@ -3,6 +3,8 @@
 , cacheArgs
 , stdenv
 , deno
+, preCache ? ""
+, postCache ? ""
 }:
 stdenv.mkDerivation
 {
@@ -16,6 +18,8 @@ stdenv.mkDerivation
       mkdir $out
       export DENO_DIR=$out
       shopt -s globstar
+      ${preCache}
       deno cache ${cacheArgs}
+      ${postCache}
     '';
 }
