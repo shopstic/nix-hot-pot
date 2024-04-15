@@ -12,6 +12,7 @@
 , deno-cache ? null
 , preBuild ? ""
 , postBuild ? ""
+, postCompile ? ""
 , prefix-patch ? null
 , suffix-patch ? null
 }:
@@ -64,6 +65,7 @@ stdenv.mkDerivation {
       ${postBuild}
       export DENORT_BIN="${denort}/bin/denort"
       deno compile ${denoCompileFlags} -o "$out/bin/${name}" "$RESULT"
+      ${postCompile}
     '';
 }
 
