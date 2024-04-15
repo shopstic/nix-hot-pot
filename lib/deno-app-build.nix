@@ -11,24 +11,24 @@
 , preBuild ? ""
 , postBuild ? ""
 , writeShellScriptBin
-, prefixPatch ? null
-, suffixPatch ? null
+, prefix-patch ? null
+, suffix-patch ? null
 }:
 let
   generateBuildCommands = outputVarName: srcPath: ''
     ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?
-    ${if prefixPatch != null then ''
+    ${if prefix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
-      cat ${prefixPatch} > "$PATCHED_${outputVarName}"
+      cat ${prefix-patch} > "$PATCHED_${outputVarName}"
       cat "$${outputVarName}" >> "$PATCHED_${outputVarName}"
       rm "$${outputVarName}"
       mv "$PATCHED_${outputVarName}" "$${outputVarName}"
     '' else ""}
 
-    ${if suffixPatch != null then ''
+    ${if suffix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
       cat "$${outputVarName}" > "$PATCHED_${outputVarName}"
-      cat ${suffixPatch} >> "$PATCHED_${outputVarName}"
+      cat ${suffix-patch} >> "$PATCHED_${outputVarName}"
       rm "$${outputVarName}"
       mv "$PATCHED_${outputVarName}" "$${outputVarName}"
     '' else ""}
