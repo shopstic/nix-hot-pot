@@ -123,13 +123,11 @@
           nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix { inherit writeTextFiles; };
           redpanda = pkgs.callPackage ./pkgs/redpanda.nix { };
           kubesess = pkgs.callPackage ./pkgs/kubesess.nix { };
-          graphjin = pkgs.callPackage ./pkgs/graphjin.nix { };
           kubernetes-helm = pkgs.callPackage ./pkgs/kubernetes-helm { };
           kubeshark = pkgs.callPackage ./pkgs/kubeshark.nix { };
           dive = pkgs.callPackage ./pkgs/dive.nix { };
           gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
           docker-credential-helpers = pkgs.callPackage ./pkgs/docker-credential-helpers.nix { };
-          ecr-credential-provider-1_24 = pkgs.callPackage ./pkgs/ecr-credential-provider-1.24.nix { };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
@@ -169,11 +167,11 @@
                 deno denort deno_1_38_x deno_1_41_x denort_1_41_x deno_1_42_x denort_1_42_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
-                kubesess kubeshark graphjin
+                kubesess kubeshark
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server
-                ecr-credential-provider-1_24 deno-app-build
+                deno-app-build
                 ;
               inherit (pkgs) kubectx terraform;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
@@ -200,11 +198,11 @@
                   image-lib-yourkit-agent = pkgs.callPackage ./images/lib-yourkit-agent { inherit nix2container; };
                   image-netcat = pkgs.callPackage ./images/netcat { inherit nix2container; };
                   image-jre-fdb-test-base = pkgs.callPackage ./images/jre-fdb-test-base {
-                    jre = jre17;
+                    jre = pkgs.temurin-jre-bin-21;
                     inherit fdb nix2container nonRootShadowSetup;
                   };
                   image-jre-fdb-app = pkgs.callPackage ./images/jre-fdb-app {
-                    jre = jre17;
+                    jre = pkgs.temurin-jre-bin-21;
                     inherit fdb nix2container nonRootShadowSetup;
                   };
                   image-confluent-community = pkgs.callPackage ./images/confluent-community {

@@ -2,7 +2,6 @@
 , stdenv
 , buildGoModule
 , fetchFromGitHub
-, fetchpatch
 , pkg-config
 , btrfs-progs
 , gpgme

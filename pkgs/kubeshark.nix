@@ -1,21 +1,21 @@
 { autoPatchelfHook, fetchurl, stdenv, lib }:
 let
-  version = "41.6";
+  version = "52.2.1";
   downloadMap = {
     x86_64-linux = {
       os = "linux";
       arch = "amd64";
-      hash = "sha256-EwpX3/ESDMd3jFYpU6pJME1Woz2CUgBzna8quRhy3J8=";
+      hash = "sha256-Hd91UAofUyRpC29fwzHQR6IGrm7FkfsZ06+fn+IE0Bc=";
     };
     aarch64-darwin = {
       os = "darwin";
       arch = "arm64";
-      hash = "sha256-L+N5+RkDoNknklA3yfsCVevAnpWTx0iJ5r02aRmw9Qg=";
+      hash = "sha256-V5Wnuhs4ZLxqK4CQwtYHtuMUaSIDO17vXUD5gijwIQ4=";
     };
     aarch64-linux = {
       os = "linux";
       arch = "arm64";
-      hash = "sha256-guEPU+6jtm7DmqMMPzkAFih3V1yj+Snw3ltIweP/qj0=";
+      hash = "sha256-lcCaS4x7a8joCAeKyH2+NhCsfTQAY2co430140f6/FA=";
     };
   };
   download = downloadMap."${stdenv.hostPlatform.system}";
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
   pname = "kubeshark";
 
   src = fetchurl {
-    url = "https://github.com/kubeshark/kubeshark/releases/download/${version}/kubeshark_${download.os}_${download.arch}";
+    url = "https://github.com/kubeshark/kubeshark/releases/download/v${version}/kubeshark_${download.os}_${download.arch}";
     sha256 = download.hash;
   };
 
@@ -37,8 +37,8 @@ stdenv.mkDerivation rec {
     install -m755 -D ${src} $out/bin/${pname}
   '';
 
-  meta = with stdenv.lib; {
-    homepage = https://github.com/kubeshark/kubeshark;
+  meta = {
+    homepage = "https://github.com/kubeshark/kubeshark";
     platforms = builtins.attrNames downloadMap;
   };
 }
