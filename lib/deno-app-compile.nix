@@ -12,12 +12,30 @@
 , deno-cache ? null
 , preBuild ? ""
 , postBuild ? ""
+, prefixPatch ? null
+, suffixPatch ? null
 }:
 let
+  generateBuildCommands = outputVarName: srcPath: ''
+    ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --allow-npm-specifier --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?
+    ${if prefixPatch != null then ''
+      PATCHED_${outputVarName}=$(mktemp)
+      cat ${prefixPatch} > "$PATCHED_${outputVarName}"
+      cat "$${outputVarName}" >> "$PATCHED_${outputVarName}"
+      rm "$${outputVarName}"
+      mv "$PATCHED_${outputVarName}" "$${outputVarName}"
+    '' else ""}
+
+    ${if suffixPatch != null then ''
+      PATCHED_${outputVarName}=$(mktemp)
+      cat "$${outputVarName}" > "$PATCHED_${outputVarName}"
+      cat ${suffixPatch} >> "$PATCHED_${outputVarName}"
+      rm "$${outputVarName}"
+      mv "$PATCHED_${outputVarName}" "$${outputVarName}"
+    '' else ""}
+  '';
   additionalSrcCommands = lib.mapAttrsToList
-    (name: value: ''
-      RESULT_${builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper name)}=$(${deno-app-build}/bin/deno-app-build --allow-npm-specifier --app-path="${value}" --out-path="$TEMP_OUT") || exit $?
-    '')
+    (name: value: (generateBuildCommands ''RESULT_${builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper name)}'' value))
     additionalSrcPaths;
 in
 stdenv.mkDerivation {
@@ -41,7 +59,7 @@ stdenv.mkDerivation {
       TEMP_OUT=$(mktemp -d)
       mkdir -p $out/bin
       ${preBuild}
-      RESULT=$(${deno-app-build}/bin/deno-app-build --allow-npm-specifier --app-path="${appSrcPath}" --out-path="$TEMP_OUT") || exit $?
+      ${generateBuildCommands "RESULT" appSrcPath}
       ${lib.strings.concatStringsSep "\n" additionalSrcCommands}
       ${postBuild}
       export DENORT_BIN="${denort}/bin/denort"
