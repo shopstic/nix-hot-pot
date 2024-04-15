@@ -1,6 +1,8 @@
-{ name
+{ lib
+, name
 , src
 , appSrcPath
+, additionalSrcPaths ? { }
 , denoRunFlags ? "--no-config --no-lock --no-prompt --no-remote --cached-only -A"
 , stdenv
 , deno
@@ -11,6 +13,11 @@
 , writeShellScriptBin
 }:
 let
+  additionalSrcCommands = lib.mapAttrsToList
+    (name: value: ''
+      RESULT_${builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper name)}=$(${deno-app-build}/bin/deno-app-build --app-path="${value}" --out-path="$TEMP_OUT") || exit $?
+    '')
+    additionalSrcPaths;
   app-build = stdenv.mkDerivation
     {
       inherit src;
@@ -35,6 +42,7 @@ let
           mkdir $out
           ${preBuild}
           RESULT=$(${deno-app-build}/bin/deno-app-build --app-path="${appSrcPath}" --out-path=$out) || exit $?
+          ${lib.strings.concatStringsSep "\n" additionalSrcCommands}
           ${postBuild}
           echo "$RESULT" > $entry
         '';
