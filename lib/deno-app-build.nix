@@ -20,17 +20,17 @@ let
     ${if prefix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
       cat ${prefix-patch} > "$PATCHED_${outputVarName}"
-      cat "$${outputVarName}" >> "$PATCHED_${outputVarName}"
-      rm "$${outputVarName}"
-      mv "$PATCHED_${outputVarName}" "$${outputVarName}"
+      cat "${"$" + outputVarName}" >> "$PATCHED_${outputVarName}"
+      rm "${"$" + outputVarName}"
+      mv "$PATCHED_${outputVarName}" "${"$" + outputVarName}"
     '' else ""}
 
     ${if suffix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
-      cat "$${outputVarName}" > "$PATCHED_${outputVarName}"
+      cat "${"$" + outputVarName}" > "$PATCHED_${outputVarName}"
       cat ${suffix-patch} >> "$PATCHED_${outputVarName}"
-      rm "$${outputVarName}"
-      mv "$PATCHED_${outputVarName}" "$${outputVarName}"
+      rm "${"$" + outputVarName}"
+      mv "$PATCHED_${outputVarName}" "${"$" + outputVarName}"
     '' else ""}
   '';
   additionalSrcCommands = lib.mapAttrsToList
