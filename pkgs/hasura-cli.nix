@@ -1,18 +1,18 @@
-{ fetchurl, stdenv, makeWrapper }:
+{ lib, fetchurl, stdenv, makeWrapper }:
 let
-  version = "2.35.0";
+  version = "2.38.1";
   downloadMap = {
     x86_64-linux = {
       url = "https://github.com/hasura/graphql-engine/releases/download/v${version}/cli-hasura-linux-amd64";
-      hash = "sha256-vXqAqAO6p5BHubz/oeRppINIyUg5D5el7kBAZD1BCZQ=";
+      hash = "sha256-0r0tnroJo6ttx1jjb9hx7Cay3oTQ27EBTK2jNvOEcDo=";
     };
     aarch64-darwin = {
       url = "https://github.com/hasura/graphql-engine/releases/download/v${version}/cli-hasura-darwin-arm64";
-      hash = "sha256-G6jPu97yc8cTKAhsZT68XWGd+9DM95lMKwNKwxBlrk4=";
+      hash = "sha256-XWqUIOz7+x945R/Ly7uqiAlkrHAcAfYT9bEDff8ls/Q=";
     };
     aarch64-linux = {
       url = "https://github.com/hasura/graphql-engine/releases/download/v${version}/cli-hasura-linux-arm64";
-      hash = "sha256-TMDZbAru2tszl5KaFhvm/40lA0rS8joLyTa15IOHnvE=";
+      hash = "sha256-42OfLIvL6lkVctmjN/oXdgKvB+sQYucnrJ+VQj62MAM=";
     };
   };
 in
@@ -39,9 +39,10 @@ stdenv.mkDerivation rec {
     wrapProgram $out/bin/hasura --add-flags --skip-update-check
   '';
 
-  meta = with stdenv.lib; {
-    homepage = https://github.com/hasura/graphql-engine/releases;
+  meta = {
+    homepage = "https://github.com/hasura/graphql-engine/releases";
     description = "Hasura CLI";
+    license = lib.licenses.asl20;
     platforms = builtins.attrNames downloadMap;
   };
 }
