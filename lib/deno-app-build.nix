@@ -16,7 +16,7 @@
 }:
 let
   generateBuildCommands = outputVarName: srcPath: ''
-    ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?
+    ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --app-path="${srcPath}" --out-path="$out") || exit $?
     ${if prefix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
       cat ${prefix-patch} > "$PATCHED_${outputVarName}"
