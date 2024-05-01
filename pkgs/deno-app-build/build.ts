@@ -1,7 +1,4 @@
-import {
-  transpile,
-  type TranspileOptions,
-} from "https://deno.land/x/emit@0.38.3/mod.ts";
+import { transpile, type TranspileOptions } from "jsr:@deno/emit@0.40.2";
 import {
   dirname,
   fromFileUrl,
@@ -10,7 +7,7 @@ import {
   resolve,
   toFileUrl,
 } from "jsr:@std/path@0.221.0";
-import ts from "https://esm.sh/typescript@5.4.4";
+import ts from "https://esm.sh/typescript@5.4.5";
 import { assert } from "jsr:@std/assert@0.221.0";
 import { exists } from "jsr:@std/fs@0.221.0";
 import { parseArgs } from "jsr:@std/cli@0.221.0/parse-args";
@@ -23,7 +20,7 @@ import {
   Value,
 } from "jsr:@wok/utils@1.1.5/typebox";
 import { paramCase } from "jsr:@wok/case@1.0.1/param-case";
-import { createCache } from "https://deno.land/x/deno_cache@0.7.1/mod.ts";
+import { createCache } from "jsr:@deno/cache-dir@0.8";
 import { parseFromJson } from "https://deno.land/x/import_map@v0.19.1/mod.ts";
 import { Semaphore } from "jsr:@wok/utils@1.1.5/semaphore";
 
