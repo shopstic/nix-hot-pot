@@ -3,7 +3,8 @@
 , src
 , appSrcPath
 , additionalSrcPaths ? { }
-, denoCompileFlags ? "--no-config --no-lock --no-prompt --no-remote --cached-only -A"
+, transpile ? false
+, denoCompileFlags ? (if transpile then "--no-config --no-lock --no-prompt --no-remote --cached-only -A" else "--cached-only -A")
 , stdenv
 , makeWrapper
 , deno
@@ -18,7 +19,11 @@
 }:
 let
   generateBuildCommands = outputVarName: srcPath: ''
-    ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --allow-npm-specifier --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?
+    ${outputVarName}=${if transpile then 
+    ''$(${deno-app-build}/bin/deno-app-build --allow-npm-specifier --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?''
+    else
+    ''"${srcPath}"''}
+
     ${if prefix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
       cat ${prefix-patch} > "$PATCHED_${outputVarName}"
