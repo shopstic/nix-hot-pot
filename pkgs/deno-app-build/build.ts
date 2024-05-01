@@ -11,7 +11,7 @@ import ts from "https://esm.sh/typescript@5.4.5";
 import { assert } from "jsr:@std/assert@0.221.0";
 import { exists } from "jsr:@std/fs@0.221.0";
 import { parseArgs } from "jsr:@std/cli@0.221.0/parse-args";
-import { captureExec, inheritExec } from "jsr:@wok/utils@1.1.5/exec";
+import { inheritExec } from "jsr:@wok/utils@1.1.5/exec";
 import {
   NonEmptyString,
   Static,
@@ -20,7 +20,6 @@ import {
   Value,
 } from "jsr:@wok/utils@1.1.5/typebox";
 import { paramCase } from "jsr:@wok/case@1.0.1/param-case";
-import { createCache } from "jsr:@deno/cache-dir@0.8";
 import { parseFromJson } from "https://deno.land/x/import_map@v0.19.1/mod.ts";
 import { Semaphore } from "jsr:@wok/utils@1.1.5/semaphore";
 
@@ -133,69 +132,44 @@ try {
 
   type Load = NonNullable<TranspileOptions["load"]>;
   type LoadParams = Parameters<Load>;
-
-  const cache = createCache({
-    allowRemote: false,
-    vendorRoot: hasImportMap ? vendorDir : undefined,
-    readOnly: true,
-    cacheSetting: "only",
-  });
+  const sem = new Semaphore(32);
 
   const attemptToTranspile = async (): Promise<Map<string, string>> => {
-    try {
-      return await transpile(absoluteAppPath, {
-        importMap: hasImportMap ? importMapUrl : undefined,
-        cacheSetting: "only",
-        allowRemote: false,
-        async load(
-          specifier: string,
-          isDynamic?: boolean,
-          cacheSetting?: LoadParams[2],
-          checksum?: string,
+    return await transpile(absoluteAppPath, {
+      importMap: hasImportMap ? importMapUrl : undefined,
+      cacheSetting: "only",
+      allowRemote: false,
+      async load(
+        specifier: string,
+        _isDynamic?: boolean,
+        _cacheSetting?: LoadParams[2],
+        _checksum?: string,
+      ) {
+        if (
+          specifier.startsWith("node:") ||
+          (allowNpmSpecifier && specifier.startsWith("npm:"))
         ) {
-          if (
-            specifier.startsWith("node:") ||
-            (allowNpmSpecifier && specifier.startsWith("npm:"))
-          ) {
-            return {
-              kind: "external",
-              specifier,
-            };
-          }
-
-          return await cache.load(specifier, isDynamic, cacheSetting, checksum);
-        },
-      });
-    } catch (e) {
-      // macOS has a mysterious disk read-after-write consistency bug
-      if (Deno.build.os === "darwin") {
-        const match = e.message.match(/^Module not found "([^"]+)"/);
-
-        if (match) {
-          const location = match[1];
-          console.error(
-            "Under darwin: got module not found error for",
-            location,
-          );
-
-          try {
-            await captureExec({
-              cmd: ["ls", fromFileUrl(location)],
-              stderr: {
-                ignore: true,
-              },
-            });
-          } catch {
-            throw e;
-          }
-
-          console.error("File actually exists at", location, "going to retry");
-          return await attemptToTranspile();
+          return {
+            kind: "external",
+            specifier,
+          };
         }
-      }
 
-      throw e;
-    }
+        await sem.acquire();
+        try {
+          const filePath = fromFileUrl(specifier);
+          const content = await Deno.readTextFile(filePath);
+
+          return {
+            kind: "module",
+            specifier,
+            content,
+          };
+        } finally {
+          sem.release();
+        }
+      },
+    });
   };
 
   const result = await attemptToTranspile();
@@ -304,7 +278,6 @@ try {
     return printer.printFile(ret.transformed[0]);
   };
 
-  const sem = new Semaphore(32);
   const promises = Array.from(result).map(async ([key, content]) => {
     const path = fromFileUrl(key);
     const newPath = join(
