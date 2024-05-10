@@ -117,19 +117,6 @@ try {
   const importMapUrl = toFileUrl(join(vendorDir, "import_map.json"));
   const hasImportMap = await exists(importMapUrl);
 
-  // macOS somehow has a disk read-after-write consistency bug after running "deno vendor"
-  // if (hasImportMap && Deno.build.os === "darwin") {
-  //   await inheritExec({
-  //     cmd: ["find", vendorDir],
-  //     stdout: {
-  //       ignore: true,
-  //     },
-  //     stderr: {
-  //       ignore: true,
-  //     },
-  //   });
-  // }
-
   type Load = NonNullable<TranspileOptions["load"]>;
   type LoadParams = Parameters<Load>;
   const sem = new Semaphore(32);
