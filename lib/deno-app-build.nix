@@ -41,7 +41,7 @@ let
       inherit src;
       name = "${name}-build";
       nativeBuildInputs = [ deno ];
-      __noChroot = true;
+      __noChroot = deno-cache == null;
       phases = [ "unpackPhase" "installPhase" ];
       outputs = [ "out" "entry" ];
       installPhase =
