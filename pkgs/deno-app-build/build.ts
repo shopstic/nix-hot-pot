@@ -20,8 +20,8 @@ import {
   Value,
 } from "jsr:@wok/utils@1.1.5/typebox";
 import { paramCase } from "jsr:@wok/case@1.0.1/param-case";
-import { parseFromJson } from "https://deno.land/x/import_map@v0.19.1/mod.ts";
 import { Semaphore } from "jsr:@wok/utils@1.1.5/semaphore";
+import { parseFromJson } from "./import_map.ts";
 
 const argsSchema = {
   _: Type.Array(Type.String()),
