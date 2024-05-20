@@ -2,19 +2,24 @@
 , denort
 , writeShellScriptBin
 , runCommand
+, makeWrapper
 }:
 let
-  deno-app-build-src = ./build.ts;
+  deno-app-build-src = ./.;
   deno-app-build = runCommand "deno-app-build"
     {
       __noChroot = true;
-      nativeBuildInputs = [ deno ];
+      nativeBuildInputs = [ deno makeWrapper ];
     }
     ''
-      mkdir -p $out/bin
+      mkdir -p $out/bin $out/cache
       export DENO_DIR=$(mktemp -d)
+      export TEST_PATH=$(mktemp -d)
       export DENORT_BIN="${denort}/bin/denort"
-      deno compile -A --check --output=$out/bin/deno-app-build ${deno-app-build-src}
+      deno compile -A --check --output=$out/bin/deno-app-build ${deno-app-build-src}/build.ts
+      wrapProgram "$out/bin/deno-app-build" --set DENO_EMIT_WASM_CACHE_HOME "$out/cache"
+      echo "console.log('test');" > "$TEST_PATH/test.ts"
+      $out/bin/deno-app-build --app-path="$TEST_PATH/test.ts" --out-path="$TEST_PATH/out"
     '';
-in 
+in
 deno-app-build

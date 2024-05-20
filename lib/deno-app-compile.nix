@@ -47,7 +47,7 @@ in
 stdenv.mkDerivation {
   inherit src name;
   nativeBuildInputs = [ makeWrapper deno ];
-  __noChroot = true;
+  __noChroot = deno-cache == null;
   phases = [ "unpackPhase" "installPhase" ];
   installPhase =
     ''

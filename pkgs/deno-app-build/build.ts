@@ -1,4 +1,4 @@
-import { transpile, type TranspileOptions } from "jsr:@deno/emit@0.40.2";
+import { transpile, type TranspileOptions } from "./emit.ts";
 import {
   dirname,
   fromFileUrl,
