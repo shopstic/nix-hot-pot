@@ -24,7 +24,7 @@ buildGoModule rec {
 
   proxyVendor = true;
 
-  vendorHash = "sha256-MbaM+ipRG/6j2PdyTgFwghvlOL4opusyZk5s6ua3gM0=";
+  vendorHash = "sha256-Eaz56iU862KDAlVPuMo8qPuWSFCxEFcJ3Qubl9TUiyI=";
 
   # TODO investigate why some config tests are failing
   doCheck = !(stdenv.isDarwin && stdenv.isAarch64);
