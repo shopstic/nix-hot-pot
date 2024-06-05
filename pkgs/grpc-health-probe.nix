@@ -1,20 +1,20 @@
-{ buildGo119Module
+{ buildGo122Module
 , fetchFromGitHub
 , lib
 }:
 let
-  grpc-health-probe = buildGo119Module rec {
+  grpc-health-probe = buildGo122Module rec {
     pname = "grpc-health-probe";
-    version = "0.4.25";
+    version = "0.4.26";
 
     src = fetchFromGitHub {
       owner = "grpc-ecosystem";
       repo = "grpc-health-probe";
       rev = "v${version}";
-      sha256 = "sha256-KEhaBykgsVt40glEBvAftRon6mWNOZj2CcTJnVB764Y=";
+      sha256 = "sha256-4/Yauqc0ZUhIVoLkDcEhvjX/5ZQxqmfQJTMdLqx48nc=";
     };
 
-    vendorHash = "sha256-9cQMRdaUDJrKSN/6lRADmrAYOC70n24xRt78nnGVvi4=";
+    vendorHash = "sha256-Pb1IxZMK0R1IdZouw4XI79gL+ABs/VBejXcRlMa6FC8=";
 
     meta = with lib; {
       description = "A command-line tool to perform health-checks for gRPC applications in Kubernetes etc.";
