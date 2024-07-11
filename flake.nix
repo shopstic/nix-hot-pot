@@ -43,10 +43,12 @@
           deno_1_42_x = pkgs.callPackage ./pkgs/deno-1.42.x.nix { };
           deno_1_43_x = pkgs.callPackage ./pkgs/deno-1.43.x.nix { };
           deno_1_44_x = pkgs.callPackage ./pkgs/deno-1.44.x.nix { };
+          deno_1_45_x = pkgs.callPackage ./pkgs/deno-1.45.x.nix { };
           denort_1_41_x = pkgs.callPackage ./pkgs/denort-1.41.x.nix { };
           denort_1_42_x = pkgs.callPackage ./pkgs/denort-1.42.x.nix { };
           denort_1_43_x = pkgs.callPackage ./pkgs/denort-1.43.x.nix { };
           denort_1_44_x = pkgs.callPackage ./pkgs/denort-1.44.x.nix { };
+          denort_1_45_x = pkgs.callPackage ./pkgs/denort-1.45.x.nix { };
           deno = deno_1_44_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
@@ -169,7 +171,8 @@
             {
               inherit
                 deno denort deno_1_38_x deno_1_41_x denort_1_41_x deno_1_42_x denort_1_42_x deno_1_43_x denort_1_43_x
-                deno_1_44_x denort_1_44_x
+                denort_1_44_x deno_1_44_x
+                denort_1_45_x deno_1_45_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark
