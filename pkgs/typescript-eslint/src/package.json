@@ -10,7 +10,8 @@
   "type": "module",
   "dependencies": {
     "typescript": "^5.5.4",
-    "typescript-eslint": "^7.17.0"
+    "typescript-eslint": "^7.17.0",
+    "eslint": "8.57.0"
   },
   "devDependencies": {
     "npm-check-updates": "^16.14.20"

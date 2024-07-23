@@ -134,12 +134,16 @@
           dive = pkgs.callPackage ./pkgs/dive.nix { };
           gitlab-copy = pkgs.callPackage ./pkgs/gitlab-copy.nix { };
           docker-credential-helpers = pkgs.callPackage ./pkgs/docker-credential-helpers.nix { };
+          typescript-eslint = pkgs.callPackage ./pkgs/typescript-eslint {
+            inherit npmlock2nix;
+            nodejs = pkgs.nodejs_20;
+          };
         in
         rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
               inherit
-                skopeo-nix2container redpanda kubeshark gitlab-copy;
+                skopeo-nix2container redpanda kubeshark gitlab-copy typescript-eslint;
               inherit (pkgs)
                 awscli2
                 parallel
@@ -179,7 +183,7 @@
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server
-                deno-app-build
+                deno-app-build typescript-eslint
                 ;
               inherit (pkgs) kubectx terraform;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
@@ -191,10 +195,6 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
-              typescript-eslint = pkgs.callPackage ./pkgs/typescript-eslint {
-                inherit npmlock2nix;
-                nodejs = pkgs.nodejs_20;
-              };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {
