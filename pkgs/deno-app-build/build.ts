@@ -7,20 +7,20 @@ import {
   resolve,
   toFileUrl,
 } from "jsr:@std/path@0.221.0";
-import ts from "https://esm.sh/typescript@5.4.5";
-import { assert } from "jsr:@std/assert@0.221.0";
-import { exists } from "jsr:@std/fs@0.221.0";
-import { parseArgs } from "jsr:@std/cli@0.221.0/parse-args";
-import { inheritExec } from "jsr:@wok/utils@1.1.5/exec";
+import ts from "https://esm.sh/typescript@5.5.4";
+import { assert } from "jsr:@std/assert@1.0.0";
+import { exists } from "jsr:@std/fs@0.229.3";
+import { parseArgs } from "jsr:@std/cli@1.0.0/parse-args";
+import { inheritExec } from "jsr:@wok/utils@1.3.3/exec";
 import {
   NonEmptyString,
   Static,
   Type,
   TypeGuard,
   Value,
-} from "jsr:@wok/utils@1.1.5/typebox";
+} from "jsr:@wok/utils@1.3.3/typebox";
 import { paramCase } from "jsr:@wok/case@1.0.1/param-case";
-import { Semaphore } from "jsr:@wok/utils@1.1.5/semaphore";
+import { Semaphore } from "jsr:@wok/utils@1.3.3/semaphore";
 import { parseFromJson } from "./import_map.ts";
 
 const argsSchema = {
