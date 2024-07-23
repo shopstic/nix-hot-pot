@@ -49,12 +49,12 @@
           denort_1_43_x = pkgs.callPackage ./pkgs/denort-1.43.x.nix { };
           denort_1_44_x = pkgs.callPackage ./pkgs/denort-1.44.x.nix { };
           denort_1_45_x = pkgs.callPackage ./pkgs/denort-1.45.x.nix { };
-          deno = deno_1_44_x.overrideAttrs (oldAttrs: {
+          deno = deno_1_45_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
           });
-          denort = denort_1_44_x.overrideAttrs (oldAttrs: {
+          denort = denort_1_45_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };

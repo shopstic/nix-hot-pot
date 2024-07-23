@@ -1,19 +1,19 @@
 { autoPatchelfHook, fetchzip, stdenv, lib, makeWrapper }:
 (import ./denort.nix rec {
   inherit autoPatchelfHook fetchzip stdenv lib makeWrapper;
-  version = "1.45.2";
+  version = "1.45.3";
   downloadMap = {
     x86_64-linux = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/denort-x86_64-unknown-linux-gnu.zip";
-      hash = "sha256-1DVm8TGFUeQajFwqRX2ZaDKB/SkXzTsRzURsYHfoShI=";
+      hash = "sha256-eBSexrkGxL3PGFKEcfmuOiI/F7Z4NvAjiqaBC9E974c=";
     };
     aarch64-darwin = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/denort-aarch64-apple-darwin.zip";
-      hash = "sha256-6dg+sdjX/P48+jFMIvnRlQUl61osMH2geY11UJEXsh4=";
+      hash = "sha256-sO9u6FUqJttwKGClPuyVJFdkem+zsCKm47Zmu+eUrgQ=";
     };
     aarch64-linux = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/denort-aarch64-unknown-linux-gnu.zip";
-      hash = "sha256-OdtRuqPU1O4CRxvPX5uB5On9DcjlbDCZIFlg8P3olvI=";
+      hash = "sha256-5gF53lMMI5Y38Iz5va1mQX29d/7y7pRvxRPXIAzsaYw=";
     };
   };
   priority = 10;
