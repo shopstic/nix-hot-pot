@@ -10,6 +10,7 @@
 , deno-cache ? null
 , preBuild ? ""
 , postBuild ? ""
+, preExec ? ""
 , writeShellScriptBin
 , prefix-patch ? null
 , suffix-patch ? null
@@ -67,5 +68,6 @@ let
     };
 in
 writeShellScriptBin name ''
+  ${preExec}
   exec ${deno}/bin/deno run ${denoRunFlags} "$(cat ${app-build.entry})" "$@"
 ''
