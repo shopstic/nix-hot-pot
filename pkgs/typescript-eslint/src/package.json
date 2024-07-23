@@ -1,16 +1,19 @@
-{
+  {
   "name": "typescript-eslint",
   "version": "7.5.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check-updates": "ncu"
   },
   "type": "module",
   "dependencies": {
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.4",
-    "typescript-eslint": "^7.5.0"
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^7.17.0"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^16.14.20"
   },
   "author": "",
   "license": "ISC"
