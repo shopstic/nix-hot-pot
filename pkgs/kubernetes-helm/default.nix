@@ -1,17 +1,17 @@
-# Forked from https://github.com/NixOS/nixpkgs/blob/29084fa04bf4abcd229422497d7edc8c6e383e8c/pkgs/applications/networking/cluster/helm/default.nix
+# Forked from https://github.com/NixOS/nixpkgs/blob/f11a6a01cb5e2ceaa40bdc28d492bd2fd8b2a847/pkgs/applications/networking/cluster/helm/default.nix
 { lib, buildGoModule, fetchFromGitHub, installShellFiles, testers, kubernetes-helm }:
 
 buildGoModule rec {
   pname = "kubernetes-helm";
-  version = "3.14.4";
+  version = "3.15.3";
 
   src = fetchFromGitHub {
     owner = "helm";
     repo = "helm";
     rev = "v${version}";
-    sha256 = "sha256-Wt5ovKa2CHrD0VSxvReYAwoC4SsuZHAhi/P6Kn1H7So=";
+    sha256 = "sha256-m5k1MUncx9xSGu49Qjy1MByl3h6Qz7VCNrveqRVjtdQ=";
   };
-  vendorHash = "sha256-b25LUyr4B4fF/WF4Q+zzrDo78kuSTEPBklKkA4o+DBo=";
+  vendorHash = "sha256-2q5IziYSW2FFfRZvWKz6dVnJfauRlE9lRrb4/l2EGC0=";
 
   subPackages = [ "cmd/helm" ];
   ldflags = [
@@ -57,7 +57,7 @@ buildGoModule rec {
     $out/bin/helm completion fish > helm.fish
     installShellCompletion helm.{bash,zsh,fish}
   '';
-
+  
   patches = [
     ./patch-pvc-is-ready.patch
   ];
@@ -70,7 +70,7 @@ buildGoModule rec {
 
   meta = with lib; {
     homepage = "https://github.com/kubernetes/helm";
-    description = "A package manager for kubernetes";
+    description = "Package manager for kubernetes";
     mainProgram = "helm";
     license = licenses.asl20;
     maintainers = with maintainers; [ rlupton20 edude03 saschagrunert Frostman Chili-Man techknowlogick ];
