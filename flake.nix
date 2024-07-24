@@ -2,8 +2,8 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-    fdbPkg.url = "github:shopstic/nix-fdb/7.1.57";
+    nixpkgs.url = "github:nixos/nixpkgs/249fbde2a178a2ea2638b65b9ecebd531b338cf9"; #nixos-24.05
+    fdbPkg.url = "github:shopstic/nix-fdb/7.1.61";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
       url = "github:nix-community/npmlock2nix/9197bbf397d76059a76310523d45df10d2e4ca81";
