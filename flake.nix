@@ -2,7 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/249fbde2a178a2ea2638b65b9ecebd531b338cf9"; #nixos-24.05
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
     fdbPkg.url = "github:shopstic/nix-fdb/7.1.61";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
@@ -10,8 +10,8 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/c891f90d2e3c48a6b33466c96e4851e0fc0cf455";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs/0ad13a6833440b8e238947e47bea7f11071dc2b2";
+      url = "github:nlewo/nix2container/3853e5caf9ad24103b13aa6e0e8bcebb47649fe4";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -38,15 +38,8 @@
           skopeo-nix2container = nix2containerPkgs.skopeo-nix2container;
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
-          deno_1_38_x = pkgs.callPackage ./pkgs/deno-1.38.x.nix { };
-          deno_1_41_x = pkgs.callPackage ./pkgs/deno-1.41.x.nix { };
-          deno_1_42_x = pkgs.callPackage ./pkgs/deno-1.42.x.nix { };
-          deno_1_43_x = pkgs.callPackage ./pkgs/deno-1.43.x.nix { };
           deno_1_44_x = pkgs.callPackage ./pkgs/deno-1.44.x.nix { };
           deno_1_45_x = pkgs.callPackage ./pkgs/deno-1.45.x.nix { };
-          denort_1_41_x = pkgs.callPackage ./pkgs/denort-1.41.x.nix { };
-          denort_1_42_x = pkgs.callPackage ./pkgs/denort-1.42.x.nix { };
-          denort_1_43_x = pkgs.callPackage ./pkgs/denort-1.43.x.nix { };
           denort_1_44_x = pkgs.callPackage ./pkgs/denort-1.44.x.nix { };
           denort_1_45_x = pkgs.callPackage ./pkgs/denort-1.45.x.nix { };
           deno = deno_1_45_x.overrideAttrs (oldAttrs: {
@@ -174,7 +167,7 @@
             in
             {
               inherit
-                deno denort deno_1_38_x deno_1_41_x denort_1_41_x deno_1_42_x denort_1_42_x deno_1_43_x denort_1_43_x
+                deno denort
                 denort_1_44_x deno_1_44_x
                 denort_1_45_x deno_1_45_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
