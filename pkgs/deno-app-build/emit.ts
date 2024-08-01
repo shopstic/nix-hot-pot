@@ -1,7 +1,7 @@
 import {
   transpile as originalTranspile,
   type TranspileOptions,
-} from "jsr:@deno/emit@0.43.1";
+} from "@deno/emit";
 export { type TranspileOptions };
 
 export async function transpile(
