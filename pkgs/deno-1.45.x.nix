@@ -5,7 +5,7 @@
   downloadMap = {
     x86_64-linux = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-x86_64-unknown-linux-gnu.zip";
-      hash = "sha256-crbQjyOvpvASiAN1shlDutjN+Az9Q6VFVZ+ZX5OXr9k=";
+      hash = "sha256-G8Y2EUBcCEu+wUToqdTEHJeEn3wYBIHK8F9ekTVoink=";
     };
     aarch64-darwin = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-aarch64-apple-darwin.zip";
