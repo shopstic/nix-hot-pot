@@ -40,9 +40,11 @@
           fdb = fdbPkg.packages.${system}.fdb_7;
           deno_1_44_x = pkgs.callPackage ./pkgs/deno-1.44.x.nix { };
           deno_1_45_x = pkgs.callPackage ./pkgs/deno-1.45.x.nix { };
+          deno_1_46_x = pkgs.callPackage ./pkgs/deno-1.46.x.nix { };
           denort_1_44_x = pkgs.callPackage ./pkgs/denort-1.44.x.nix { };
           denort_1_45_x = pkgs.callPackage ./pkgs/denort-1.45.x.nix { };
-          deno = deno_1_45_x.overrideAttrs (oldAttrs: {
+          denort_1_46_x = pkgs.callPackage ./pkgs/denort-1.46.x.nix { };
+          deno = deno_1_46_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -170,6 +172,7 @@
                 deno denort
                 denort_1_44_x deno_1_44_x
                 denort_1_45_x deno_1_45_x
+                denort_1_46_x deno_1_46_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark
