@@ -1,6 +1,6 @@
 { autoPatchelfHook, fetchzip, stdenv, lib, makeWrapper, jre }:
 let
-  version = "0.12.0";
+  version = "0.13.0";
 in
 stdenv.mkDerivation {
   inherit version;
@@ -9,7 +9,7 @@ stdenv.mkDerivation {
   src = fetchzip {
     name = "jib-cli-${version}";
     url = "https://github.com/GoogleContainerTools/jib/releases/download/v${version}-cli/jib-jre-${version}.zip";
-    sha256 = "sha256-47kNpi6O+v7EP/R8FOrsrlnoKKEN64W0kx9FXjoaugM=";
+    sha256 = "sha256-3/wKpwVHVBU86GJfR4YGM5ba8pOOfLL+fKU7zwwU+Qc=";
   };
 
   nativeBuildInputs = (lib.optionals (stdenv.isLinux) [ autoPatchelfHook ]) ++ [
@@ -23,7 +23,7 @@ stdenv.mkDerivation {
   '';
 
   meta = {
-    homepage = https://github.com/GoogleContainerTools/jib;
+    homepage = "https://github.com/GoogleContainerTools/jib";
     description = "Build container images for your Java applications.";
     platforms = lib.platforms.all;
   };

@@ -1,6 +1,6 @@
   {
   "name": "typescript-eslint",
-  "version": "7.5.0",
+  "version": "8.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,11 +10,11 @@
   "type": "module",
   "dependencies": {
     "typescript": "^5.5.4",
-    "typescript-eslint": "^7.17.0",
-    "eslint": "8.57.0"
+    "typescript-eslint": "^8.2.0",
+    "eslint": "9.9.0"
   },
   "devDependencies": {
-    "npm-check-updates": "^16.14.20"
+    "npm-check-updates": "^17.1.0"
   },
   "author": "",
   "license": "ISC"

@@ -7,7 +7,7 @@
 }:
 let
   pname = "pvc-autoresizer";
-  version = "0.10.0";
+  version = "0.12.0";
 
   pvc-autoresizer = buildGoModule rec {
     inherit pname version;
@@ -15,10 +15,16 @@ let
       owner = "topolvm";
       repo = pname;
       rev = "v${version}";
-      sha256 = "sha256-tsuUFTKvGfcRbsaDpxxhIw0Bd7s6pTdBmZeMIIyWgAk=";
+      sha256 = "sha256-v5H207jGi3ZHYUPeE+R3f8STLGT7q3QFO/aVVn1mnvw=";
     };
 
-    vendorHash = "sha256-0lsZYERe9UpQ2ZPomc9jK2UmduG9awQdumlwPgETazg=";
+    vendorHash = "sha256-di+h4smc1AinLZaARJHfZUH5XgmudrdoVVzQiwiixv8=";
+
+    overrideModAttrs = _: {
+      preBuild = ''
+        go mod tidy
+      '';
+    };
 
     doCheck = false;
     meta = with lib; {
