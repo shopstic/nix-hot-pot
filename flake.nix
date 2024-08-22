@@ -185,10 +185,6 @@
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
                 inherit npmlock2nix;
               };
-              kysely-codegen = pkgs.callPackage ./pkgs/kysely-codegen {
-                nodejs = pkgs.nodejs-18_x;
-                inherit npmlock2nix;
-              };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
               libpq = pkgs.callPackage ./pkgs/libpq.nix { };
