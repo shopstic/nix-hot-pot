@@ -49,7 +49,7 @@
               priority = 0;
             };
           });
-          denort = denort_1_45_x.overrideAttrs (oldAttrs: {
+          denort = denort_1_46_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
