@@ -40,7 +40,7 @@ let
       Env = [
         "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
       ];
-      Entrypoint = [ "${pvc-autoresizer}/bin/${pname}" ];
+      Entrypoint = [ "${pvc-autoresizer}/bin/cmd" ];
     };
     maxLayers = 50;
   };
