@@ -6,6 +6,7 @@
 , downloadMap
 , priority
 , makeWrapper
+, setFuture ? false
 }:
 stdenv.mkDerivation {
   inherit version;
@@ -23,7 +24,7 @@ stdenv.mkDerivation {
 
   installPhase = ''
     install -m755 -D deno $out/bin/deno
-    wrapProgram "$out/bin/deno" --set DENO_NO_UPDATE_CHECK 1
+    wrapProgram "$out/bin/deno" --set DENO_NO_UPDATE_CHECK 1${if setFuture then " --set DENO_FUTURE 1" else ""}
     ln -s $out/bin/deno $out/bin/deno-${version}
   '';
 

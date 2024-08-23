@@ -1,6 +1,6 @@
-{ autoPatchelfHook, fetchzip, stdenv, lib, makeWrapper }:
+{ autoPatchelfHook, fetchzip, stdenv, lib, makeWrapper, setFuture }:
 (import ./deno.nix rec {
-  inherit autoPatchelfHook fetchzip stdenv lib makeWrapper;
+  inherit autoPatchelfHook fetchzip stdenv lib makeWrapper setFuture;
   version = "1.46.1";
   downloadMap = {
     x86_64-linux = {

@@ -40,7 +40,10 @@
           fdb = fdbPkg.packages.${system}.fdb_7;
           deno_1_44_x = pkgs.callPackage ./pkgs/deno-1.44.x.nix { };
           deno_1_45_x = pkgs.callPackage ./pkgs/deno-1.45.x.nix { };
-          deno_1_46_x = pkgs.callPackage ./pkgs/deno-1.46.x.nix { };
+          deno_1_46_x = pkgs.callPackage ./pkgs/deno-1.46.x.nix
+            {
+              setFuture = true;
+            };
           denort_1_44_x = pkgs.callPackage ./pkgs/denort-1.44.x.nix { };
           denort_1_45_x = pkgs.callPackage ./pkgs/denort-1.45.x.nix { };
           denort_1_46_x = pkgs.callPackage ./pkgs/denort-1.46.x.nix { };
