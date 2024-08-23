@@ -12,12 +12,13 @@
 , postBuild ? ""
 , preExec ? ""
 , writeShellScriptBin
+, allowNpmSpecifiers ? false
 , prefix-patch ? null
 , suffix-patch ? null
 }:
 let
   generateBuildCommands = outputVarName: srcPath: ''
-    ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --app-path="${srcPath}" --out-path="$out") || exit $?
+    ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --app-path="${srcPath}" --out-path="$out"${if allowNpmSpecifiers then " --allow-npm-specifier" else ""}) || exit $?
     ${if prefix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
       cat ${prefix-patch} > "$PATCHED_${outputVarName}"
