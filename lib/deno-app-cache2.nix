@@ -1,14 +1,14 @@
 { name
-, config-file
 , lock-file
 , deno
 , preCache ? ""
 , postCache ? ""
 , runCommand
+, jq
 }:
 runCommand name
 {
-  nativeBuildInputs = [ deno ];
+  nativeBuildInputs = [ deno jq ];
   __noChroot = true;
 } ''
   mkdir $out
@@ -16,6 +16,8 @@ runCommand name
   TEMP_OUT="$(mktemp -d)"
   shopt -s globstar
   ${preCache}
-  deno install --config="${config-file}" --lock=${lock-file} --root="$TEMP_OUT"
+  cp "${lock-file}" ./deno.lock
+  jq -er '{ imports: .specifiers }' < deno.lock > deno.json
+  deno install --config=deno.json --lock=./deno.lock --check --root="$TEMP_OUT"
   ${postCache}
 ''
