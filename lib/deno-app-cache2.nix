@@ -16,6 +16,6 @@ runCommand name
   TEMP_OUT="$(mktemp -d)"
   shopt -s globstar
   ${preCache}
-  deno install --config="${config-file}" --lock=${lock-file} --frozen=true --root="$TEMP_OUT"
+  deno install --config="${config-file}" --lock=${lock-file} --root="$TEMP_OUT"
   ${postCache}
 ''
