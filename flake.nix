@@ -286,7 +286,7 @@
             rec {
               denoAppBuild = callPackageWith
                 (pkgs // {
-                  inherit deno-app-build;
+                  inherit deno deno-app-build;
                 })
                 ./lib/deno-app-build.nix;
               denoAppCache = callPackageWith
@@ -296,7 +296,7 @@
                 ./lib/deno-app-cache.nix;
               denoAppCache2 = callPackageWith
                 (pkgs // {
-                  inherit deno-gen-cache-entry;
+                  inherit deno deno-gen-cache-entry;
                 })
                 ./lib/deno-app-cache2.nix;
               denoGenCacheEntry = callPackageWith
