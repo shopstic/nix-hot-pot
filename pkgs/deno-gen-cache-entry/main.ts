@@ -49,7 +49,7 @@ const run = createCliAction(
     );
 
     const allSpecifiers = new Set<string>();
-    const queue = new AsyncQueue<Task>(concurrency);
+    const queue = new AsyncQueue<Task>(1);
     const workerPromises: Promise<void>[] = Array.from({ length: workerCount })
       .map((_, i) =>
         runQueueWorker(queue, {
@@ -62,22 +62,25 @@ const run = createCliAction(
 
     const mainPromise = (async () => {
       try {
-        for await (const entry of walk(resolvedSrcPath)) {
-          if (!entry.isFile || !entry.name.endsWith(".ts")) {
-            continue;
-          }
+        for await (
+          const { fileUrl, specifiers } of AsyncQueue
+            .from(walk(resolvedSrcPath))
+            .filter((entry) => entry.isFile && entry.name.endsWith(".ts"))
+            .concurrentMap(concurrency, async (entry) => {
+              const deferrred = Promise.withResolvers<string[]>();
+              const task = {
+                input: entry.path,
+                promise: deferrred,
+                signal,
+              } satisfies Task;
 
-          const deferrred = Promise.withResolvers<string[]>();
-          const task = {
-            input: entry.path,
-            promise: deferrred,
-            signal,
-          } satisfies Task;
-
-          assert(await queue.enqueue(task));
-          const specifiers = await deferrred.promise;
-          const fileUrl = toFileUrl(entry.path);
-
+              assert(await queue.enqueue(task));
+              return {
+                fileUrl: toFileUrl(entry.path),
+                specifiers: await deferrred.promise,
+              };
+            })
+        ) {
           for (const specifier of specifiers) {
             const resolved = importMap.resolve(specifier, fileUrl);
             if (

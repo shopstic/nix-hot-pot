@@ -4,6 +4,7 @@
 , lock-file
 , deno
 , deno-gen-cache-entry
+, genCacheEntryArgs ? ""
 , preCache ? ""
 , postCache ? ""
 , runCommand
@@ -16,7 +17,7 @@ let
     } ''
     mkdir $out
     export DENO_DIR=$(mktemp -d)
-    deno-gen-cache-entry --src-path "${src}" > "$out/cache-entry.ts"
+    deno-gen-cache-entry --src-path "${src}" ${genCacheEntryArgs} > "$out/cache-entry.ts"
   '';
   cache-entry-ts = writeTextFile {
     name = "${name}-cache-entry.ts";
