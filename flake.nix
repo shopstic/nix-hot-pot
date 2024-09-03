@@ -65,6 +65,9 @@
           deno-app-build = pkgs.callPackage ./pkgs/deno-app-build {
             inherit deno denort;
           };
+          deno-gen-cache-entry = pkgs.callPackage ./pkgs/deno-gen-cache-entry {
+            inherit deno denort;
+          };
           intellij-helper =
             let
               name = "intellij-helper";
@@ -182,7 +185,9 @@
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server
-                deno-app-build typescript-eslint
+                deno-app-build 
+                deno-gen-cache-entry
+                typescript-eslint
                 ;
               inherit (pkgs) kubectx terraform;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {

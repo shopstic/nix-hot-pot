@@ -10,11 +10,11 @@ import {
 import ts from "typescript";
 import { assert } from "@std/assert/assert";
 import { exists } from "@std/fs/exists";
-import { inheritExec } from "jsr:@wok/utils@1.3.3/exec";
+import { inheritExec } from "@wok/utils/exec";
 import { NonEmptyString, Type } from "@wok/typebox";
 import { CliProgram, createCliAction, ExitCode } from "@wok/utils/cli";
 import { Semaphore } from "@wok/utils/semaphore";
-import { parseFromJson } from "./import_map.ts";
+import { parseFromJson } from "../_deno-shared/import_map.ts";
 
 function isRelativePath(path: string) {
   return path.startsWith("./") || path.startsWith("../");

@@ -1,23 +1,36 @@
 { name
+, src
+, config-file
 , lock-file
 , deno
+, deno-gen-cache-entry
 , preCache ? ""
 , postCache ? ""
 , runCommand
-, jq
+, writeTextFile
 }:
-runCommand name
+let
+  cache-entry = runCommand "${name}-cache-entry"
+    {
+      nativeBuildInputs = [ deno-gen-cache-entry ];
+    } ''
+    mkdir $out
+    export DENO_DIR=$(mktemp -d)
+    deno-gen-cache-entry --src-path "${src}" > "$out/cache-entry.ts"
+  '';
+  cache-entry-ts = writeTextFile {
+    name = "${name}-cache-entry.ts";
+    text = builtins.readFile "${cache-entry}/cache-entry.ts";
+  };
+in
+runCommand "${name}-cache"
 {
-  nativeBuildInputs = [ deno jq ];
+  nativeBuildInputs = [ deno ];
   __noChroot = true;
 } ''
   mkdir $out
   export DENO_DIR=$out
-  TEMP_OUT="$(mktemp -d)"
-  shopt -s globstar
   ${preCache}
-  cp "${lock-file}" ./deno.lock
-  jq -er '{ imports: .specifiers }' < deno.lock > deno.json
-  deno install --config=deno.json --lock=./deno.lock --check --root="$TEMP_OUT"
+  deno cache --config="${config-file}" --lock="${lock-file}" --frozen=true "${cache-entry-ts}"
   ${postCache}
 ''
