@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/3853e5caf9ad24103b13aa6e0e8bcebb47649fe4";
+      url = "github:nlewo/nix2container/fa6bb0a1159f55d071ba99331355955ae30b3401";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -140,7 +140,7 @@
             nodejs = pkgs.nodejs_20;
           };
         in
-        rec {
+        (rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
               inherit
@@ -185,7 +185,7 @@
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server
-                deno-app-build 
+                deno-app-build
                 deno-gen-cache-entry
                 typescript-eslint
                 ;
@@ -276,8 +276,45 @@
             );
           defaultPackage = pkgs.linkFarmFromDrvs "nix-hot-pot"
             (pkgs.lib.unique (builtins.attrValues (pkgs.lib.filterAttrs (n: _: (!(pkgs.lib.hasPrefix "image-" n) && n != "all-images")) packages)));
+        }) // {
+          lib =
+            let
+              inherit (pkgs.lib)
+                callPackageWith
+                ;
+            in
+            rec {
+              denoAppBuild = callPackageWith
+                (pkgs // {
+                  inherit deno-app-build;
+                })
+                ./lib/deno-app-build.nix;
+              denoAppCache = callPackageWith
+                (pkgs // {
+                  inherit deno;
+                })
+                ./lib/deno-app-cache.nix;
+              denoAppCache2 = callPackageWith
+                (pkgs // {
+                  inherit deno-gen-cache-entry;
+                })
+                ./lib/deno-app-cache2.nix;
+              denoGenCacheEntry = callPackageWith
+                (pkgs // {
+                  inherit deno-gen-cache-entry;
+                })
+                ./lib/deno-gen-cache-entry.nix;
+              denoAppCompile = callPackageWith
+                (pkgs // {
+                  inherit deno-app-build deno denort;
+                })
+                ./lib/deno-app-compile.nix;
+              wrapJdk = import ./lib/wrap-jdk.nix;
+              writeTextFiles = pkgs.callPackage ./lib/write-text-files.nix { };
+              nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix {
+                inherit writeTextFiles;
+              };
+            };
         }
-      ) // {
-      lib = (import ./lib);
-    };
+      );
 }
