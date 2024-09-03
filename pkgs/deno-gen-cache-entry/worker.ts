@@ -3,7 +3,7 @@ import { isSelfWorker } from "@wok/utils/queue-worker/shared";
 import { getDefaultLogger } from "@wok/utils/logger";
 import { gray } from "@std/fmt/colors";
 import { format as formatDuration } from "@std/fmt/duration";
-import { extractRemoteDependencies } from "./shared.ts";
+import { extractImportExportSpecifiers } from "./shared.ts";
 
 if (!isSelfWorker(self)) {
   throw new Error("Expected to be run as a worker.");
@@ -15,7 +15,7 @@ const logger = getDefaultLogger().prefixed(gray(workerName));
 await runAsQueueWorker<string, string[]>(async (filePath) => {
   const startTime = performance.now();
   const sourceCode = await Deno.readTextFile(filePath);
-  const specifierSet = extractRemoteDependencies(filePath, sourceCode);
+  const specifierSet = extractImportExportSpecifiers(filePath, sourceCode);
   logger.info?.(
     filePath,
     specifierSet.size,

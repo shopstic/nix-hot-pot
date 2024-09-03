@@ -11,7 +11,7 @@ import { resolve } from "@std/path/resolve";
 import { toFileUrl } from "@std/path/to-file-url";
 import { parseFromJson } from "../_deno-shared/import_map.ts";
 import { join } from "@std/path/join";
-import { extractRemoteDependencies } from "./shared.ts";
+import { extractImportExportSpecifiers } from "./shared.ts";
 import { format as formatDuration } from "@std/fmt/duration";
 
 const logger = getDefaultLogger().prefixed(gray("main"));
@@ -77,7 +77,7 @@ const run = createCliAction(
               const startTime = performance.now();
 
               try {
-                const specifierSet = extractRemoteDependencies(
+                const specifierSet = extractImportExportSpecifiers(
                   filePath,
                   await Deno.readTextFile(filePath),
                 );
