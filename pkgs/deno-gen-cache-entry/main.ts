@@ -11,6 +11,7 @@ import { resolve } from "@std/path/resolve";
 import { toFileUrl } from "@std/path/to-file-url";
 import { parseFromJson } from "../_deno-shared/import_map.ts";
 import { join } from "@std/path/join";
+import { relative } from "@std/path/relative";
 import { extractImportExportSpecifiers } from "./shared.ts";
 import { format as formatDuration } from "@std/fmt/duration";
 
@@ -83,7 +84,7 @@ const run = createCliAction(
                 );
                 resolver.resolve(Array.from(specifierSet));
                 logger.info?.(
-                  filePath,
+                  relative(resolvedSrcPath, filePath),
                   specifierSet.size,
                   gray(
                     formatDuration(performance.now() - startTime, {
