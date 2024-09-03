@@ -17,7 +17,7 @@ let
     } ''
     mkdir $out
     export DENO_DIR=$(mktemp -d)
-    deno-gen-cache-entry --src-path "${src}" ${genCacheEntryArgs} > "$out/cache-entry.ts"
+    time deno-gen-cache-entry --src-path "${src}" ${genCacheEntryArgs} > "$out/cache-entry.ts"
   '';
   cache-entry-ts = writeTextFile {
     name = "${name}-cache-entry.ts";
