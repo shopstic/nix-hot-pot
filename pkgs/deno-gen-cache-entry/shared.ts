@@ -1,25 +1,33 @@
-import ts from "typescript";
+import {
+  createSourceFile,
+  forEachChild,
+  isExportDeclaration,
+  isImportDeclaration,
+  isStringLiteral,
+  type Node,
+  ScriptTarget,
+} from "typescript";
 
 export function extractImportExportSpecifiers(
   filePath: string,
   sourceCode: string,
 ): Set<string> {
   const specifierSet = new Set<string>();
-  const sourceFile = ts.createSourceFile(
+  const sourceFile = createSourceFile(
     filePath,
     sourceCode,
-    ts.ScriptTarget.Latest,
+    ScriptTarget.Latest,
     true,
   );
 
-  function visit(node: ts.Node): void {
-    if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
-      if (node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
+  function visit(node: Node): void {
+    if (isImportDeclaration(node) || isExportDeclaration(node)) {
+      if (node.moduleSpecifier && isStringLiteral(node.moduleSpecifier)) {
         const specifier = node.moduleSpecifier.text;
         specifierSet.add(specifier);
       }
     } else {
-      ts.forEachChild(node, visit);
+      forEachChild(node, visit);
     }
   }
 
