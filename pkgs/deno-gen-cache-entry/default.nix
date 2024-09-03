@@ -30,6 +30,7 @@ let
   };
   deno-gen-cache-entry = runCommand "deno-gen-cache-entry"
     {
+      __noChroot = true;
       nativeBuildInputs = [ deno makeWrapper diffutils ];
     }
     ''
