@@ -80,7 +80,7 @@ const buildAction = createCliAction(
             _checksum?: string,
           ) {
             if (
-              specifier.startsWith("node:") ||
+              specifier.startsWith("node:") || specifier.startsWith("data:") ||
               (allowNpmSpecifier && specifier.startsWith("npm:"))
             ) {
               return {
@@ -122,6 +122,7 @@ const buildAction = createCliAction(
           importMap &&
           !isRelativePath(specifier) &&
           !specifier.startsWith("node:") &&
+          !specifier.startsWith("data:") &&
           !(allowNpmSpecifier && specifier.startsWith("npm:"))
         ) {
           const parentPath = dirname(path);

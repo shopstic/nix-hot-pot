@@ -128,7 +128,8 @@ const run = createCliAction(
           for (const specifier of specifiers) {
             const resolved = importMap.resolve(specifier, fileUrl);
             if (
-              resolved.startsWith("file://") || resolved.startsWith("node:")
+              resolved.startsWith("file://") || resolved.startsWith("node:") ||
+              resolved.startsWith("data:")
             ) {
               continue;
             }
