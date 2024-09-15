@@ -7,7 +7,7 @@
 , stdenv
 , deno
 , deno-app-transpile
-, deno-cache ? null
+, deno-cache-dir ? null
 , preBuild ? ""
 , postBuild ? ""
 , preExec ? ""
@@ -43,19 +43,19 @@ let
       inherit src;
       name = "${name}-build";
       nativeBuildInputs = [ deno ];
-      __noChroot = deno-cache == null;
+      __noChroot = deno-cache-dir == null;
       phases = [ "unpackPhase" "installPhase" ];
       outputs = [ "out" "entry" ];
       installPhase =
         ''
           export DENO_DIR=$(mktemp -d)
           ${
-            if deno-cache != null 
+            if deno-cache-dir != null 
             then 
             ''
-              ln -s ${deno-cache}/deps "$DENO_DIR/deps"
-              ln -s ${deno-cache}/npm "$DENO_DIR/npm"
-              ln -s ${deno-cache}/registries "$DENO_DIR/registries"
+              ln -s ${deno-cache-dir}/deps "$DENO_DIR/deps"
+              ln -s ${deno-cache-dir}/npm "$DENO_DIR/npm"
+              ln -s ${deno-cache-dir}/registries "$DENO_DIR/registries"
             '' 
             else ""
           }
