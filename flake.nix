@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     fdbPkg.url = "github:shopstic/nix-fdb/7.1.61";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
@@ -15,7 +16,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg }:
+  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg, nixpkgsUnstable }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ]
       (system:
         let
@@ -28,6 +29,7 @@
               ];
             };
           };
+          pkgsUnstable = import nixpkgsUnstable { inherit system; };
           npmlock2nix = import npmlock2nixPkg {
             inherit pkgs;
             lib = pkgs.lib // {
@@ -196,6 +198,7 @@
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
               libpq = pkgs.callPackage ./pkgs/libpq.nix { };
+              libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix { sqlite = pkgsUnstable.sqlite; };
               libpq_16 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_16; };
               libgpgme = pkgs.callPackage ./pkgs/libgpgme.nix { };
               librnp = pkgs.callPackage ./pkgs/librnp.nix { };
