@@ -90,7 +90,7 @@
             pkgs.callPackage ./lib/deno-app-compile.nix
               {
                 inherit name src appSrcPath deno denort deno-app-transpile;
-                deno-cache = cache;
+                deno-cache-dir = cache;
               };
           vscodeSettings = pkgs.writeTextFile {
             name = "vscode-settings.json";
