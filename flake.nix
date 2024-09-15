@@ -3,7 +3,6 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
-    nixpkgsUnstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     fdbPkg.url = "github:shopstic/nix-fdb/7.1.61";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
@@ -16,7 +15,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg, nixpkgsUnstable }:
+  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ]
       (system:
         let
@@ -29,7 +28,6 @@
               ];
             };
           };
-          pkgsUnstable = import nixpkgsUnstable { inherit system; };
           npmlock2nix = import npmlock2nixPkg {
             inherit pkgs;
             lib = pkgs.lib // {
@@ -198,7 +196,16 @@
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
               libpq = pkgs.callPackage ./pkgs/libpq.nix { };
-              libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix { sqlite = pkgsUnstable.sqlite; };
+              libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix {
+                # Temporary until nixpkgs catches up to sqlite 3.46.1
+                sqlite = pkgs.sqlite.overrideAttrs (oldAttrs: {
+                  version = "3.46.1";
+                  src = pkgs.fetchurl {
+                    url = "https://www.sqlite.org/2024/sqlite-autoconf-3460100.tar.gz";
+                    hash = "sha256-Z9P+bSaObq3crjcn/OWPzI6cU4ab3Qegxh443fKWUHE=";
+                  };
+                });
+              };
               libpq_16 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_16; };
               libgpgme = pkgs.callPackage ./pkgs/libgpgme.nix { };
               librnp = pkgs.callPackage ./pkgs/librnp.nix { };
@@ -302,7 +309,7 @@
                 (pkgs // {
                   inherit deno deno-gen-cache-entry;
                 })
-                ./lib/deno-app-cache-entry.nix;                
+                ./lib/deno-app-cache-entry.nix;
               denoAppCache2 = callPackageWith
                 (pkgs // {
                   inherit deno deno-gen-cache-entry;
