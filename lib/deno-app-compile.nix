@@ -9,8 +9,9 @@
 , makeWrapper
 , deno
 , denort
-, deno-app-build
-, deno-cache ? null
+, deno-app-transpile
+, deno-cache-dir ? null
+, deno-vendor-dir ? null
 , preBuild ? ""
 , postBuild ? ""
 , postCompile ? ""
@@ -20,7 +21,7 @@
 let
   generateBuildCommands = outputVarName: srcPath: ''
     ${outputVarName}=${if transpile then 
-    ''$(${deno-app-build}/bin/deno-app-build --allow-npm-specifier --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?''
+    ''$(deno-app-transpile --allow-npm-specifier --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?''
     else
     ''"${srcPath}"''}
 
@@ -46,22 +47,32 @@ let
 in
 stdenv.mkDerivation {
   inherit src name;
-  nativeBuildInputs = [ makeWrapper deno ];
-  __noChroot = deno-cache == null;
+  nativeBuildInputs = [ makeWrapper deno deno-app-transpile ];
+  __noChroot = deno-cache-dir == null;
   phases = [ "unpackPhase" "installPhase" ];
   installPhase =
     ''
       export DENO_DIR=$(mktemp -d)
       ${
-        if deno-cache != null 
+        if deno-cache-dir != null 
         then 
         ''
-          ln -s ${deno-cache}/deps "$DENO_DIR/deps"
-          ln -s ${deno-cache}/npm "$DENO_DIR/npm"
-          ln -s ${deno-cache}/registries "$DENO_DIR/registries"
+          ln -s ${deno-cache-dir}/deps "$DENO_DIR/deps"
+          ln -s ${deno-cache-dir}/npm "$DENO_DIR/npm"
+          ln -s ${deno-cache-dir}/registries "$DENO_DIR/registries"
         '' 
         else ""
       }
+
+      ${
+        if deno-vendor-dir != null 
+        then 
+        ''
+          cp -r "${deno-vendor-dir}"/* .
+        '' 
+        else ""
+      }
+
       TEMP_OUT=$(mktemp -d)
       mkdir -p $out/bin
       ${preBuild}

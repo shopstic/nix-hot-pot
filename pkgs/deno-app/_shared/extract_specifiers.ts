@@ -8,7 +8,7 @@ import {
   ScriptTarget,
 } from "typescript";
 
-export function extractImportExportSpecifiers(
+export function extractModuleSpecifiers(
   filePath: string,
   sourceCode: string,
 ): Set<string> {

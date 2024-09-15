@@ -6,7 +6,7 @@
 , denoRunFlags ? "--no-config --no-lock --no-prompt --no-remote --cached-only -A"
 , stdenv
 , deno
-, deno-app-build
+, deno-app-transpile
 , deno-cache ? null
 , preBuild ? ""
 , postBuild ? ""
@@ -18,7 +18,7 @@
 }:
 let
   generateBuildCommands = outputVarName: srcPath: ''
-    ${outputVarName}=$(${deno-app-build}/bin/deno-app-build --app-path="${srcPath}" --out-path="$out"${if allowNpmSpecifiers then " --allow-npm-specifier" else ""}) || exit $?
+    ${outputVarName}=$(${deno-app-transpile}/bin/deno-app-transpile --app-path="${srcPath}" --out-path="$out"${if allowNpmSpecifiers then " --allow-npm-specifier" else ""}) || exit $?
     ${if prefix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
       cat ${prefix-patch} > "$PATCHED_${outputVarName}"

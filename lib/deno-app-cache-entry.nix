@@ -1,8 +1,9 @@
 { name
 , src
 , deno-gen-cache-entry
-, runCommand
 , genCacheEntryArgs ? ""
+, runCommand
+, writeTextFile
 }:
 let
   cache-entry = runCommand "${name}-cache-entry"
@@ -14,4 +15,7 @@ let
     time deno-gen-cache-entry --src-path "${src}" ${genCacheEntryArgs} > "$out/cache-entry.ts"
   '';
 in
-cache-entry
+writeTextFile {
+  name = "${name}-cache-entry.ts";
+  text = builtins.readFile "${cache-entry}/cache-entry.ts";
+}

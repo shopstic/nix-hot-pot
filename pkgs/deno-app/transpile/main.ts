@@ -1,4 +1,4 @@
-import { transpile, type TranspileOptions } from "./emit.ts";
+import { transpile, type TranspileOptions } from "$shared/transpile.ts";
 import {
   dirname,
   fromFileUrl,
@@ -14,7 +14,7 @@ import { inheritExec } from "@wok/utils/exec";
 import { NonEmptyString, Type } from "@wok/typebox";
 import { CliProgram, createCliAction, ExitCode } from "@wok/utils/cli";
 import { Semaphore } from "@wok/utils/semaphore";
-import { parseFromJson } from "../_deno-shared/import_map.ts";
+import { parseImportMapFromJson } from "$shared/import_map.ts";
 
 function isRelativePath(path: string) {
   return path.startsWith("./") || path.startsWith("../");
@@ -23,7 +23,7 @@ function isRelativePath(path: string) {
 type Load = NonNullable<TranspileOptions["load"]>;
 type LoadParams = Parameters<Load>;
 
-const buildAction = createCliAction(
+const transpileAction = createCliAction(
   {
     allowNpmSpecifier: Type.Optional(Type.Boolean()),
     appPath: NonEmptyString(),
@@ -44,14 +44,17 @@ const buildAction = createCliAction(
     }
 
     try {
+      const cmd = [
+        "deno",
+        "vendor",
+        "--node-modules-dir=false",
+        `--output=${vendorDir}`,
+        absoluteAppPath,
+      ];
+
       await inheritExec({
-        cmd: [
-          "deno",
-          "vendor",
-          "--node-modules-dir=false",
-          `--output=${vendorDir}`,
-          absoluteAppPath,
-        ],
+        cmd,
+        cwd: rootPath,
         signal,
       });
 
@@ -109,7 +112,7 @@ const buildAction = createCliAction(
       const result = await attemptToTranspile();
 
       const importMap = hasImportMap
-        ? await parseFromJson(
+        ? await parseImportMapFromJson(
           importMapUrl,
           await Deno.readTextFile(importMapUrl),
         )
@@ -223,9 +226,13 @@ const buildAction = createCliAction(
 
       const promises = Array.from(result).map(async ([key, content]) => {
         const path = fromFileUrl(key);
+        const newRelativePath = relative(rootPath, path).replace(
+          /\.ts$/,
+          ".js",
+        );
         const newPath = join(
           absoluteOutPath,
-          relative(rootPath, path).replace(/\.ts$/, ".js"),
+          newRelativePath,
         );
         const newParentDir = dirname(newPath);
         await sem.acquire();
@@ -235,13 +242,14 @@ const buildAction = createCliAction(
         } finally {
           sem.release();
         }
-        console.error(`Wrote ${newPath}`);
+        console.error(`Wrote ${newRelativePath}`);
       });
       await Promise.all(promises);
 
       if (toCopyAssetFiles.length > 0) {
         const promises = toCopyAssetFiles.map(async (path) => {
-          const newPath = join(absoluteOutPath, relative(rootPath, path));
+          const newRelativePath = relative(rootPath, path);
+          const newPath = join(absoluteOutPath, newRelativePath);
           const newParentDir = dirname(newPath);
           await sem.acquire();
           try {
@@ -250,7 +258,7 @@ const buildAction = createCliAction(
           } finally {
             sem.release();
           }
-          console.error(`Copied ${path} to ${newPath}`);
+          console.error(`Copied ${newRelativePath}`);
         });
         await Promise.all(promises);
       }
@@ -272,5 +280,5 @@ const buildAction = createCliAction(
 );
 
 await new CliProgram()
-  .addAction("build", buildAction)
+  .addAction("transpile", transpileAction)
   .run(Deno.args);

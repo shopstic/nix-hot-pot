@@ -62,10 +62,10 @@
           pcap-ws = pkgs.callPackage ./pkgs/pcap-ws { };
           ng-server = pkgs.callPackage ./pkgs/ng-server { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
-          deno-app-build = pkgs.callPackage ./pkgs/deno-app-build {
+          deno-app-transpile = pkgs.callPackage ./pkgs/deno-app/transpile {
             inherit deno denort;
           };
-          deno-gen-cache-entry = pkgs.callPackage ./pkgs/deno-gen-cache-entry {
+          deno-gen-cache-entry = pkgs.callPackage ./pkgs/deno-app/gen_cache_entry {
             inherit deno denort;
           };
           intellij-helper =
@@ -89,7 +89,7 @@
             in
             pkgs.callPackage ./lib/deno-app-compile.nix
               {
-                inherit name src appSrcPath deno denort deno-app-build;
+                inherit name src appSrcPath deno denort deno-app-transpile;
                 deno-cache = cache;
               };
           vscodeSettings = pkgs.writeTextFile {
@@ -185,7 +185,7 @@
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror pcap-ws ng-server
-                deno-app-build
+                deno-app-transpile
                 deno-gen-cache-entry
                 typescript-eslint
                 ;
@@ -285,31 +285,37 @@
                 ;
             in
             rec {
-              denoAppBuild = callPackageWith
+              denoAppTranspile = callPackageWith
                 (pkgs // {
-                  inherit deno deno-app-build;
+                  inherit deno deno-app-transpile;
                 })
-                ./lib/deno-app-build.nix;
+                ./lib/deno-app-transpile.nix;
               denoAppCache = callPackageWith
                 (pkgs // {
                   inherit deno;
                 })
                 ./lib/deno-app-cache.nix;
+              denoAppCacheEntry = callPackageWith
+                (pkgs // {
+                  inherit deno deno-gen-cache-entry;
+                })
+                ./lib/deno-app-cache-entry.nix;                
               denoAppCache2 = callPackageWith
                 (pkgs // {
                   inherit deno deno-gen-cache-entry;
                 })
                 ./lib/deno-app-cache2.nix;
-              denoGenCacheEntry = callPackageWith
-                (pkgs // {
-                  inherit deno-gen-cache-entry;
-                })
-                ./lib/deno-gen-cache-entry.nix;
               denoAppCompile = callPackageWith
                 (pkgs // {
-                  inherit deno-app-build deno denort;
+                  inherit deno-app-transpile deno denort;
                 })
                 ./lib/deno-app-compile.nix;
+              denoAppVendor = callPackageWith
+                (pkgs // {
+                  inherit deno;
+                  nodejs = pkgs.nodejs_22;
+                })
+                ./lib/deno-app-vendor.nix;
               wrapJdk = import ./lib/wrap-jdk.nix;
               writeTextFiles = pkgs.callPackage ./lib/write-text-files.nix { };
               nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix {
