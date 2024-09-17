@@ -33,7 +33,11 @@ export async function extractExternalSpecifiers(
   for await (
     const { fileUrl, specifiers } of AsyncQueue
       .from(walk(srcPath))
-      .filter((entry) => entry.isFile && entry.name.endsWith(".ts"))
+      .filter((entry) =>
+        entry.isFile &&
+        (entry.name.endsWith(".ts") || entry.name.endsWith(".tsx") ||
+          entry.name.endsWith(".js") || entry.name.endsWith(".jsx"))
+      )
       .concurrentMap(concurrency, async (entry) => {
         const filePath = entry.path;
         const startTime = performance.now();
