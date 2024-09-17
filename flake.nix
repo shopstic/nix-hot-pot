@@ -35,7 +35,15 @@
             };
           };
           nix2containerPkgs = nix2containerPkg.packages.${system};
-          skopeo-nix2container = nix2containerPkgs.skopeo-nix2container;
+          skopeo-nix2container = nix2containerPkgs.skopeo-nix2container.overrideAttrs (oldAttrs: rec {
+            version = "1.16.1";
+            src = pkgs.fetchFromGitHub {
+              rev = "v${version}";
+              owner = "containers";
+              repo = "skopeo";
+              hash = "sha256-RsFfShru4ujB+x0hju8Xju43JJk/+PAevIPjjDC5YbQ=";
+            };
+          });
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
           deno_1_44_x = pkgs.callPackage ./pkgs/deno-1.44.x.nix { };
