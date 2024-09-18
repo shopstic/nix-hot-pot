@@ -6,6 +6,7 @@
 , nodejs
 , jq
 , runCommand
+, extraDenoCacheArgs ? ""
 , preVendor ? ""
 , postVendor ? ""
 }:
@@ -24,7 +25,7 @@ runCommand "${name}-vendor"
   ${if lock-file != null then ''cp ${lock-file} "$WORK_DIR/deno.lock"'' else ""}
   
   cd "$WORK_DIR"
-  deno cache --node-modules-dir --vendor cache-entry.ts
+  deno cache --node-modules-dir --vendor cache-entry.ts ${extraDenoCacheArgs}
 
   PACKAGE_JSON=$(npm ls --depth=0 --json | \
     jq -re '
