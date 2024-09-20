@@ -8,22 +8,26 @@ import { join } from "@std/path/join";
 import { relative } from "@std/path/relative";
 import { format as formatDuration } from "@std/fmt/duration";
 import { extractModuleSpecifiers } from "$shared/extract_specifiers.ts";
+import { resolve } from "@std/path/resolve";
 
 export async function extractExternalSpecifiers(
-  { srcPath, logger }: {
+  { srcPath, denoConfigPath, logger }: {
     srcPath: string;
+    denoConfigPath?: string;
     logger: Logger;
   },
 ): Promise<Set<string>> {
-  const denoConfigPath = join(srcPath, "deno.json");
+  const resolvedDenoConfigPath = denoConfigPath
+    ? resolve(Deno.cwd(), denoConfigPath)
+    : join(srcPath, "deno.json");
 
-  if (!(await exists(denoConfigPath))) {
-    throw new Error(`deno.json not found at ${denoConfigPath}`);
+  if (!(await exists(resolvedDenoConfigPath))) {
+    throw new Error(`deno.json not found at ${resolvedDenoConfigPath}`);
   }
 
   const importMap = await parseImportMapFromJson(
-    toFileUrl(denoConfigPath),
-    await Deno.readTextFile(denoConfigPath),
+    toFileUrl(resolvedDenoConfigPath),
+    await Deno.readTextFile(resolvedDenoConfigPath),
     { expandImports: true },
   );
 

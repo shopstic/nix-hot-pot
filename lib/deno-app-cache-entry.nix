@@ -1,5 +1,6 @@
 { name
 , src
+, denoConfigPath ? null
 , deno-gen-cache-entry
 , genCacheEntryArgs ? ""
 , runCommand
@@ -12,7 +13,7 @@ let
     } ''
     mkdir $out
     export DENO_DIR=$(mktemp -d)
-    time deno-gen-cache-entry --src-path "${src}" ${genCacheEntryArgs} > "$out/cache-entry.ts"
+    time deno-gen-cache-entry --src-path="${src}" ${if denoConfigPath != null then ''--deno-config-path="${src}/${denoConfigPath}"'' else ""} ${genCacheEntryArgs} > "$out/cache-entry.ts"
   '';
 in
 writeTextFile {

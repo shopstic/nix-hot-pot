@@ -11,8 +11,9 @@ const run = createCliAction(
   {
     concurrency: Type.Optional(PosInt({ default: 32 })),
     srcPath: NonEmptyString(),
+    denoConfigPath: Type.Optional(NonEmptyString()),
   },
-  async ({ concurrency = 32, srcPath }) => {
+  async ({ concurrency = 32, srcPath, denoConfigPath }) => {
     const resolvedSrcPath = resolve(srcPath);
 
     logger.info?.(
@@ -25,6 +26,7 @@ const run = createCliAction(
     const allSpecifiers = Array.from(
       await extractExternalSpecifiers({
         srcPath: resolvedSrcPath,
+        denoConfigPath,
         logger,
       }),
     );
