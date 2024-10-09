@@ -80,30 +80,9 @@
           deno-gen-cache-entry = pkgs.callPackage ./pkgs/deno-app/gen_cache_entry {
             inherit deno denort;
           };
-          intellij-helper =
-            let
-              name = "intellij-helper";
-              src = builtins.path
-                {
-                  path = ./pkgs/${name};
-                  name = "${name}-src";
-                  filter = with pkgs.lib; (path: /* type */_:
-                    hasInfix "/src" path ||
-                    hasSuffix "/deno.lock" path
-                  );
-                };
-              appSrcPath = "./src/${name}.ts";
-              cache = pkgs.callPackage ./lib/deno-app-cache.nix
-                {
-                  inherit deno name src;
-                  cacheArgs = ''"${appSrcPath}"'';
-                };
-            in
-            pkgs.callPackage ./lib/deno-app-compile.nix
-              {
-                inherit name src appSrcPath deno denort deno-app-transpile;
-                deno-cache-dir = cache;
-              };
+          intellij-helper = pkgs.callPackage ./pkgs/intellij-helper {
+            inherit deno denort;
+          };
           vscodeSettings = pkgs.writeTextFile {
             name = "vscode-settings.json";
             text = builtins.toJSON {
