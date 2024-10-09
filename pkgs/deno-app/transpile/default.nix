@@ -1,4 +1,5 @@
 { deno
+, deno-vendor
 , lib
 , denort
 , writeShellScriptBin
@@ -10,7 +11,7 @@ let
   deno-app-transpile = runCommand "deno-app-transpile"
     {
       __noChroot = true;
-      nativeBuildInputs = [ deno makeWrapper ];
+      nativeBuildInputs = [ deno deno-vendor makeWrapper ];
     }
     ''
       mkdir -p $out/bin $out/cache

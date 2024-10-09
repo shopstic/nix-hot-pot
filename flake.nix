@@ -53,7 +53,7 @@
               setFuture = true;
             };
           deno_2_0_x = pkgs.callPackage ./pkgs/deno-2.0.x.nix
-            {};
+            { };
           denort_1_44_x = pkgs.callPackage ./pkgs/denort-1.44.x.nix { };
           denort_1_45_x = pkgs.callPackage ./pkgs/denort-1.45.x.nix { };
           denort_1_46_x = pkgs.callPackage ./pkgs/denort-1.46.x.nix { };
@@ -74,6 +74,7 @@
           ng-server = pkgs.callPackage ./pkgs/ng-server { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
           deno-app-transpile = pkgs.callPackage ./pkgs/deno-app/transpile {
+            deno-vendor = deno_1_46_x;
             inherit deno denort;
           };
           deno-gen-cache-entry = pkgs.callPackage ./pkgs/deno-app/gen_cache_entry {
@@ -153,7 +154,7 @@
         in
         (rec {
           devShell = pkgs.mkShellNoCC {
-            buildInputs = [ deno manifest-tool ] ++ builtins.attrValues {
+            buildInputs = [ deno deno_1_46_x manifest-tool ] ++ builtins.attrValues {
               inherit
                 skopeo-nix2container redpanda kubeshark gitlab-copy typescript-eslint;
               inherit (pkgs)

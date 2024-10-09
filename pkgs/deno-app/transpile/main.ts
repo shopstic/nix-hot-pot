@@ -45,7 +45,7 @@ const transpileAction = createCliAction(
 
     try {
       const cmd = [
-        "deno",
+        "deno-1.46.3",
         "vendor",
         "--node-modules-dir=false",
         `--output=${vendorDir}`,
