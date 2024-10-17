@@ -6,6 +6,7 @@
 , denoRunFlags ? "--no-config --no-lock --no-prompt --no-remote --cached-only -A"
 , stdenv
 , deno
+, deno-vendor
 , deno-app-transpile
 , deno-cache-dir ? null
 , preBuild ? ""
@@ -42,7 +43,7 @@ let
     {
       inherit src;
       name = "${name}-build";
-      nativeBuildInputs = [ deno ];
+      nativeBuildInputs = [ deno deno-vendor ];
       __noChroot = deno-cache-dir == null;
       phases = [ "unpackPhase" "installPhase" ];
       outputs = [ "out" "entry" ];
