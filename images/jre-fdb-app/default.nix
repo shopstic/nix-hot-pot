@@ -13,6 +13,7 @@
 , fdb
 , jre
 , dumb-init
+, dnsutils
 }:
 let
   name = "jre-fdb-app";
@@ -46,6 +47,7 @@ let
       bash
       dumb-init
       jre
+      dnsutils
     ];
   };
 

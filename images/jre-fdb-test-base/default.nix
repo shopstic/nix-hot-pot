@@ -9,6 +9,7 @@
 , jre
 , dumb-init
 , bash
+, dnsutils
 }:
 let
   name = "jre-fdb-test-base";
@@ -53,6 +54,7 @@ let
       jre
       entrypoint
       bash
+      dnsutils
     ];
   };
 
