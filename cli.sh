@@ -59,7 +59,7 @@ push_single_arch() {
 
   echo >&2 "Pushing ${TARGET_IMAGE}"
 
-  skopeo --insecure-policy copy --dest-tls-verify=false \
+  skopeo --insecure-policy copy --dest-tls-verify=false --dest-compress-format="zstd:chunked" \
     nix:"./result/${FILE_NAME}" \
     "docker://${TARGET_IMAGE}"
 }
