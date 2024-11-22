@@ -46,24 +46,21 @@
           });
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
-          deno_1_44_x = pkgs.callPackage ./pkgs/deno-1.44.x.nix { };
-          deno_1_45_x = pkgs.callPackage ./pkgs/deno-1.45.x.nix { };
           deno_1_46_x = pkgs.callPackage ./pkgs/deno-1.46.x.nix
             {
               setFuture = true;
             };
-          deno_2_0_x = pkgs.callPackage ./pkgs/deno-2.0.x.nix
-            { };
-          denort_1_44_x = pkgs.callPackage ./pkgs/denort-1.44.x.nix { };
-          denort_1_45_x = pkgs.callPackage ./pkgs/denort-1.45.x.nix { };
+          deno_2_0_x = pkgs.callPackage ./pkgs/deno-2.0.x.nix { };
+          deno_2_1_x = pkgs.callPackage ./pkgs/deno-2.1.x.nix { };
           denort_1_46_x = pkgs.callPackage ./pkgs/denort-1.46.x.nix { };
           denort_2_0_x = pkgs.callPackage ./pkgs/denort-2.0.x.nix { };
-          deno = deno_2_0_x.overrideAttrs (oldAttrs: {
+          denort_2_1_x = pkgs.callPackage ./pkgs/denort-2.1.x.nix { };
+          deno = deno_2_1_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
           });
-          denort = denort_2_0_x.overrideAttrs (oldAttrs: {
+          denort = denort_2_1_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -167,10 +164,9 @@
             {
               inherit
                 deno denort
-                denort_1_44_x deno_1_44_x
-                denort_1_45_x deno_1_45_x
                 denort_1_46_x deno_1_46_x
                 denort_2_0_x deno_2_0_x
+                denort_2_1_x deno_2_1_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container redpanda hasura-cli
                 kubesess kubeshark
