@@ -2,7 +2,7 @@
   description = "Misc Nix packages";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     fdbPkg.url = "github:shopstic/nix-fdb/7.1.61";
     flakeUtils.url = "github:numtide/flake-utils";
     npmlock2nixPkg = {
@@ -27,6 +27,11 @@
                 "terraform"
               ];
             };
+            overlays = [
+              (self: super: {
+                nodejs-16_x = super.nodejs-18_x;
+              })
+            ];
           };
           npmlock2nix = import npmlock2nixPkg {
             inherit pkgs;
