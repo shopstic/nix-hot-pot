@@ -199,6 +199,7 @@
                   };
                 });
               };
+              libpq_17 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_17; };
               libpq_16 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_16; };
               libgpgme = pkgs.callPackage ./pkgs/libgpgme.nix { };
               librnp = pkgs.callPackage ./pkgs/librnp.nix { };
