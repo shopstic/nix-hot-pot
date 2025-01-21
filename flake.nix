@@ -188,6 +188,7 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
+              pg-schema-diff = pkgs.callPackage ./pkgs/pg-schema-diff.nix { };
               libpq = pkgs.callPackage ./pkgs/libpq.nix { };
               libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix {
                 # Temporary until nixpkgs catches up to sqlite 3.46.1
