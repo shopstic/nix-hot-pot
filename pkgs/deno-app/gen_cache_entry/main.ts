@@ -1,19 +1,19 @@
 import { CliProgram, createCliAction, ExitCode } from "@wok/utils/cli";
-import { NonEmptyString, PosInt, Type } from "@wok/typebox";
 import { getDefaultLogger } from "@wok/utils/logger";
 import { gray } from "@std/fmt/colors";
 import { resolve } from "@std/path/resolve";
 import { extractExternalSpecifiers } from "$shared/extract_external_specifiers.ts";
+import { NonEmpStr, Opt, PosInt } from "@wok/schema";
 
 const logger = getDefaultLogger().prefixed(gray("main"));
 
 const run = createCliAction(
   {
-    concurrency: Type.Optional(PosInt({ default: 32 })),
-    srcPath: NonEmptyString(),
-    denoConfigPath: Type.Optional(NonEmptyString()),
+    concurrency: Opt(PosInt(), 32),
+    srcPath: NonEmpStr(),
+    denoConfigPath: Opt(NonEmpStr()),
   },
-  async ({ concurrency = 32, srcPath, denoConfigPath }) => {
+  async ({ concurrency, srcPath, denoConfigPath }) => {
     const resolvedSrcPath = resolve(srcPath);
 
     logger.info?.(

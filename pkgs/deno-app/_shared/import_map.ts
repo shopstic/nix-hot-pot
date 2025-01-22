@@ -2,7 +2,7 @@ import {
   ImportMap,
   type ImportMapJson,
   parseFromJson,
-} from "https://deno.land/x/import_map@v0.20.1/mod.ts";
+} from "https://deno.land/x/import_map@v0.21.0/mod.ts";
 export { ImportMap, type ImportMapJson };
 
 export async function parseImportMapFromJson(

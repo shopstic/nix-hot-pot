@@ -14,8 +14,8 @@
 }:
 let
   name = "confluent-community";
-  minorVersion = "7.7";
-  version = "7.7.0";
+  minorVersion = "7.8";
+  version = "7.8.0";
   user = "app";
   userUid = 1000;
   shadow = nonRootShadowSetup { inherit user; uid = userUid; shellBin = "/dev/false"; };
@@ -23,7 +23,7 @@ let
 
   confluent-community = fetchzip {
     url = "https://packages.confluent.io/archive/${minorVersion}/confluent-community-${version}.zip";
-    sha256 = "sha256-1kpv9q9axPfm9NwEGKg2Iaw042ilCZEFWkbQBcuCOio=";
+    sha256 = "sha256-c8b4tg0zakTQV3BRF2JpS7xopBABknoeLOVxuipjiOg=";
     postFetch = ''
       rm -Rf $out/src
     '';

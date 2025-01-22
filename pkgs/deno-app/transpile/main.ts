@@ -11,10 +11,10 @@ import ts from "typescript";
 import { assert } from "@std/assert/assert";
 import { exists } from "@std/fs/exists";
 import { inheritExec } from "@wok/utils/exec";
-import { NonEmptyString, Type } from "@wok/typebox";
 import { CliProgram, createCliAction, ExitCode } from "@wok/utils/cli";
 import { Semaphore } from "@wok/utils/semaphore";
 import { parseImportMapFromJson } from "$shared/import_map.ts";
+import { Bool, NonEmpStr, Opt } from "@wok/schema";
 
 function isRelativePath(path: string) {
   return path.startsWith("./") || path.startsWith("../");
@@ -25,12 +25,12 @@ type LoadParams = Parameters<Load>;
 
 const transpileAction = createCliAction(
   {
-    allowNpmSpecifier: Type.Optional(Type.Boolean()),
-    appPath: NonEmptyString(),
-    outPath: NonEmptyString(),
+    allowNpmSpecifier: Opt(Bool(), false),
+    appPath: NonEmpStr(),
+    outPath: NonEmpStr(),
   },
   async (args, signal) => {
-    const { allowNpmSpecifier = false, appPath, outPath } = args;
+    const { allowNpmSpecifier, appPath, outPath } = args;
 
     const absoluteAppPath = resolve(appPath);
     const absoluteOutPath = resolve(outPath);

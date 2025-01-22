@@ -4,13 +4,19 @@ shopt -s extglob globstar
 
 THIS_DIR="$(dirname "$(realpath "$0")")"
 
+code_quality() {
+  deno fmt --check
+  deno lint
+  deno check **/*.ts
+}
+
 update_lock() {
   rm -f deno.lock
   deno cache "${THIS_DIR}"/**/*.ts "$@"
 }
 
 update_deps() {
-  deno run -A jsr:@wok/deup@1.3.1 update "$@"
+  deno run -A jsr:@wok/deup@2.1.1 update "$@"
   "$0" update_lock
 }
 

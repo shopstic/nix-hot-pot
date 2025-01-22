@@ -130,21 +130,21 @@
           docker-credential-helpers = pkgs.callPackage ./pkgs/docker-credential-helpers.nix { };
           typescript-eslint = pkgs.callPackage ./pkgs/typescript-eslint {
             inherit npmlock2nix;
-            nodejs = pkgs.nodejs_20;
+            nodejs = pkgs.nodejs_22;
           };
         in
         (rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno deno_1_46_x manifest-tool ] ++ builtins.attrValues {
               inherit
-                skopeo-nix2container redpanda kubeshark gitlab-copy typescript-eslint;
+                skopeo-nix2container redpanda kubeshark gitlab-copy;
               inherit (pkgs)
                 awscli2
                 parallel
-                nodejs
                 kubectl
                 yq-go
                 fzf
+                nodejs_22
                 ;
             };
             shellHook = ''
