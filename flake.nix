@@ -205,6 +205,7 @@
               libgpgme = pkgs.callPackage ./pkgs/libgpgme.nix { };
               librnp = pkgs.callPackage ./pkgs/librnp.nix { };
               libevent-core = pkgs.callPackage ./pkgs/libevent-core.nix { };
+              atlas = pkgs.callPackage ./pkgs/atlas.nix { };
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 images = {
