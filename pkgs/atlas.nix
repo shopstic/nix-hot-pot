@@ -1,4 +1,4 @@
-{ autoPatchelfHook, fetchurl, stdenv, lib }:
+{ autoPatchelfHook, fetchurl, stdenv, lib, makeWrapper }:
 let
   version = "0.30.0";
   downloadMap = {
@@ -29,12 +29,13 @@ stdenv.mkDerivation rec {
     sha256 = download.hash;
   };
 
-  nativeBuildInputs = lib.optionals (stdenv.isLinux) [ autoPatchelfHook ];
+  nativeBuildInputs = [ makeWrapper ] ++ lib.optionals (stdenv.isLinux) [ autoPatchelfHook ];
 
   dontUnpack = true;
 
   installPhase = ''
-    install -m755 -D ${src} $out/bin/atlas
+    install -m755 -D ${src} "$out"/bin/atlas
+    wrapProgram "$out"/bin/atlas --set ATLAS_NO_ANON_TELEMETRY true
   '';
 
   meta = {
