@@ -1,5 +1,4 @@
 { deno
-, deno-vendor
 , lib
 , denort
 , writeShellScriptBin
@@ -11,7 +10,7 @@ let
   deno-app-transpile = runCommand "deno-app-transpile"
     {
       __noChroot = true;
-      nativeBuildInputs = [ deno deno-vendor makeWrapper ];
+      nativeBuildInputs = [ deno makeWrapper ];
     }
     ''
       mkdir -p $out/bin $out/cache
@@ -22,7 +21,6 @@ let
       deno compile -A --check --frozen --output=$out/bin/deno-app-transpile ${src}/transpile/main.ts
 
       wrapProgram "$out/bin/deno-app-transpile" \
-        --prefix PATH : "${deno}/bin" \
         --set DENO_WASM_CACHE_HOME "$out/cache" \
         --add-flags transpile
       

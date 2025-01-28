@@ -76,7 +76,6 @@
           ng-server = pkgs.callPackage ./pkgs/ng-server { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
           deno-app-transpile = pkgs.callPackage ./pkgs/deno-app/transpile {
-            deno-vendor = deno_1_46_x;
             inherit deno denort;
           };
           deno-gen-cache-entry = pkgs.callPackage ./pkgs/deno-app/gen_cache_entry {
