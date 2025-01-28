@@ -291,12 +291,6 @@
                 ;
             in
             rec {
-              denoAppTranspile = callPackageWith
-                (pkgs // {
-                  deno-vendor = deno_1_46_x;
-                  inherit deno deno-app-transpile;
-                })
-                ./lib/deno-app-transpile.nix;
               denoAppCache = callPackageWith
                 (pkgs // {
                   inherit deno;
