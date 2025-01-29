@@ -290,32 +290,21 @@
                 ;
             in
             rec {
-              denoAppCache = callPackageWith
-                (pkgs // {
-                  inherit deno;
-                })
-                ./lib/deno-app-cache.nix;
               denoAppCacheEntry = callPackageWith
                 (pkgs // {
                   inherit deno deno-gen-cache-entry;
                 })
                 ./lib/deno-app-cache-entry.nix;
-              denoAppCache2 = callPackageWith
+              denoAppVendor = callPackageWith
                 (pkgs // {
-                  inherit deno deno-gen-cache-entry;
+                  inherit deno;
                 })
-                ./lib/deno-app-cache2.nix;
+                ./lib/deno-app-vendor.nix;
               denoAppCompile = callPackageWith
                 (pkgs // {
                   inherit deno-app-transpile deno denort;
                 })
                 ./lib/deno-app-compile.nix;
-              denoAppVendor = callPackageWith
-                (pkgs // {
-                  inherit deno;
-                  nodejs = pkgs.nodejs_22;
-                })
-                ./lib/deno-app-vendor.nix;
               wrapJdk = import ./lib/wrap-jdk.nix;
               writeTextFiles = pkgs.callPackage ./lib/write-text-files.nix { };
               nonRootShadowSetup = pkgs.callPackage ./lib/non-root-shadow-setup.nix {

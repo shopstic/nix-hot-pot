@@ -3,15 +3,12 @@
 , src
 , appSrcPath
 , additionalSrcPaths ? { }
-, transpile ? false
-, denoCompileFlags ? (if transpile then "--no-config --no-lock --no-prompt --no-remote --cached-only -A" else "--cached-only -A")
+, deno-vendor-dir ? null
+, denoCompileFlags ? "-A"
 , stdenv
 , makeWrapper
 , deno
 , denort
-, deno-app-transpile
-, deno-cache-dir ? null
-, deno-vendor-dir ? null
 , preBuild ? ""
 , postBuild ? ""
 , postCompile ? ""
@@ -20,10 +17,7 @@
 }:
 let
   generateBuildCommands = outputVarName: srcPath: ''
-    ${outputVarName}=${if transpile then 
-    ''$(deno-app-transpile --allow-npm-specifier --app-path="${srcPath}" --out-path="$TEMP_OUT") || exit $?''
-    else
-    ''"${srcPath}"''}
+    ${outputVarName}=${''"${srcPath}"''}
 
     ${if prefix-patch != null then ''
       PATCHED_${outputVarName}=$(mktemp)
@@ -47,40 +41,36 @@ let
 in
 stdenv.mkDerivation {
   inherit src name;
-  nativeBuildInputs = [ makeWrapper deno deno-app-transpile ];
-  __noChroot = deno-cache-dir == null;
+  nativeBuildInputs = [ makeWrapper deno ];
+  __noChroot = deno-vendor-dir == null;
   phases = [ "unpackPhase" "installPhase" ];
   installPhase =
     ''
       export DENO_DIR=$(mktemp -d)
-      ${
-        if deno-cache-dir != null 
-        then 
-        ''
-          ln -s ${deno-cache-dir}/deps "$DENO_DIR/deps"
-          ln -s ${deno-cache-dir}/npm "$DENO_DIR/npm"
-          ln -s ${deno-cache-dir}/registries "$DENO_DIR/registries"
-        '' 
-        else ""
-      }
 
       ${
         if deno-vendor-dir != null 
         then 
         ''
-          cp -r "${deno-vendor-dir}"/* .
+          for dir in deps npm registries; do
+            if [ -d ${deno-vendor-dir}/deno-dir/$dir ]; then
+              ln -s ${deno-vendor-dir}/deno-dir/$dir "$DENO_DIR/$dir"
+            fi
+          done
+
+          for link in node_modules vendor; do
+            cp -R "${deno-vendor-dir}/$link" "./$link"
+          done
         '' 
         else ""
       }
 
-      TEMP_OUT=$(mktemp -d)
       mkdir -p $out/bin
       ${preBuild}
       ${generateBuildCommands "RESULT" appSrcPath}
       ${lib.strings.concatStringsSep "\n" additionalSrcCommands}
       ${postBuild}
-      export DENORT_BIN="${denort}/bin/denort"
-      deno compile ${denoCompileFlags} -o "$out/bin/${name}" "$RESULT"
+      DENORT_BIN="${denort}/bin/denort" deno compile ${if deno-vendor-dir != null then "--cached-only --vendor --node-modules-dir=manual" else ""} ${denoCompileFlags} -o "$out/bin/${name}" "$RESULT"
       ${postCompile}
     '';
 }

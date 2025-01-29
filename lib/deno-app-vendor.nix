@@ -3,41 +3,26 @@
 , config-file
 , lock-file ? null
 , deno
-, nodejs
-, jq
 , runCommand
-, extraDenoCacheArgs ? ""
+, extraDenoInstallArgs ? ""
 , preVendor ? ""
 , postVendor ? ""
 }:
 runCommand "${name}-vendor"
 {
-  nativeBuildInputs = [ deno nodejs jq ];
+  nativeBuildInputs = [ deno ];
   __noChroot = true;
 } ''
-  export WORK_DIR=$(mktemp -d)
-  export DENO_DIR=$(mktemp -d)
-  mkdir $out
-  shopt -s globstar
+  export DENO_DIR="$out"/deno-dir
+  mkdir -p "$DENO_DIR"
+
   ${preVendor}
-  cp ${cache-entry-file} "$WORK_DIR/cache-entry.ts"
-  cp ${config-file} "$WORK_DIR/deno.json"
-  ${if lock-file != null then ''cp ${lock-file} "$WORK_DIR/deno.lock"'' else ""}
+  cp ${cache-entry-file} "$out/cache-entry.ts"
+  cp ${config-file} "$out/deno.json"
+  ${if lock-file != null then ''cp ${lock-file} "$out/deno.lock"'' else ""}
   
-  cd "$WORK_DIR"
-  deno cache --node-modules-dir --vendor cache-entry.ts ${extraDenoCacheArgs}
-
-  PACKAGE_JSON=$(npm ls --depth=0 --json | \
-    jq -re '
-      .dependencies
-      | map_values(.version)
-      | with_entries(select(.value != null))
-      | { dependencies: . }'
-  ) || exit 1
-
-  echo "$PACKAGE_JSON" | tee $out/package.json
+  (cd "$out" && deno install --node-modules-dir --vendor ${extraDenoInstallArgs} --entrypoint cache-entry.ts)
   
-  mv ./node_modules $out/
-  mv ./vendor $out/
+  rm -Rf "$out/cache-entry.ts" "$out/deno.json" "$out/deno.lock"
   ${postVendor}
 ''
