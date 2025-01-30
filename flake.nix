@@ -75,6 +75,7 @@
           aws-batch-routes = pkgs.callPackage ./pkgs/aws-batch-routes { };
           pcap-ws = pkgs.callPackage ./pkgs/pcap-ws { };
           ng-server = pkgs.callPackage ./pkgs/ng-server { };
+          periodic-exec = pkgs.callPackage ./pkgs/periodic-exec { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
           deno-app-transpile = pkgs.callPackage ./pkgs/deno-app/transpile {
             inherit deno denort;
@@ -177,7 +178,7 @@
                 kubesess kubeshark
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
-                aws-batch-routes symlink-mirror pcap-ws ng-server
+                aws-batch-routes symlink-mirror periodic-exec pcap-ws ng-server
                 deno-app-transpile
                 deno-gen-cache-entry
                 typescript-eslint
