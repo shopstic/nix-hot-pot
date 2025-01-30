@@ -18,5 +18,5 @@ buildGoModule rec {
       );
     };
 
-  vendorHash = "sha256-kTgoLlnpOnsHPn0vDfHg8RNff1j63bfBxQ7XdgSdl+w=";
+  vendorHash = "sha256-KZUU6i1LhN15SEFnqaoeqrLT0OoSplux8Gm2847TdFk=";
 }
