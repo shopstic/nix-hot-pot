@@ -62,7 +62,7 @@ let
       # fromImage = base-image;
       tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
       copyToRoot = [ nix-bin shadow dirs usr-bin ];
-      maxLayers = 50;
+      maxLayers = 10;
       perms = [
         {
           path = dirs;

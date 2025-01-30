@@ -10,7 +10,7 @@
       flake = false;
     };
     nix2containerPkg = {
-      url = "github:nlewo/nix2container/5fb215a1564baa74ce04ad7f903d94ad6617e17a";
+      url = "github:nktpro/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -49,6 +49,7 @@
               hash = "sha256-RsFfShru4ujB+x0hju8Xju43JJk/+PAevIPjjDC5YbQ=";
             };
           });
+          nix2container-bin = nix2containerPkgs.nix2container-bin;
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
           deno_1_46_x = pkgs.callPackage ./pkgs/deno-1.46.x.nix
@@ -136,7 +137,7 @@
           devShell = pkgs.mkShellNoCC {
             buildInputs = [ deno deno_1_46_x manifest-tool ] ++ builtins.attrValues {
               inherit
-                skopeo-nix2container redpanda kubeshark gitlab-copy;
+                skopeo-nix2container nix2container-bin redpanda kubeshark gitlab-copy;
               inherit (pkgs)
                 awscli2
                 parallel
@@ -172,7 +173,7 @@
                 denort_2_0_x deno_2_0_x
                 denort_2_1_x deno_2_1_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
-                skopeo-nix2container redpanda hasura-cli
+                skopeo-nix2container nix2container-bin redpanda hasura-cli
                 kubesess kubeshark
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
