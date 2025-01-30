@@ -46,7 +46,7 @@ let
       inherit name;
       tag = version;
       copyToRoot = [ nix-bin shadow home-dir ];
-      maxLayers = 50;
+      maxLayers = 7;
       perms = [
         {
           path = home-dir;

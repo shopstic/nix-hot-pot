@@ -124,11 +124,7 @@ let
       ];
     };
     copyToRoot = [ nix-bin shadow home-dir etc-dir ];
-    layers = [
-      (nix2container.buildLayer { deps = [ docker-slim ]; })
-      (nix2container.buildLayer { deps = [ gitlab-runner ]; })
-    ];
-    maxLayers = 100;
+    maxLayers = 30;
     perms = [
       {
         path = home-dir;
