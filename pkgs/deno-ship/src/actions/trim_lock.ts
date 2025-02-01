@@ -71,9 +71,13 @@ export const trimLockAction = createCliAction(
     const lock: DenoLock = JSON.parse(
       await Deno.readTextFile(resolvedLockPath),
     );
-    const resolvedImportMap = await parseImportMapFromJson(
+
+    const importMap = await parseImportMapFromJson(
       toFileUrl(resolvedConfigPath),
       await Deno.readTextFile(resolvedConfigPath),
+      {
+        expandImports: true,
+      },
     );
 
     const lockSpecifierEntries = Object.entries(lock.specifiers);
@@ -220,19 +224,37 @@ export const trimLockAction = createCliAction(
     for (const srcPath of srcPaths) {
       const graph = await createGraph(toFileUrl(resolve(srcPath)).href, {
         async load(specifier, isDynamic, _cacheSetting, checksum) {
-          if (specifier.startsWith("node:") || specifier.startsWith("data:")) {
-            return {
-              kind: "external",
-              specifier,
-            };
+          try {
+            if (
+              specifier.startsWith("node:") || specifier.startsWith("data:")
+            ) {
+              return {
+                kind: "external",
+                specifier,
+              };
+            }
+            return await cacher.load(specifier, isDynamic, "only", checksum);
+          } catch (error) {
+            console.error("Failed to load", specifier, error);
+            throw error;
           }
-          return await cacher.load(specifier, isDynamic, "only", checksum);
         },
         resolve(specifier, referrer) {
-          const resolved = resolvedImportMap.resolve(specifier, referrer);
-          const mapped = mapSpecifier(resolved);
-          // console.error(specifier, ">", resolved, ">", mapped);
-          return mapped;
+          try {
+            const resolved = importMap.resolve(specifier, referrer);
+            const mapped = mapSpecifier(resolved);
+            // console.error(specifier, ">", resolved, ">", mapped);
+            return mapped;
+          } catch (error) {
+            console.error(
+              "Failed to resolve",
+              specifier,
+              "from",
+              referrer,
+              error,
+            );
+            throw error;
+          }
         },
       });
 
@@ -241,6 +263,16 @@ export const trimLockAction = createCliAction(
           throw new Error(
             `Failed resolving from cache ${mod.specifier}: ${mod.error}`,
           );
+        }
+
+        if (mod.dependencies) {
+          for (const dep of mod.dependencies) {
+            if (dep.code?.error !== undefined) {
+              throw new Error(
+                `Failed resolving ${dep.specifier}: ${dep.code.error}`,
+              );
+            }
+          }
         }
 
         if (
