@@ -9,9 +9,10 @@
 , denort
 , includeSrcPaths ? { }
 , deno-cache-dir ? null
-, denoCompileFlags ? "-A --frozen"
+, denoCompileFlags ? "-A"
 , prePatch ? ""
 , postPatch ? ""
+, preCompile ? ""
 , postCompile ? ""
 , prefix-patch ? null
 , suffix-patch ? null
@@ -78,7 +79,16 @@ stdenv.mkDerivation {
       ${lib.strings.concatStringsSep "\n" additionalSrcCommands}
       ${postPatch}
       
+      
+      COMPILE_FLAGS=(
+        ${if deno-cache-dir != null then "--cached-only" else ""}
+        ${denoCompileFlags}
+        ${additionalCompileIncludeArgs}
+      )
+      
       if [ -f "deno.lock" ]; then
+        COMPILE_FLAGS+=("--frozen")
+        
         deno-ship trim-lock \
           --deno-dir="$DENO_DIR" \
           --config="$PWD"/deno.json \
@@ -87,12 +97,10 @@ stdenv.mkDerivation {
         mv "$TEMP_DIR/deno.lock" "$PWD/deno.lock"
       fi
 
+      ${preCompile}
       DENORT_BIN="${denort}/bin/denort" deno compile \
-        ${if deno-cache-dir != null then "--cached-only" else ""} \
-        ${denoCompileFlags} \
-        ${additionalCompileIncludeArgs} \
+        "''${COMPILE_FLAGS[@]}" \
         -o "$out/bin/${name}" "$RESULT"
-
       ${postCompile}
     '';
 }
