@@ -54,7 +54,8 @@ stdenv.mkDerivation {
   installPhase =
     ''
       shopt -s globstar
-      export DENO_DIR="$(mktemp -d)"
+      export TEMP_DIR="$(mktemp -d)"
+      export DENO_DIR="$TEMP_DIR/.deno"
       mkdir -p $out/bin
 
       ${
@@ -80,9 +81,10 @@ stdenv.mkDerivation {
       if [ -f "deno.lock" ]; then
         deno-ship trim-lock \
           --deno-dir="$DENO_DIR" \
-          --config=$PWD/deno.json \
-          --lock=$PWD/deno.lock \
-          "$RESULT" ${additionalSrcArgs} > deno.lock
+          --config="$PWD"/deno.json \
+          --lock="$PWD"/deno.lock \
+          "$RESULT" ${additionalSrcArgs} > "$TEMP_DIR/deno.lock"
+        mv "$TEMP_DIR/deno.lock" "$PWD/deno.lock"
       fi
 
       DENORT_BIN="${denort}/bin/denort" deno compile \
