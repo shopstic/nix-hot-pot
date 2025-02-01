@@ -56,7 +56,7 @@ stdenv.mkDerivation {
       shopt -s globstar
       export TEMP_DIR="$(mktemp -d)"
       export DENO_DIR="$TEMP_DIR/.deno"
-      mkdir -p $out/bin
+      mkdir -p $out/bin "$DENO_DIR"
 
       ${
         if deno-cache-dir != null 
