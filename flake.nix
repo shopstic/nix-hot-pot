@@ -77,10 +77,7 @@
           ng-server = pkgs.callPackage ./pkgs/ng-server { };
           periodic-exec = pkgs.callPackage ./pkgs/periodic-exec { };
           symlink-mirror = pkgs.callPackage ./pkgs/symlink-mirror { };
-          deno-app-transpile = pkgs.callPackage ./pkgs/deno-app/transpile {
-            inherit deno denort;
-          };
-          deno-gen-cache-entry = pkgs.callPackage ./pkgs/deno-app/gen_cache_entry {
+          deno-ship = pkgs.callPackage ./pkgs/deno-ship {
             inherit deno denort;
           };
           intellij-helper = pkgs.callPackage ./pkgs/intellij-helper {
@@ -179,8 +176,7 @@
                 k9s kubernetes-helm
                 dive gitlab-copy docker-credential-helpers
                 aws-batch-routes symlink-mirror periodic-exec pcap-ws ng-server
-                deno-app-transpile
-                deno-gen-cache-entry
+                deno-ship
                 typescript-eslint
                 ;
               inherit (pkgs) kubectx terraform;
@@ -294,17 +290,17 @@
             rec {
               denoAppCacheEntry = callPackageWith
                 (pkgs // {
-                  inherit deno deno-gen-cache-entry;
+                  inherit deno deno-ship;
                 })
                 ./lib/deno-app-cache-entry.nix;
-              denoAppVendor = callPackageWith
+              denoAppCache = callPackageWith
                 (pkgs // {
                   inherit deno;
                 })
-                ./lib/deno-app-vendor.nix;
+                ./lib/deno-app-cache.nix;
               denoAppCompile = callPackageWith
                 (pkgs // {
-                  inherit deno-app-transpile deno denort;
+                  inherit deno-ship deno denort;
                 })
                 ./lib/deno-app-compile.nix;
               wrapJdk = import ./lib/wrap-jdk.nix;

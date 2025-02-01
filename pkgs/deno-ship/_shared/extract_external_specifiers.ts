@@ -3,11 +3,11 @@ import { AsyncQueue } from "@wok/utils/async-queue";
 import { Logger } from "@wok/utils/logger";
 import { gray } from "@std/fmt/colors";
 import { toFileUrl } from "@std/path/to-file-url";
-import { parseImportMapFromJson } from "$shared/import_map.ts";
+import { parseImportMapFromJson } from "./import_map.ts";
 import { join } from "@std/path/join";
 import { relative } from "@std/path/relative";
 import { format as formatDuration } from "@std/fmt/duration";
-import { extractModuleSpecifiers } from "$shared/extract_specifiers.ts";
+import { extractModuleSpecifiers } from "./extract_specifiers.ts";
 import { resolve } from "@std/path/resolve";
 
 export async function extractExternalSpecifiers(

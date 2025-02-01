@@ -1,13 +1,13 @@
 import { resolve, toFileUrl } from "@std/path";
 import ts from "typescript";
 import { assert } from "@std/assert/assert";
-import { CliProgram, createCliAction, ExitCode } from "@wok/utils/cli";
-import { parseImportMapFromJson } from "$shared/import_map.ts";
+import { createCliAction, ExitCode } from "@wok/utils/cli";
+import { parseImportMapFromJson } from "../../_shared/import_map.ts";
 import { NonEmpStr } from "@wok/schema";
 import { walk } from "@std/fs/walk";
 import { AsyncQueue } from "@wok/utils/async-queue";
 
-const transpileAction = createCliAction(
+export const unmapSpecifiersAction = createCliAction(
   {
     importMapPath: NonEmpStr(),
     srcPath: NonEmpStr(),
@@ -127,7 +127,3 @@ const transpileAction = createCliAction(
     return ExitCode.Zero;
   },
 );
-
-await new CliProgram()
-  .addAction("transpile", transpileAction)
-  .run(Deno.args);

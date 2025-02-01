@@ -1,19 +1,18 @@
-import { CliProgram, createCliAction, ExitCode } from "@wok/utils/cli";
+import { createCliAction, ExitCode } from "@wok/utils/cli";
 import { getDefaultLogger } from "@wok/utils/logger";
 import { gray } from "@std/fmt/colors";
 import { resolve } from "@std/path/resolve";
-import { extractExternalSpecifiers } from "$shared/extract_external_specifiers.ts";
+import { extractExternalSpecifiers } from "../../_shared/extract_external_specifiers.ts";
 import { NonEmpStr, Opt, PosInt } from "@wok/schema";
 
-const logger = getDefaultLogger().prefixed(gray("main"));
-
-const run = createCliAction(
+export const genCacheEntryAction = createCliAction(
   {
     concurrency: Opt(PosInt(), 32),
     srcPath: NonEmpStr(),
     denoConfigPath: Opt(NonEmpStr()),
   },
   async ({ concurrency, srcPath, denoConfigPath }) => {
+    const logger = getDefaultLogger().prefixed(gray("main"));
     const resolvedSrcPath = resolve(srcPath);
 
     logger.info?.(
@@ -40,7 +39,3 @@ const run = createCliAction(
     return ExitCode.Zero;
   },
 );
-
-await new CliProgram()
-  .addAction("gen", run)
-  .run(Deno.args);

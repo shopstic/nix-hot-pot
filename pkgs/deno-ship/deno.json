@@ -1,7 +1,9 @@
 {
   "imports": {
     "$shared/": "./_shared/",
+    "@deno/cache-dir": "jsr:@deno/cache-dir@^0.17.0",
     "@deno/emit": "jsr:@deno/emit@^0.46.0",
+    "@deno/graph": "jsr:@deno/graph@^0.87.2",
     "@std/assert": "jsr:@std/assert@^1.0.11",
     "@std/fmt": "jsr:@std/fmt@^1.0.4",
     "@std/fs": "jsr:@std/fs@^1.0.10",

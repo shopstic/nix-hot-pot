@@ -2,21 +2,22 @@
 , name
 , src
 , appSrcPath
-, additionalSrcPaths ? { }
-, deno-vendor-dir ? null
-, denoCompileFlags ? "-A"
+, deno-ship
 , stdenv
 , makeWrapper
 , deno
 , denort
-, preBuild ? ""
-, postBuild ? ""
+, includeSrcPaths ? { }
+, deno-cache-dir ? null
+, denoCompileFlags ? "-A"
+, prePatch ? ""
+, postPatch ? ""
 , postCompile ? ""
 , prefix-patch ? null
 , suffix-patch ? null
 }:
 let
-  generateBuildCommands = outputVarName: srcPath: ''
+  generatePatchCommands = outputVarName: srcPath: ''
     ${outputVarName}=${''"${srcPath}"''}
 
     ${if prefix-patch != null then ''
@@ -36,41 +37,60 @@ let
     '' else ""}
   '';
   additionalSrcCommands = lib.mapAttrsToList
-    (name: value: (generateBuildCommands ''RESULT_${builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper name)}'' value))
-    additionalSrcPaths;
+    (name: value: (generatePatchCommands ''RESULT_${builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper name)}'' value))
+    includeSrcPaths;
+  additionalSrcArgs = lib.strings.concatStringsSep " " (lib.mapAttrsToList
+    (name: _: ''"$RESULT_${builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper name)}"'')
+    includeSrcPaths);
+  additionalCompileIncludeArgs = lib.strings.concatStringsSep " " (lib.mapAttrsToList
+    (name: _: ''--include="$RESULT_${builtins.replaceStrings ["-"] ["_"] (lib.strings.toUpper name)}"'')
+    includeSrcPaths);
 in
 stdenv.mkDerivation {
   inherit src name;
-  nativeBuildInputs = [ makeWrapper deno ];
-  __noChroot = deno-vendor-dir == null;
+  nativeBuildInputs = [ makeWrapper deno deno-ship ];
+  __noChroot = deno-cache-dir == null;
   phases = [ "unpackPhase" "installPhase" ];
   installPhase =
     ''
-      export DENO_DIR=$(mktemp -d)
+      shopt -s globstar
+      export DENO_DIR="$(mktemp -d)"
+      mkdir -p $out/bin
 
       ${
-        if deno-vendor-dir != null 
+        if deno-cache-dir != null 
         then 
         ''
-          for dir in deps npm registries; do
-            if [ -d ${deno-vendor-dir}/deno-dir/$dir ]; then
-              ln -s ${deno-vendor-dir}/deno-dir/$dir "$DENO_DIR/$dir"
+          cp ${deno-cache-dir}/*_cache_* "$DENO_DIR"/
+          chmod -R +w "$DENO_DIR"
+          for dir in deps npm registries remote; do
+            if [ -d ${deno-cache-dir}/$dir ]; then
+              ln -s ${deno-cache-dir}/$dir "$DENO_DIR/$dir"
             fi
-          done
-
-          for link in node_modules vendor; do
-            cp -R "${deno-vendor-dir}/$link" "./$link"
           done
         '' 
         else ""
       }
 
-      mkdir -p $out/bin
-      ${preBuild}
-      ${generateBuildCommands "RESULT" appSrcPath}
+      ${prePatch}
+      ${generatePatchCommands "RESULT" appSrcPath}
       ${lib.strings.concatStringsSep "\n" additionalSrcCommands}
-      ${postBuild}
-      DENORT_BIN="${denort}/bin/denort" deno compile ${if deno-vendor-dir != null then "--cached-only --vendor --node-modules-dir=manual" else ""} ${denoCompileFlags} -o "$out/bin/${name}" "$RESULT"
+      ${postPatch}
+      
+      if [ -f "deno.lock" ]; then
+        deno-ship trim-lock \
+          --deno-dir="$DENO_DIR" \
+          --config=$PWD/deno.json \
+          --lock=$PWD/deno.lock \
+          "$RESULT" ${additionalSrcArgs} > deno.lock
+      fi
+
+      DENORT_BIN="${denort}/bin/denort" deno compile \
+        ${if deno-cache-dir != null then "--cached-only" else ""} \
+        ${denoCompileFlags} \
+        ${additionalCompileIncludeArgs} \
+        -o "$out/bin/${name}" "$RESULT"
+
       ${postCompile}
     '';
 }

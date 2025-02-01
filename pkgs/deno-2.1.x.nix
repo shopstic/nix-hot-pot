@@ -1,19 +1,19 @@
 { autoPatchelfHook, fetchzip, stdenv, lib, makeWrapper, setFuture ? false }:
 (import ./deno.nix rec {
   inherit autoPatchelfHook fetchzip stdenv lib makeWrapper setFuture;
-  version = "2.1.7";
+  version = "2.1.9";
   downloadMap = {
     x86_64-linux = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-x86_64-unknown-linux-gnu.zip";
-      hash = "sha256-n6JVrJ0HOkX/ZITTlUJyAiJJPLpcPIEfBahZSIvuIOc=";
+      hash = "sha256-zcUmeCQbLKtWnZd7PeXnQJ2dWA+RLKQNxuTiRknyz9Q=";
     };
     aarch64-darwin = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-aarch64-apple-darwin.zip";
-      hash = "sha256-1wA1SwlbLKAcd2PpAN/J7zneOCB3pqbOcqpBZR9TZZU=";
+      hash = "sha256-GQKC3F61WrwAwfTgqu/sAQzXDWHpOUMmjUO+6evXQe4=";
     };
     aarch64-linux = {
       url = "https://github.com/denoland/deno/releases/download/v${version}/deno-aarch64-unknown-linux-gnu.zip";
-      hash = "sha256-srhIDKm9SeYE5QUC8n9uUhEP8ujawV8flFrpQAcriCA=";
+      hash = "sha256-ncj0u1nvIxdeXsDNo/oOaTYoOd76nMgIzc1e9mvNrI4=";
     };
   };
   priority = 10;

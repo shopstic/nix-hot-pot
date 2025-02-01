@@ -3,24 +3,31 @@
   "specifiers": {
     "jsr:@cliffy/table@^1.0.0-rc.7": "1.0.0-rc.7",
     "jsr:@deno/cache-dir@0.13.2": "0.13.2",
+    "jsr:@deno/cache-dir@0.17": "0.17.0",
     "jsr:@deno/emit@0.46": "0.46.0",
+    "jsr:@deno/graph@0.86": "0.86.9",
     "jsr:@deno/graph@~0.73.1": "0.73.1",
+    "jsr:@deno/graph@~0.87.2": "0.87.2",
     "jsr:@std/assert@0.223": "0.223.0",
     "jsr:@std/assert@^1.0.10": "1.0.11",
     "jsr:@std/assert@^1.0.11": "1.0.11",
     "jsr:@std/async@^1.0.9": "1.0.9",
     "jsr:@std/bytes@0.223": "0.223.0",
     "jsr:@std/bytes@^1.0.3": "1.0.4",
+    "jsr:@std/bytes@^1.0.4": "1.0.4",
     "jsr:@std/cli@^1.0.10": "1.0.10",
     "jsr:@std/data-structures@^1.0.6": "1.0.6",
     "jsr:@std/fmt@*": "1.0.4",
     "jsr:@std/fmt@0.223": "0.223.0",
+    "jsr:@std/fmt@^1.0.3": "1.0.4",
     "jsr:@std/fmt@^1.0.4": "1.0.4",
     "jsr:@std/fmt@~1.0.2": "1.0.4",
     "jsr:@std/fs@0.223": "0.223.0",
     "jsr:@std/fs@^1.0.10": "1.0.10",
+    "jsr:@std/fs@^1.0.6": "1.0.10",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/io@0.223": "0.223.0",
+    "jsr:@std/io@0.225": "0.225.1",
     "jsr:@std/path@0.223": "0.223.0",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@std/streams@^1.0.8": "1.0.8",
@@ -43,22 +50,38 @@
     "@deno/cache-dir@0.13.2": {
       "integrity": "c22419dfe27ab85f345bee487aaaadba498b005cce3644e9d2528db035c5454d",
       "dependencies": [
-        "jsr:@deno/graph",
+        "jsr:@deno/graph@~0.73.1",
         "jsr:@std/fmt@0.223",
         "jsr:@std/fs@0.223",
-        "jsr:@std/io",
+        "jsr:@std/io@0.223",
         "jsr:@std/path@0.223"
+      ]
+    },
+    "@deno/cache-dir@0.17.0": {
+      "integrity": "c3fca070e1727a30a67352fdbb994fc8125c19c536a536cee8aba741e91eb1de",
+      "dependencies": [
+        "jsr:@deno/graph@0.86",
+        "jsr:@std/fmt@^1.0.3",
+        "jsr:@std/fs@^1.0.6",
+        "jsr:@std/io@0.225",
+        "jsr:@std/path@^1.0.8"
       ]
     },
     "@deno/emit@0.46.0": {
       "integrity": "e276be2c77bac1b93caf775762e2a49a54cb00da2d48ca2b01ed8d7cba9d082c",
       "dependencies": [
-        "jsr:@deno/cache-dir",
+        "jsr:@deno/cache-dir@0.13.2",
         "jsr:@std/path@0.223"
       ]
     },
     "@deno/graph@0.73.1": {
       "integrity": "cd69639d2709d479037d5ce191a422eabe8d71bb68b0098344f6b07411c84d41"
+    },
+    "@deno/graph@0.86.9": {
+      "integrity": "c4f353a695bcc5246c099602977dabc6534eacea9999a35a8cb24e807192e6a1"
+    },
+    "@deno/graph@0.87.2": {
+      "integrity": "8b491bb0a1f2095d6fc0f2b354a537e99eddba54d7e756924529c324fcde108e"
     },
     "@std/assert@0.223.0": {
       "integrity": "eb8d6d879d76e1cc431205bd346ed4d88dc051c6366365b1af47034b0670be24"
@@ -107,6 +130,12 @@
       "dependencies": [
         "jsr:@std/assert@0.223",
         "jsr:@std/bytes@0.223"
+      ]
+    },
+    "@std/io@0.225.1": {
+      "integrity": "0a055fa523288d596f09ba11af5e006f17cecc75bab949b233ceba7eba40293e",
+      "dependencies": [
+        "jsr:@std/bytes@^1.0.4"
       ]
     },
     "@std/path@0.223.0": {
@@ -176,6 +205,8 @@
   },
   "remote": {
     "https://deno.land/x/dir@1.5.1/data_local_dir/mod.ts": "91eb1c4bfadfbeda30171007bac6d85aadacd43224a5ed721bbe56bc64e9eb66",
+    "https://deno.land/x/import_map@v0.18.3/import_map.generated.js": "48f4ff137e65f32a16b35112b15e4afbddb99bff0cb25737e476e4f5ce12ea98",
+    "https://deno.land/x/import_map@v0.18.3/mod.ts": "dd4c4e20639dcfd720a6d41f47bea250db86137901a08988102094678c6b7859",
     "https://deno.land/x/import_map@v0.20.1/import_map.generated.js": "90fb4e96e45720520d48053379975b94990534624a81095815a7d6dce692775a",
     "https://deno.land/x/import_map@v0.20.1/mod.ts": "b074650942b9cca0bd1a5a2c354338f844f93b0ae01de10a14718415d7f370f7",
     "https://deno.land/x/import_map@v0.21.0/import_map.generated.js": "fdd66141ecc2ac25ca6c73d4a598d86cb6dbbd21b98c372884b1330bc027146c",
@@ -185,7 +216,9 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@deno/cache-dir@0.17",
       "jsr:@deno/emit@0.46",
+      "jsr:@deno/graph@~0.87.2",
       "jsr:@std/assert@^1.0.11",
       "jsr:@std/fmt@^1.0.4",
       "jsr:@std/fs@^1.0.10",
