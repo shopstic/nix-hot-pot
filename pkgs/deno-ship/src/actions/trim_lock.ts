@@ -221,6 +221,8 @@ export const trimLockAction = createCliAction(
       }
     }
 
+    let hasNodeDependencies = false;
+
     for (const srcPath of srcPaths) {
       const graph = await createGraph(toFileUrl(resolve(srcPath)).href, {
         async load(specifier, isDynamic, _cacheSetting, checksum) {
@@ -272,6 +274,10 @@ export const trimLockAction = createCliAction(
                 `Failed resolving ${dep.specifier}: ${dep.code.error}`,
               );
             }
+
+            if (!hasNodeDependencies && dep.specifier.startsWith("node:")) {
+              hasNodeDependencies = true;
+            }
           }
         }
 
@@ -280,6 +286,22 @@ export const trimLockAction = createCliAction(
           !mod.specifier.startsWith("npm:/")
         ) {
           resolveDependencies(new Dependency("npm", mod.specifier.slice(4)));
+        }
+
+        if (!hasNodeDependencies && mod.specifier.startsWith("node:")) {
+          hasNodeDependencies = true;
+        }
+      }
+
+      if (hasNodeDependencies) {
+        const typesNodeLockSpecifierEntry = lockSpecifierEntries.find(([key]) =>
+          key.startsWith("npm:@types/node@")
+        );
+
+        if (typesNodeLockSpecifierEntry !== undefined) {
+          resolveDependencies(
+            new Dependency("npm", typesNodeLockSpecifierEntry[0].slice(4)),
+          );
         }
       }
 

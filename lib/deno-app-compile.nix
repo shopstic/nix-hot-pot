@@ -9,7 +9,7 @@
 , denort
 , includeSrcPaths ? { }
 , deno-cache-dir ? null
-, denoCompileFlags ? "-A"
+, denoCompileFlags ? "-A --frozen"
 , prePatch ? ""
 , postPatch ? ""
 , preCompile ? ""
@@ -87,8 +87,6 @@ stdenv.mkDerivation {
       )
       
       if [ -f "deno.lock" ]; then
-        COMPILE_FLAGS+=("--frozen")
-        
         deno-ship trim-lock \
           --deno-dir="$DENO_DIR" \
           --config="$PWD"/deno.json \
