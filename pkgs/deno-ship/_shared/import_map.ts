@@ -13,13 +13,9 @@ export async function parseImportMapFromJson(
   const DENO_WASM_CACHE_HOME = Deno.env.get("DENO_WASM_CACHE_HOME");
 
   if (DENO_WASM_CACHE_HOME !== undefined) {
-    // throw new Error("DENO_WASM_CACHE_HOME env var is not set");
     Deno.env.set("HOME", DENO_WASM_CACHE_HOME);
     Deno.env.set("XDG_DATA_HOME", DENO_WASM_CACHE_HOME);
   }
-
-  // Deno.env.set("HOME", DENO_WASM_CACHE_HOME);
-  // Deno.env.set("XDG_DATA_HOME", DENO_WASM_CACHE_HOME);
 
   return await parseFromJson(baseUrl, json, opts);
 }

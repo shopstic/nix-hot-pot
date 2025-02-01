@@ -4,6 +4,7 @@ import { genCacheEntryAction } from "./actions/gen_cache_entry.ts";
 import { trimLockAction } from "./actions/trim_lock.ts";
 import { parseImportMapFromJson } from "$shared/import_map.ts";
 import { transpile } from "$shared/transpile.ts";
+import { createGraph } from "$shared/graph.ts";
 
 await new CliProgram()
   .addAction("unmap-specifiers", unmapSpecifiersAction)
@@ -12,17 +13,11 @@ await new CliProgram()
   .addAction(
     "cache-wasm",
     createCliAction({}, async () => {
-      try {
-        await parseImportMapFromJson("", "");
-      } catch {
-        // Ignore
-      }
-
-      try {
-        await transpile("");
-      } catch {
-        // Ignore
-      }
+      await Promise.allSettled([
+        parseImportMapFromJson("", ""),
+        transpile(""),
+        createGraph(""),
+      ]);
 
       return ExitCode.Zero;
     }),

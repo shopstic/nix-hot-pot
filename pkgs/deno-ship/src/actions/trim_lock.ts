@@ -1,9 +1,9 @@
-import { createGraph } from "@deno/graph";
 import { resolve, toFileUrl } from "@std/path";
 import { DenoDir, FetchCacher, FileFetcher } from "@deno/cache-dir";
 import { parseImportMapFromJson } from "../../_shared/import_map.ts";
 import { createCliAction, ExitCode } from "@wok/utils/cli";
 import { Arr, NonEmpStr, Opt } from "@wok/schema/schema";
+import { createGraph } from "$shared/graph.ts";
 
 interface DenoLockPackage {
   dependencies?: string[];
