@@ -9,7 +9,7 @@
 , denort
 , includeSrcPaths ? { }
 , deno-cache-dir ? null
-, denoCompileFlags ? "-A"
+, denoCompileFlags ? "-A --frozen"
 , prePatch ? ""
 , postPatch ? ""
 , postCompile ? ""
