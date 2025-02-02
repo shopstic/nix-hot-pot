@@ -18,7 +18,7 @@ export async function extractExternalSpecifiers(
   },
 ): Promise<Set<string>> {
   const resolvedDenoConfigPath = denoConfigPath
-    ? resolve(Deno.cwd(), denoConfigPath)
+    ? resolve(denoConfigPath)
     : join(srcPath, "deno.json");
 
   if (!(await exists(resolvedDenoConfigPath))) {

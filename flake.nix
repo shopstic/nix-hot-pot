@@ -150,6 +150,7 @@
               mkdir -p ./.vscode
               # vscode settings
               cat ${vscodeSettings} > ./.vscode/settings.json
+              export DENORT_BIN="${denort}/bin/denort"
             '';
           };
           packages =

@@ -173,23 +173,23 @@ function createPackageSpecifierResolver(
   const cache = new Map<string, ResolvedPackageSpecifier>();
 
   const resolve = (request: string): ResolvedPackageSpecifier => {
-    let cached = cache.get(request);
-    if (cached !== undefined) {
-      return cached;
-    }
-
-    const specifier = parsePackageSpecifierOrThrow(request);
+    const { path, ...specifier } = parsePackageSpecifierOrThrow(request);
     const specifierString = stringifyPackageSpecifier(specifier);
 
-    cached = cache.get(specifierString);
+    const cached = cache.get(specifierString);
     if (cached !== undefined) {
-      return cached;
+      return {
+        ...cached,
+        path,
+      };
     }
 
     if (isResolvedSpecifier(specifier)) {
-      cache.set(request, specifier);
       cache.set(specifierString, specifier);
-      return specifier;
+      return {
+        ...specifier,
+        path,
+      };
     }
 
     const versionReq = specifier.version as PackageVersionReq;
@@ -227,7 +227,6 @@ function createPackageSpecifierResolver(
         version: lockedVersion.version,
       } satisfies PackageSpecifier;
 
-      cache.set(request, result);
       cache.set(
         stringifyPackageSpecifier({
           ...specifier,
@@ -235,18 +234,12 @@ function createPackageSpecifierResolver(
         }),
         result,
       );
-      cache.set(
-        stringifyPackageSpecifier({
-          ...specifier,
-          version: lockedVersion.req,
-          path: undefined,
-        }),
-        { ...result, path: undefined },
-      );
       cache.set(stringifyPackageSpecifier(result), result);
-      cache.set(specifierString, result);
 
-      return result;
+      return {
+        ...result,
+        path,
+      };
     }
 
     const requestedRange = parseMaybeRange(versionReq);
@@ -266,8 +259,6 @@ function createPackageSpecifierResolver(
           version: lockedVersion.version,
         } satisfies PackageSpecifier;
 
-        cache.set(request, result);
-        cache.set(specifierString, result);
         cache.set(
           stringifyPackageSpecifier({
             ...specifier,
@@ -275,16 +266,11 @@ function createPackageSpecifierResolver(
           }),
           result,
         );
-        cache.set(
-          stringifyPackageSpecifier({
-            ...specifier,
-            version: lockedVersion.req,
-            path: undefined,
-          }),
-          { ...result, path: undefined },
-        );
 
-        return result;
+        return {
+          ...result,
+          path,
+        };
       }
     }
 
@@ -407,9 +393,10 @@ export const trimLockAction = createCliAction(
           try {
             const mapped = importMap.resolve(specifier, referrer);
             if (mapped.startsWith("npm:") || mapped.startsWith("jsr:")) {
-              return stringifyPackageSpecifier(
+              const resolved = stringifyPackageSpecifier(
                 packageSpecifierResolver.resolve(mapped),
               );
+              return resolved;
             }
             return mapped;
           } catch (error) {

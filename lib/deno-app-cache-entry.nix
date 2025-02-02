@@ -4,6 +4,8 @@
 , deno-ship
 , genCacheEntryArgs ? ""
 , runCommand
+, preGen ? ""
+, postGen ? ""
 , writeTextFile
 }:
 let
@@ -13,7 +15,9 @@ let
     } ''
     mkdir $out
     export DENO_DIR=$(mktemp -d)
-    time deno-ship gen-cache-entry --src-path="${src}" ${if denoConfigPath != null then ''--deno-config-path="${src}/${denoConfigPath}"'' else ""} ${genCacheEntryArgs} > "$out/cache-entry.ts"
+    ${preGen}
+    time deno-ship gen-cache-entry --src-dir="${src}" ${if denoConfigPath != null then ''--config="${src}/${denoConfigPath}"'' else ""} ${genCacheEntryArgs} > "$out/cache-entry.ts"
+    ${postGen}
   '';
 in
 writeTextFile {

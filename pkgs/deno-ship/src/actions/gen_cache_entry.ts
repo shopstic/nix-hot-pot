@@ -8,12 +8,12 @@ import { NonEmpStr, Opt, PosInt } from "@wok/schema";
 export const genCacheEntryAction = createCliAction(
   {
     concurrency: Opt(PosInt(), 32),
-    srcPath: NonEmpStr(),
-    denoConfigPath: Opt(NonEmpStr()),
+    srcDir: NonEmpStr(),
+    config: Opt(NonEmpStr()),
   },
-  async ({ concurrency, srcPath, denoConfigPath }) => {
+  async ({ concurrency, srcDir, config }) => {
     const logger = getDefaultLogger().prefixed(gray("main"));
-    const resolvedSrcPath = resolve(srcPath);
+    const resolvedSrcPath = resolve(srcDir);
 
     logger.info?.(
       "Generating cache entry for",
@@ -25,7 +25,7 @@ export const genCacheEntryAction = createCliAction(
     const allSpecifiers = Array.from(
       await extractExternalSpecifiers({
         srcPath: resolvedSrcPath,
-        denoConfigPath,
+        denoConfigPath: config,
         logger,
       }),
     );

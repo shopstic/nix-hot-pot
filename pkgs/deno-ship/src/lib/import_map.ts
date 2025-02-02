@@ -1,8 +1,4 @@
-import {
-  ImportMap,
-  type ImportMapJson,
-  parseFromJson,
-} from "https://deno.land/x/import_map@v0.21.0/mod.ts";
+import { ImportMap, type ImportMapJson, parseFromJson } from "@deno/import-map";
 export { ImportMap, type ImportMapJson };
 
 export async function parseImportMapFromJson(

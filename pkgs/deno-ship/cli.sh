@@ -5,18 +5,24 @@ shopt -s extglob globstar
 THIS_DIR="$(dirname "$(realpath "$0")")"
 
 code_quality() {
+  "$0" check_all
+  echo "Checking for unformatted sources"
   deno fmt --check
+  echo "Running deno lint..."
   deno lint
-  deno check **/*.ts
 }
 
 update_lock() {
   rm -f deno.lock
-  deno cache "${THIS_DIR}"/**/*.ts "$@"
+  "$@" check_all
+}
+
+check_all() {
+  deno check "$@" ./src/**/*.ts
 }
 
 update_deps() {
-  deno run -A jsr:@wok/deup@2.1.1 update "$@"
+  deno run -A "$(jq -er '.imports["@wok/deup"]' <deno.json)" update "$@"
   "$0" update_lock
 }
 

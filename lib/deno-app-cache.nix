@@ -4,6 +4,7 @@
 , lock-file ? null
 , deno
 , runCommand
+, denoCheckFlags ? "--frozen"
 , preCache ? ""
 , postCache ? ""
 }:
@@ -21,6 +22,6 @@ runCommand "${name}-cache"
   cp --reflink=auto ${config-file} "./deno.json"
   ${if lock-file != null then ''cp --reflink=auto ${lock-file} "./deno.lock"'' else ""}
 
-  deno check --lock=deno.lock ./cache-entry.ts
+  deno check ${denoCheckFlags} --lock=deno.lock ./cache-entry.ts
   ${postCache}
 ''

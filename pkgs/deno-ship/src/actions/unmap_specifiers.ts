@@ -9,11 +9,11 @@ import { AsyncQueue } from "@wok/utils/async-queue";
 
 export const unmapSpecifiersAction = createCliAction(
   {
-    importMapPath: NonEmpStr(),
-    srcPath: NonEmpStr(),
+    importMap: NonEmpStr({ description: "Path to the import map" }),
+    srcDir: NonEmpStr({ description: "Path to the source directory" }),
   },
-  async ({ importMapPath, srcPath }) => {
-    const absoluteSrcPath = resolve(srcPath);
+  async ({ importMap: importMapPath, srcDir }) => {
+    const absoluteSrcPath = resolve(srcDir);
     const importMapUrl = toFileUrl(importMapPath);
     const importMap = await parseImportMapFromJson(
       importMapUrl,
