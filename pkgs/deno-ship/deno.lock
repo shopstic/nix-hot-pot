@@ -30,6 +30,7 @@
     "jsr:@std/io@0.225": "0.225.1",
     "jsr:@std/path@0.223": "0.223.0",
     "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/semver@^1.0.3": "1.0.3",
     "jsr:@std/streams@^1.0.8": "1.0.8",
     "jsr:@std/yaml@^1.0.5": "1.0.5",
     "jsr:@wok/case@^1.0.2": "1.0.2",
@@ -38,6 +39,7 @@
     "jsr:@wok/utils@^4.2.4": "4.2.4",
     "npm:@sinclair/typebox@~0.34.13": "0.34.14",
     "npm:type-fest@^4.32.0": "4.33.0",
+    "npm:type-fest@^4.33.0": "4.33.0",
     "npm:typescript@^5.7.3": "5.7.3"
   },
   "jsr": {
@@ -147,6 +149,9 @@
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
     },
+    "@std/semver@1.0.3": {
+      "integrity": "7c139c6076a080eeaa4252c78b95ca5302818d7eafab0470d34cafd9930c13c8"
+    },
     "@std/streams@1.0.8": {
       "integrity": "b41332d93d2cf6a82fe4ac2153b930adf1a859392931e2a19d9fabfb6f154fb3",
       "dependencies": [
@@ -163,7 +168,7 @@
       "integrity": "c62676c83ef3a8cb40ff8860bf8a076dd25b4940381ae0da1e548acee230ec5a",
       "dependencies": [
         "jsr:@wok/typebox",
-        "npm:type-fest"
+        "npm:type-fest@^4.32.0"
       ]
     },
     "@wok/typebox@1.1.0": {
@@ -188,7 +193,7 @@
         "jsr:@wok/case",
         "jsr:@wok/schema",
         "jsr:@wok/typebox",
-        "npm:type-fest"
+        "npm:type-fest@^4.32.0"
       ]
     }
   },
@@ -223,10 +228,12 @@
       "jsr:@std/fmt@^1.0.4",
       "jsr:@std/fs@^1.0.10",
       "jsr:@std/path@^1.0.8",
+      "jsr:@std/semver@^1.0.3",
       "jsr:@wok/case@^1.0.2",
       "jsr:@wok/schema@^2.2.0",
       "jsr:@wok/typebox@^1.1.0",
       "jsr:@wok/utils@^4.2.4",
+      "npm:type-fest@^4.33.0",
       "npm:typescript@^5.7.3"
     ]
   }

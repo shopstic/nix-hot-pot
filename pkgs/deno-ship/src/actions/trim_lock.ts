@@ -1,38 +1,309 @@
 import { resolve, toFileUrl } from "@std/path";
 import { DenoDir, FetchCacher, FileFetcher } from "@deno/cache-dir";
-import { parseImportMapFromJson } from "../../_shared/import_map.ts";
+import { parseImportMapFromJson } from "../lib/import_map.ts";
 import { createCliAction, ExitCode } from "@wok/utils/cli";
 import { Arr, NonEmpStr, Opt } from "@wok/schema/schema";
-import { createGraph } from "$shared/graph.ts";
+import { createGraph } from "../lib/graph.ts";
+import {
+  PackageName,
+  PackageSpecifier,
+  PackageType,
+  parsePackageSpecifier,
+  stringifyPackageSpecifier,
+} from "../lib/package_specifier.ts";
+import { assertExists } from "@std/assert/exists";
+import { Tagged } from "type-fest";
+import { parseRange } from "@std/semver/parse-range";
+import { formatRange } from "@std/semver/format-range";
+import { Range } from "@std/semver/types";
+
+type PackageVersionReq = Tagged<string, "PackageVersionReq">;
+type PackageVersion = Tagged<string, "PackageVersion">;
+type PackageRange = Tagged<string, "PackageRange">;
+
+interface ResolvedPackageSpecifier extends PackageSpecifier {
+  version: PackageVersion;
+}
 
 interface DenoLockPackage {
   dependencies?: string[];
 }
 
 interface DenoLock {
-  specifiers: Record<string, string>;
+  specifiers: Record<string, PackageVersion>;
   jsr: Record<string, DenoLockPackage>;
   npm: Record<string, DenoLockPackage>;
 }
 
-interface ResolvedPackage {
-  name: string;
-  dependencies?: string[];
+interface PackageVersionLock {
+  range?: PackageRange;
+  req: PackageVersionReq;
+  version: PackageVersion;
 }
 
-class Dependency {
-  private _specifier?: string;
-  constructor(
-    public type: "npm" | "jsr",
-    public name: string,
-    public mappedFromSpecifier?: string,
-  ) {}
-  get specifier() {
-    if (this._specifier === undefined) {
-      this._specifier = this.type + ":" + this.name;
-    }
-    return this._specifier;
+type PackageNameVersionRegistry = Record<
+  PackageName,
+  PackageVersionLock[]
+>;
+type PackageTypeVersionRegistry = Record<
+  PackageType,
+  PackageNameVersionRegistry
+>;
+
+interface PackageSpecifierResolver {
+  resolve(specifier: string): ResolvedPackageSpecifier;
+  cache: Map<string, PackageSpecifier>;
+  registry: PackageTypeVersionRegistry;
+}
+
+function isResolvedSpecifier(
+  specifier: PackageSpecifier,
+): specifier is ResolvedPackageSpecifier {
+  return specifier.version !== undefined && isVersionExact(specifier.version);
+}
+
+function isVersionExact(version: string): version is PackageVersion {
+  let range: Range | undefined;
+
+  try {
+    range = parseRange(version);
+  } catch {
+    // Ignore
   }
+
+  if (
+    range !== undefined && range.length === 1 && range[0].length === 1 &&
+    range[0][0].operator === undefined
+  ) {
+    return true;
+  }
+
+  return range === undefined;
+}
+
+function parsePackageSpecifierOrThrow(specifier: string): PackageSpecifier {
+  const parsed = parsePackageSpecifier(specifier);
+  if (parsed === undefined) {
+    throw new Error(`Invalid package specifier: ${specifier}`);
+  }
+  return parsed;
+}
+
+function parseMaybeRange(version: string): PackageRange | undefined {
+  try {
+    return formatRange(parseRange(version)) as PackageRange;
+  } catch {
+    return undefined;
+  }
+}
+
+function createFallbackPackageNameVersionRegistry(
+  type: PackageType,
+  lock: Record<string, DenoLockPackage>,
+): PackageNameVersionRegistry {
+  return Object.keys(lock).map((s) => {
+    const info = parsePackageSpecifierOrThrow(type + ":" + s);
+    assertExists(info.version, `Version requirement is not defined in: ${s}`);
+    return {
+      name: info.name,
+      version: info.version,
+    };
+  }).reduce((acc, entry) => {
+    if (!acc[entry.name]) {
+      acc[entry.name] = [];
+    }
+
+    acc[entry.name].push({
+      version: entry.version as PackageVersion,
+      req: entry.version as PackageVersionReq,
+    });
+
+    return acc;
+  }, {} as PackageNameVersionRegistry);
+}
+
+function createPackageSpecifierResolver(
+  lock: DenoLock,
+): PackageSpecifierResolver {
+  const specifierEntries = Object.entries(lock.specifiers).map(
+    ([specifier, version]) => {
+      const info = parsePackageSpecifierOrThrow(specifier);
+      assertExists(
+        info.version,
+        `Version requirement is not defined in: ${specifier}`,
+      );
+
+      return {
+        type: info.type,
+        name: info.name,
+        versionReq: info.version as PackageVersionReq,
+        version,
+      };
+    },
+  );
+
+  const registry = specifierEntries.reduce((acc, entry) => {
+    if (!acc[entry.type]) {
+      acc[entry.type] = {};
+    }
+    if (!acc[entry.type][entry.name]) {
+      acc[entry.type][entry.name] = [];
+    }
+
+    acc[entry.type][entry.name].push({
+      range: parseMaybeRange(entry.versionReq),
+      version: entry.version,
+      req: entry.versionReq,
+    });
+
+    return acc;
+  }, {} as PackageTypeVersionRegistry);
+
+  const fallbackRegistry = {
+    npm: createFallbackPackageNameVersionRegistry(
+      "npm",
+      lock.npm,
+    ),
+    jsr: createFallbackPackageNameVersionRegistry(
+      "jsr",
+      lock.npm,
+    ),
+  } as const;
+
+  const cache = new Map<string, ResolvedPackageSpecifier>();
+
+  const resolve = (request: string): ResolvedPackageSpecifier => {
+    let cached = cache.get(request);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    const specifier = parsePackageSpecifierOrThrow(request);
+    const specifierString = stringifyPackageSpecifier(specifier);
+
+    cached = cache.get(specifierString);
+    if (cached !== undefined) {
+      return cached;
+    }
+
+    if (isResolvedSpecifier(specifier)) {
+      cache.set(request, specifier);
+      cache.set(specifierString, specifier);
+      return specifier;
+    }
+
+    const versionReq = specifier.version as PackageVersionReq;
+    let lockedVersions = registry[specifier.type][specifier.name] ?? [];
+
+    if (versionReq === undefined) {
+      if (lockedVersions.length === 0) {
+        lockedVersions = fallbackRegistry[specifier.type][specifier.name] ?? [];
+      }
+
+      if (lockedVersions.length === 0) {
+        throw new Error(
+          `There is no locked or known version for package name: ${
+            JSON.stringify(specifier.name)
+          }. The requested specifier is: ${JSON.stringify(request)}`,
+        );
+      }
+
+      if (lockedVersions.length > 1) {
+        throw new Error(
+          `A specifier leads to ambiguous version resolution: ${
+            JSON.stringify(request)
+          }. There are multiple locked versions for package name: ${
+            JSON.stringify(specifier.name)
+          }. All known locked versions are: ${
+            lockedVersions.map((v) => v.version).join(", ")
+          }`,
+        );
+      }
+
+      const lockedVersion = lockedVersions[0];
+
+      const result = {
+        ...specifier,
+        version: lockedVersion.version,
+      } satisfies PackageSpecifier;
+
+      cache.set(request, result);
+      cache.set(
+        stringifyPackageSpecifier({
+          ...specifier,
+          version: lockedVersion.req,
+        }),
+        result,
+      );
+      cache.set(
+        stringifyPackageSpecifier({
+          ...specifier,
+          version: lockedVersion.req,
+          path: undefined,
+        }),
+        { ...result, path: undefined },
+      );
+      cache.set(stringifyPackageSpecifier(result), result);
+      cache.set(specifierString, result);
+
+      return result;
+    }
+
+    const requestedRange = parseMaybeRange(versionReq);
+
+    if (requestedRange === undefined) {
+      throw new Error(
+        `Invalid version range: ${JSON.stringify(versionReq)} in specifier: ${
+          JSON.stringify(request)
+        }`,
+      );
+    }
+
+    for (const lockedVersion of lockedVersions) {
+      if (lockedVersion.range === requestedRange) {
+        const result = {
+          ...specifier,
+          version: lockedVersion.version,
+        } satisfies PackageSpecifier;
+
+        cache.set(request, result);
+        cache.set(specifierString, result);
+        cache.set(
+          stringifyPackageSpecifier({
+            ...specifier,
+            version: lockedVersion.req,
+          }),
+          result,
+        );
+        cache.set(
+          stringifyPackageSpecifier({
+            ...specifier,
+            version: lockedVersion.req,
+            path: undefined,
+          }),
+          { ...result, path: undefined },
+        );
+
+        return result;
+      }
+    }
+
+    throw new Error(
+      `Could not find a matching locked version for specifier: ${
+        JSON.stringify(request)
+      }. Known mapping: ${
+        JSON.stringify(
+          Object.fromEntries(lockedVersions.map((v) => [v.req, v.version])),
+        )
+      }`,
+    );
+  };
+
+  return {
+    registry,
+    cache,
+    resolve,
+  };
 }
 
 export const trimLockAction = createCliAction(
@@ -55,7 +326,6 @@ export const trimLockAction = createCliAction(
       _: srcPaths,
     },
   ) => {
-    const resolvedDependencies = new Map<string, string>();
     const resolvedConfigPath = resolve(configPath);
     const resolvedLockPath = resolve(lockPath);
 
@@ -80,143 +350,35 @@ export const trimLockAction = createCliAction(
       },
     );
 
-    const lockSpecifierEntries = Object.entries(lock.specifiers);
-
-    function mapSpecifier(specifier: string) {
-      if (!specifier.startsWith("npm:") && !specifier.startsWith("jsr:")) {
-        return specifier;
-      }
-
-      const normalized = specifier.startsWith("jsr:/")
-        ? ("jsr:" + specifier.slice(5))
-        : specifier;
-
-      for (const [from, to] of lockSpecifierEntries) {
-        if (normalized === from) {
-          const li = specifier.lastIndexOf("@");
-          const prefix = specifier.slice(0, li);
-          const mapped = prefix + "@" + to;
-          resolvedDependencies.set(specifier, mapped);
-          return mapped;
-        } else if (
-          normalized.startsWith(from) && normalized[from.length] === "/"
-        ) {
-          const li = specifier.lastIndexOf("@");
-          const prefix = specifier.slice(0, li);
-          const remaining = specifier.slice(li + 1);
-          const slashIndex = remaining.indexOf("/");
-          const suffix = slashIndex !== -1 ? remaining.slice(slashIndex) : "";
-          return prefix + "@" + to + suffix;
-        }
-      }
-
-      return specifier;
-    }
+    const packageSpecifierResolver = createPackageSpecifierResolver(lock);
 
     function resolvePackage(
-      packageMap: Record<string, DenoLockPackage>,
-      { type, name }: Dependency,
-    ): ResolvedPackage {
-      const pkg = packageMap[name];
+      map: Record<string, DenoLockPackage>,
+      spec: ResolvedPackageSpecifier,
+    ) {
+      const versionedName = spec.name + "@" + spec.version;
+      const pkg = map[versionedName];
 
-      if (pkg === undefined) {
-        const prefix = name + "@";
-        for (const [key, value] of Object.entries(packageMap)) {
-          if (key.startsWith(prefix)) {
-            return {
-              name: key,
-              dependencies: value.dependencies,
-            };
-          }
-        }
-
+      if (!pkg) {
         throw new Error(
-          `Could not find ${type} package in the lock file: ${name}`,
+          `Package of type ${spec.type} not found in lock: ${versionedName}`,
         );
       }
 
-      return {
-        name,
-        dependencies: pkg.dependencies,
-      };
+      return pkg;
     }
 
-    function mapDependency(dep: Dependency) {
-      let version = lock.specifiers[dep.specifier];
-      let mappedFromSpecifier: undefined | string;
+    function resolveDependencies(specifier: string) {
+      const spec = packageSpecifierResolver.resolve(specifier);
+      const pkg = resolvePackage(
+        spec.type === "npm" ? lock.npm : lock.jsr,
+        spec,
+      );
 
-      if (version === undefined && dep.specifier.includes("@^0.")) {
-        mappedFromSpecifier = dep.specifier.replace("@^0.", "@~0.");
-        version = lock.specifiers[mappedFromSpecifier];
-      }
-
-      if (version !== undefined) {
-        const prefix = dep.name.slice(0, dep.name.lastIndexOf("@"));
-        return new Dependency(
-          dep.type,
-          prefix + "@" + version,
-          mappedFromSpecifier,
-        );
-      }
-
-      return dep;
-    }
-
-    function resolveDependencies(item: Dependency) {
-      if (resolvedDependencies.has(item.specifier)) {
-        return;
-      }
-
-      const mapped = mapDependency(item);
-      if (resolvedDependencies.has(mapped.specifier)) {
-        if (item.mappedFromSpecifier) {
-          resolvedDependencies.set(
-            item.mappedFromSpecifier,
-            resolvedDependencies.get(mapped.specifier)!,
-          );
-        }
-        resolvedDependencies.set(
-          item.specifier,
-          resolvedDependencies.get(mapped.specifier)!,
-        );
-        return;
-      }
-
-      if (mapped.type === "npm") {
-        const pkg = resolvePackage(lock.npm, mapped);
-        const resolved = `npm:${pkg.name}`;
-        if (mapped.mappedFromSpecifier) {
-          resolvedDependencies.set(mapped.mappedFromSpecifier, resolved);
-        }
-        resolvedDependencies.set(item.specifier, resolved);
-        resolvedDependencies.set(mapped.specifier, resolved);
-
-        if (pkg.dependencies) {
-          for (const dep of pkg.dependencies) {
-            resolveDependencies(new Dependency("npm", dep));
-          }
-        }
-      } else {
-        const pkg = resolvePackage(lock.jsr, mapped);
-        const resolved = `jsr:${pkg.name}`;
-        if (mapped.mappedFromSpecifier) {
-          resolvedDependencies.set(mapped.mappedFromSpecifier, resolved);
-        }
-        resolvedDependencies.set(item.specifier, resolved);
-        resolvedDependencies.set(mapped.specifier, resolved);
-
-        if (pkg.dependencies) {
-          for (const dep of pkg.dependencies) {
-            if (dep.startsWith("npm:")) {
-              resolveDependencies(new Dependency("npm", dep.slice(4)));
-            } else if (dep.startsWith("jsr:")) {
-              resolveDependencies(new Dependency("jsr", dep.slice(4)));
-            } else {
-              throw new Error(
-                `Unexpected dependency of ${mapped.specifier} - neither jsr nor npm: ${dep}`,
-              );
-            }
-          }
+      if (pkg.dependencies) {
+        for (const dep of pkg.dependencies) {
+          const depSpecifier = spec.type === "npm" ? `npm:${dep}` : dep;
+          resolveDependencies(depSpecifier);
         }
       }
     }
@@ -243,9 +405,12 @@ export const trimLockAction = createCliAction(
         },
         resolve(specifier, referrer) {
           try {
-            const resolved = importMap.resolve(specifier, referrer);
-            const mapped = mapSpecifier(resolved);
-            // console.error(specifier, ">", resolved, ">", mapped);
+            const mapped = importMap.resolve(specifier, referrer);
+            if (mapped.startsWith("npm:") || mapped.startsWith("jsr:")) {
+              return stringifyPackageSpecifier(
+                packageSpecifierResolver.resolve(mapped),
+              );
+            }
             return mapped;
           } catch (error) {
             console.error(
@@ -282,10 +447,9 @@ export const trimLockAction = createCliAction(
         }
 
         if (
-          mod.kind === "external" && mod.specifier.startsWith("npm:") &&
-          !mod.specifier.startsWith("npm:/")
+          mod.kind === "external" && mod.specifier.startsWith("npm:")
         ) {
-          resolveDependencies(new Dependency("npm", mod.specifier.slice(4)));
+          resolveDependencies(mod.specifier);
         }
 
         if (!hasNodeDependencies && mod.specifier.startsWith("node:")) {
@@ -294,15 +458,7 @@ export const trimLockAction = createCliAction(
       }
 
       if (hasNodeDependencies) {
-        const typesNodeLockSpecifierEntry = lockSpecifierEntries.find(([key]) =>
-          key.startsWith("npm:@types/node@")
-        );
-
-        if (typesNodeLockSpecifierEntry !== undefined) {
-          resolveDependencies(
-            new Dependency("npm", typesNodeLockSpecifierEntry[0].slice(4)),
-          );
-        }
+        resolveDependencies("npm:@types/node");
       }
 
       const graphPackages: Record<string, string> | undefined =
@@ -313,19 +469,18 @@ export const trimLockAction = createCliAction(
         for (
           const p of Object.values(graphPackages)
         ) {
-          resolveDependencies(new Dependency("jsr", p));
+          resolveDependencies(`jsr:${p}`);
         }
       }
     }
-
-    const resolvedDependencySet = new Set(resolvedDependencies.values());
 
     console.error(
       JSON.stringify(
         Object.fromEntries(
           Array
-            .from(resolvedDependencies.entries())
-            .sort(([a], [b]) => a.localeCompare(b)),
+            .from(packageSpecifierResolver.cache.entries())
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([specifier, resolved]) => [specifier, resolved.version]),
         ),
         null,
         2,
@@ -335,18 +490,18 @@ export const trimLockAction = createCliAction(
       {
         ...lock,
         specifiers: Object.fromEntries(
-          lockSpecifierEntries.filter(([key]) =>
-            !key.startsWith("npm:") || resolvedDependencies.has(key)
+          Object.entries(lock.specifiers).filter(([key]) =>
+            packageSpecifierResolver.cache.has(key)
           ),
         ),
         jsr: Object.fromEntries(
           Object.entries(lock.jsr).filter(([key]) =>
-            resolvedDependencySet.has(`jsr:${key}`)
+            packageSpecifierResolver.cache.has(`jsr:${key}`)
           ),
         ),
         npm: Object.fromEntries(
           Object.entries(lock.npm).filter(([key]) =>
-            resolvedDependencySet.has(`npm:${key}`)
+            packageSpecifierResolver.cache.has(`npm:${key}`)
           ),
         ),
       },
