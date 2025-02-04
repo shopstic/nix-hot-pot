@@ -133,9 +133,9 @@
         in
         (rec {
           devShell = pkgs.mkShellNoCC {
-            buildInputs = [ deno deno_1_46_x manifest-tool ] ++ builtins.attrValues {
+            buildInputs = builtins.attrValues {
               inherit
-                skopeo-nix2container nix2container-bin redpanda kubeshark gitlab-copy;
+                deno skopeo-nix2container;
               inherit (pkgs)
                 awscli2
                 parallel
@@ -143,6 +143,7 @@
                 yq-go
                 fzf
                 nodejs_22
+                regclient
                 ;
             };
             shellHook = ''
