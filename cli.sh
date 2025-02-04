@@ -61,11 +61,14 @@ push_single_arch() {
   local NIX_STORE_PATH
   NIX_STORE_PATH=$(realpath "./result/${FILE_NAME}")
 
-  if regctl manifest get --format='{{jsonPretty .}}' "${LAST_IMAGE}" | jq -e --arg VALUE '.annotations["nix.store.path"] == $VALUE' > /dev/null 2>&1; then
-    echo >&2 "Last image ${LAST_IMAGE} already exists with nix.store.path annotation of ${NIX_STORE_PATH}"
+  LAST_IMAGE_NIX_STORE_PATH=$(regctl manifest get --format='{{jsonPretty .}}' "${LAST_IMAGE}" | jq -r '.annotations["nix.store.path"]') || true
+
+  if [[ "${LAST_IMAGE_NIX_STORE_PATH}" == "${NIX_STORE_PATH}" ]]; then
+    echo "Last image ${LAST_IMAGE} already exists with nix.store.path annotation of ${NIX_STORE_PATH}"
     regctl index create "${TARGET_IMAGE}" --ref "${LAST_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
   else
-    echo >&2 "Pushing image ${TARGET_IMAGE}"
+    echo "Last image ${LAST_IMAGE} nix.store.path=${LAST_IMAGE_NIX_STORE_PATH} does not match ${NIX_STORE_PATH}"
+    echo "Pushing image ${TARGET_IMAGE}"
     skopeo copy --dest-compress-format="zstd:chunked" --insecure-policy nix:"${NIX_STORE_PATH}" docker://"${TARGET_IMAGE}"
     regctl index create "${TARGET_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
     regctl index create "${LAST_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
