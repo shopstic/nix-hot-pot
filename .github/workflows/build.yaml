@@ -70,18 +70,18 @@ jobs:
         run: |
           ./cli.sh push_all_single_arch_images ${{ matrix.imageArch }}
 
-  push-manifests:
-    name: Build and push multi-arch manifests
-    timeout-minutes: 20
-    runs-on: [self-hosted, nix, general, arm64-linux, small]
-    needs: [build-push-images]
-    if: github.ref == 'refs/heads/main'
-    defaults:
-      run:
-        shell: nix develop -c bash {0}      
-    steps:
-      - uses: actions/checkout@v4
+  # push-manifests:
+  #   name: Build and push multi-arch manifests
+  #   timeout-minutes: 20
+  #   runs-on: [self-hosted, nix, general, arm64-linux, small]
+  #   needs: [build-push-images]
+  #   if: github.ref == 'refs/heads/main'
+  #   defaults:
+  #     run:
+  #       shell: nix develop -c bash {0}      
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Build and push images
-        run: |
-          ./cli.sh push_all_manifests
+  #     - name: Build and push images
+  #       run: |
+  #         ./cli.sh push_all_manifests
