@@ -61,6 +61,7 @@ push_single_arch() {
   local NIX_STORE_PATH
   NIX_STORE_PATH=$(realpath "./result/${FILE_NAME}")
 
+  set -x
   local LAST_IMAGE_NIX_STORE_PATH
   LAST_IMAGE_NIX_STORE_PATH=$(regctl manifest get --format='{{jsonPretty .}}' "${LAST_IMAGE}" | jq -r '.annotations["nix.store.path"]') || true
 

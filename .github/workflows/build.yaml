@@ -66,7 +66,6 @@ jobs:
           ./cli.sh build_all_images ${{ matrix.imageArch }}
 
       - name: Push all images
-        if: github.ref == 'refs/heads/main'
         run: |
           ./cli.sh push_all_single_arch_images ${{ matrix.imageArch }}
 
