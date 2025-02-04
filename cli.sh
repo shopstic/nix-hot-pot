@@ -91,11 +91,6 @@ push_manifest() {
   regctl index create "${TARGET}" \
     --ref "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-amd64" \
     --ref "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-arm64"
-
-  echo >&2 "Cleaning up single-arch tags for ${TARGET}"
-  parallel --linebuffer \
-    regctl tag delete "${TARGET}-{}" ::: \
-    arm64 amd64
 }
 
 nix_copy_to_public_bin_cache() {
