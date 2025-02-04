@@ -34,15 +34,12 @@ jobs:
         env:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
         run: |
-          nix store sign "${NIX_OUTPUT}" -v -r -k ~/.secrets/nix-cache-private-key
-          nix copy -v --to "s3://${NIX_CACHE_BUCKET_NAME}/cache?region=${NIX_CACHE_BUCKET_REGION}&compression=zstd&parallel-compression=true" "${NIX_OUTPUT}"
+          NIX_CACHE_SIGNING_PRIVATE_KEY_PATH=${NIX_CACHE_SIGNING_PRIVATE_KEY_PATH:?"NIX_CACHE_SIGNING_PRIVATE_KEY_PATH env var is not set"}
+          NIX_CACHE_BUCKET_NAME=${NIX_CACHE_BUCKET_NAME:?"NIX_CACHE_BUCKET_NAME env var is not set"}
+          NIX_CACHE_BUCKET_REGION=${NIX_CACHE_BUCKET_REGION:?"NIX_CACHE_BUCKET_REGION env var is not set"}
 
-      # - name: Cache some packages in S3
-      #   env:
-      #     BIN_ARCH: ${{ matrix.runner.arch }}
-      #   shell: nix develop -c bash {0}
-      #   run: |
-      #     ./cli.sh nix_copy_to_public_bin_cache "${BIN_ARCH}" ecr-credential-provider 1_24
+          nix store sign "${NIX_OUTPUT}" -v -r -k "${NIX_CACHE_SIGNING_PRIVATE_KEY_PATH}"
+          nix copy -v --to "s3://${NIX_CACHE_BUCKET_NAME}/cache?region=${NIX_CACHE_BUCKET_REGION}&compression=zstd&parallel-compression=true" "${NIX_OUTPUT}"
 
   build-push-images:
     name: Build and push images
