@@ -130,12 +130,13 @@
             inherit npmlock2nix;
             nodejs = pkgs.nodejs_22;
           };
+          regclient = pkgs.callPackage ./pkgs/regclient.nix { };
         in
         (rec {
           devShell = pkgs.mkShellNoCC {
             buildInputs = builtins.attrValues {
               inherit
-                deno skopeo-nix2container;
+                deno skopeo-nix2container regclient;
               inherit (pkgs)
                 awscli2
                 parallel
@@ -143,7 +144,6 @@
                 yq-go
                 fzf
                 nodejs_22
-                regclient
                 jq
                 ;
             };
@@ -163,7 +163,6 @@
                 };
               });
               jre17 = jdk17Pkg.jre;
-              regclient = pkgs.callPackage ./pkgs/regclient.nix { };
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               k9s = pkgs.callPackage ./pkgs/k9s.nix { };
             in
