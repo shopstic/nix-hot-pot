@@ -56,12 +56,20 @@ push_single_arch() {
   FILE_NAME=$(nix eval --raw ".#packages.${NIX_ARCH}-linux.image-${IMAGE}.name") || exit $?
 
   local TARGET_IMAGE="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-${ARCH}"
+  local LAST_IMAGE="${IMAGE_REPOSITORY}/${IMAGE}:latest-${ARCH}"
 
-  echo >&2 "Pushing ${TARGET_IMAGE}"
+  local NIX_STORE_PATH
+  NIX_STORE_PATH=$(realpath "./result/${FILE_NAME}")
 
-  skopeo --insecure-policy copy --dest-tls-verify=false --dest-compress-format="zstd:chunked" \
-    nix:"./result/${FILE_NAME}" \
-    "docker://${TARGET_IMAGE}"
+  if regctl manifest get --format='{{jsonPretty .}}' "${LAST_IMAGE}" | jq -e --arg VALUE '.annotations["nix.store.path"] == $VALUE' > /dev/null 2>&1; then
+    echo >&2 "Last image ${LAST_IMAGE} already exists with nix.store.path annotation of ${NIX_STORE_PATH}"
+    regctl index create "${TARGET_IMAGE}" --ref "${LAST_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
+  else
+    echo >&2 "Pushing image ${TARGET_IMAGE}"
+    skopeo copy --dest-compress-format="zstd:chunked" --insecure-policy nix:"${NIX_STORE_PATH}" docker://"${TARGET_IMAGE}"
+    regctl index create "${TARGET_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
+    regctl index create "${LAST_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
+  fi
 }
 
 push_manifest() {
@@ -80,11 +88,14 @@ push_manifest() {
   local TARGET="${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}"
 
   echo >&2 "Writing manifest for ${TARGET}"
+  regctl index create "${TARGET}" \
+    --ref "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-amd64" \
+    --ref "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-arm64"
 
-  manifest-tool push from-args \
-    --platforms linux/amd64,linux/arm64 \
-    --template "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-ARCH" \
-    --target "${TARGET}"
+  echo >&2 "Cleaning up single-arch tags for ${TARGET}"
+  parallel --linebuffer \
+    regctl tag delete "${TARGET}-{}" ::: \
+    arm64 amd64
 }
 
 nix_copy_to_public_bin_cache() {
