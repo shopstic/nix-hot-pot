@@ -144,6 +144,7 @@
                 fzf
                 nodejs_22
                 regclient
+                jq
                 ;
             };
             shellHook = ''
