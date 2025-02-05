@@ -18,6 +18,7 @@
 , git
 , amazon-ecr-credential-helper
 , fetchFromGitHub
+, nix-serve-ng
 }:
 let
   name = "github-runner-nix";
@@ -100,6 +101,7 @@ let
       openssh
       git
       amazon-ecr-credential-helper
+      nix-serve-ng
     ];
   };
 
