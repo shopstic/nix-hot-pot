@@ -41,10 +41,10 @@ jobs:
           nix store sign "${NIX_OUTPUT}" -v -r -k "${NIX_CACHE_SIGNING_PRIVATE_KEY_PATH}"
           nix copy -v --to "s3://${NIX_CACHE_BUCKET_NAME}/cache?region=${NIX_CACHE_BUCKET_REGION}&compression=zstd&parallel-compression=true" "${NIX_OUTPUT}"
 
-  build-push-images:
-    name: Build and push images
+  build-images:
+    name: Build images
     timeout-minutes: 20
-    runs-on: 
+    runs-on:
       - self-hosted
       - nix
       - general
@@ -65,20 +65,44 @@ jobs:
         run: |
           ./cli.sh build_all_images ${{ matrix.imageArch }}
 
+  push-images:
+    name: Push images
+    if: github.ref_name == 'main'
+    needs: [build-images]
+    timeout-minutes: 20
+    environment: main
+    concurrency: main
+    runs-on:
+      - self-hosted
+      - nix
+      - general
+      - ${{ matrix.imageArch }}-linux
+      - medium
+    strategy:
+      fail-fast: false
+      matrix:
+        imageArch: [amd64, arm64]
+    defaults:
+      run:
+        shell: nix develop -c bash {0}
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Push all images
-        if: github.ref == 'refs/heads/main'
         run: |
           ./cli.sh push_all_single_arch_images ${{ matrix.imageArch }}
 
   push-manifests:
     name: Build and push multi-arch manifests
     timeout-minutes: 20
+    if: github.ref_name == 'main'
+    needs: [push-images]
+    environment: main
+    concurrency: main
     runs-on: [self-hosted, nix, general, amd64-linux, small]
-    needs: [build-push-images]
-    if: github.ref == 'refs/heads/main'
     defaults:
       run:
-        shell: nix develop -c bash {0}      
+        shell: nix develop -c bash {0}
     steps:
       - uses: actions/checkout@v4
 

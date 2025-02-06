@@ -40,6 +40,7 @@ push_all_manifests() {
 
 push_single_arch() {
   local IMAGE_REPOSITORY=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
+  local IMAGE_PUSH_SKIP_DIFFING=${IMAGE_PUSH_SKIP_DIFFING:-"0"}
 
   local IMAGE=${1:?"Image name is required"}
   local ARCH=${2:?"Arch is required (amd64 | arm64)"}
@@ -60,17 +61,21 @@ push_single_arch() {
   NIX_STORE_PATH=$(realpath "./result/${FILE_NAME}")
 
   local LAST_IMAGE_NIX_STORE_PATH
-  LAST_IMAGE_NIX_STORE_PATH=$(regctl manifest get --format='{{jsonPretty .}}' "${LAST_IMAGE}" | jq -r '.annotations["nix.store.path"]') || true
+  if [[ "${IMAGE_PUSH_SKIP_DIFFING}" == "0" ]]; then
+    LAST_IMAGE_NIX_STORE_PATH=$(regctl manifest get --format='{{jsonPretty .}}' "${LAST_IMAGE}" | jq -r '.annotations["nix.store.path"]') || true
+  else
+    echo "Skipping diffing of last image" >&2
+  fi
 
   if [[ "${LAST_IMAGE_NIX_STORE_PATH}" == "${NIX_STORE_PATH}" ]]; then
     echo "Last image ${LAST_IMAGE} already exists with nix.store.path annotation of ${NIX_STORE_PATH}"
-    regctl index create "${TARGET_IMAGE}" --ref "${LAST_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
+    regctl index create "${TARGET_IMAGE}" --ref "${LAST_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}" --platform linux/"${ARCH}"
   else
     echo "Last image ${LAST_IMAGE} nix.store.path=${LAST_IMAGE_NIX_STORE_PATH} does not match ${NIX_STORE_PATH}"
     echo "Pushing image ${TARGET_IMAGE}"
     skopeo copy --dest-compress-format="zstd:chunked" --insecure-policy nix:"${NIX_STORE_PATH}" docker://"${TARGET_IMAGE}"
-    regctl index create "${TARGET_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
-    regctl index create "${LAST_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}"
+    regctl index create "${TARGET_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}" --platform linux/"${ARCH}"
+    regctl index create "${LAST_IMAGE}" --ref "${TARGET_IMAGE}" --annotation nix.store.path="${NIX_STORE_PATH}" --platform linux/"${ARCH}"
   fi
 }
 
@@ -92,7 +97,13 @@ push_manifest() {
   echo >&2 "Writing manifest for ${TARGET}"
   regctl index create "${TARGET}" \
     --ref "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-amd64" \
-    --ref "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-arm64"
+    --ref "${IMAGE_REPOSITORY}/${IMAGE}:${IMAGE_TAG}-arm64" \
+    --platform linux/amd64 \
+    --platform linux/arm64
+  regctl index create "${IMAGE_REPOSITORY}/${IMAGE}:latest" \
+    --ref "${TARGET}" \
+    --platform linux/amd64 \
+    --platform linux/arm64
 }
 
 nix_copy_to_public_bin_cache() {
