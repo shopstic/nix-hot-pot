@@ -1,5 +1,13 @@
 name: Build
 on: [push]
+env:
+  IMAGE_REPOSITORY: ${{ vars.IMAGE_REPOSITORY }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_AWS_ACCESS_KEY_ID: ${{ secrets.NIX_AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.NIX_AWS_SECRET_ACCESS_KEY }}
+  NIX_CACHE_BUCKET_NAME: ${{ vars.NIX_CACHE_BUCKET_NAME }}
+  NIX_CACHE_BUCKET_REGION: ${{ vars.NIX_CACHE_BUCKET_REGION }}
+  NIX_CACHE_SIGNING_PRIVATE_KEY: ${{ secrets.NIX_CACHE_SIGNING_PRIVATE_KEY }}
 jobs:
   build-packages:
     name: Build packages
@@ -34,15 +42,11 @@ jobs:
         env:
           NIX_OUTPUT: .#defaultPackage.${{ matrix.runner.arch }}
         run: |
-          NIX_CACHE_SIGNING_PRIVATE_KEY_PATH=${NIX_CACHE_SIGNING_PRIVATE_KEY_PATH:?"NIX_CACHE_SIGNING_PRIVATE_KEY_PATH env var is not set"}
-          NIX_CACHE_BUCKET_NAME=${NIX_CACHE_BUCKET_NAME:?"NIX_CACHE_BUCKET_NAME env var is not set"}
-          NIX_CACHE_BUCKET_REGION=${NIX_CACHE_BUCKET_REGION:?"NIX_CACHE_BUCKET_REGION env var is not set"}
-
-          nix store sign "${NIX_OUTPUT}" -v -r -k "${NIX_CACHE_SIGNING_PRIVATE_KEY_PATH}"
+          nix store sign "${NIX_OUTPUT}" -v -r -k <(echo -n "${NIX_CACHE_SIGNING_PRIVATE_KEY}")
           nix copy -v --to "s3://${NIX_CACHE_BUCKET_NAME}/cache?region=${NIX_CACHE_BUCKET_REGION}&compression=zstd&parallel-compression=true" "${NIX_OUTPUT}"
 
-  build-images:
-    name: Build images
+  build-push-images:
+    name: Build and push images
     timeout-minutes: 20
     runs-on:
       - self-hosted
@@ -50,6 +54,8 @@ jobs:
       - general
       - ${{ matrix.imageArch }}-linux
       - medium
+    environment: ${{ github.ref_name }}
+    concurrency: ${{ github.ref_name }}-${{ matrix.imageArch }}
     needs: [build-packages]
     strategy:
       fail-fast: false
@@ -58,6 +64,8 @@ jobs:
     defaults:
       run:
         shell: nix develop -c bash {0}
+    env:
+      IMAGE_PUSH_SKIP_DIFFING: ${{ vars.IMAGE_PUSH_SKIP_DIFFING }}
     steps:
       - uses: actions/checkout@v4
 
@@ -65,30 +73,8 @@ jobs:
         run: |
           ./cli.sh build_all_images ${{ matrix.imageArch }}
 
-  push-images:
-    name: Push images
-    if: github.ref_name == 'main'
-    needs: [build-images]
-    timeout-minutes: 20
-    environment: main
-    concurrency: main
-    runs-on:
-      - self-hosted
-      - nix
-      - general
-      - ${{ matrix.imageArch }}-linux
-      - medium
-    strategy:
-      fail-fast: false
-      matrix:
-        imageArch: [amd64, arm64]
-    defaults:
-      run:
-        shell: nix develop -c bash {0}
-    steps:
-      - uses: actions/checkout@v4
-
       - name: Push all images
+        if: github.ref_name == 'main'
         run: |
           ./cli.sh push_all_single_arch_images ${{ matrix.imageArch }}
 
@@ -96,7 +82,7 @@ jobs:
     name: Build and push multi-arch manifests
     timeout-minutes: 20
     if: github.ref_name == 'main'
-    needs: [push-images]
+    needs: [build-push-images]
     environment: main
     concurrency: main
     runs-on: [self-hosted, nix, general, amd64-linux, small]
