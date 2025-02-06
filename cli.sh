@@ -17,10 +17,10 @@ image_arch_to_nix_arch() {
 build_all_images() {
   local arch=${1:?"Arch is required (amd64 | arm64)"}
 
-  local nic_arch
-  nic_arch=$("$0" image_arch_to_nix_arch "${arch}") || exit $?
+  local nix_arch
+  nix_arch=$("$0" image_arch_to_nix_arch "${arch}") || exit $?
 
-  nix build -L -v ".#packages.${nic_arch}-linux.all-images"
+  nix build -L -v ".#packages.${nix_arch}-linux.all-images"
 }
 
 push_all_single_arch_images() {
@@ -45,14 +45,14 @@ push_single_arch() {
   local image=${1:?"Image name is required"}
   local arch=${2:?"Arch is required (amd64 | arm64)"}
 
-  local nic_arch
-  nic_arch=$("$0" image_arch_to_nix_arch "${arch}") || exit $?
+  local nix_arch
+  nix_arch=$("$0" image_arch_to_nix_arch "${arch}") || exit $?
 
   local image_tag
-  image_tag=$(nix eval --raw ".#packages.${nic_arch}-linux.image-${image}.imageTag") || exit $?
+  image_tag=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.imageTag") || exit $?
 
   local file_name
-  file_name=$(nix eval --raw ".#packages.${nic_arch}-linux.image-${image}.name") || exit $?
+  file_name=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.name") || exit $?
 
   local target_image="${image_repository}/${image}:${image_tag}-${arch}"
   local last_image="${image_repository}/${image}:latest-${arch}"
@@ -84,13 +84,13 @@ push_manifest() {
   local image=${1:?"Image name is required"}
   local image_tag
 
-  local nic_arch
-  nic_arch=$(uname -m) || exit $?
-  if [[ "${nic_arch}" == "arm64" ]]; then
-    nic_arch="aarch64"
+  local nix_arch
+  nix_arch=$(uname -m) || exit $?
+  if [[ "${nix_arch}" == "arm64" ]]; then
+    nix_arch="aarch64"
   fi
 
-  image_tag=$(nix eval --raw ".#packages.${nic_arch}-linux.image-${image}.imageTag") || exit $?
+  image_tag=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.imageTag") || exit $?
 
   local target="${image_repository}/${image}:${image_tag}"
 
@@ -100,10 +100,7 @@ push_manifest() {
     --ref "${image_repository}/${image}:${image_tag}-arm64" \
     --platform linux/amd64 \
     --platform linux/arm64
-  regctl index create "${image_repository}/${image}:latest" \
-    --ref "${target}" \
-    --platform linux/amd64 \
-    --platform linux/arm64
+  regctl image copy "${target}" "${image_repository}/${image}:latest"
 }
 
 "$@"

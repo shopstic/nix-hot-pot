@@ -63,7 +63,7 @@ jobs:
         imageArch: [amd64, arm64]
     defaults:
       run:
-        shell: nix develop -c bash {0}
+        shell: nix develop -v -c bash -euo pipefail {0}
     env:
       IMAGE_PUSH_SKIP_DIFFING: ${{ vars.IMAGE_PUSH_SKIP_DIFFING }}
     steps:
@@ -88,7 +88,7 @@ jobs:
     runs-on: [self-hosted, nix, general, amd64-linux, small]
     defaults:
       run:
-        shell: nix develop -c bash {0}
+        shell: nix develop -v -c bash -euo pipefail {0}
     steps:
       - uses: actions/checkout@v4
 
