@@ -1,21 +1,21 @@
 { autoPatchelfHook, fetchurl, stdenv, lib, makeWrapper }:
 let
-  version = "0.30.0";
+  version = "0.31.0";
   downloadMap = {
     x86_64-linux = {
       os = "linux";
       arch = "amd64";
-      hash = "sha256-gHiHN2OJY2+QjZdO5tcjUsEJe3NPbiYAFpdqJrnWlL8=";
+      hash = "sha256-+CG71Gbtd/aYFLP1Yn/+VFikOs0owFw/J7tPMmfdBCo=";
     };
     aarch64-darwin = {
       os = "darwin";
       arch = "arm64";
-      hash = "sha256-yLDu2M2oXSX9NbAivn8J/BGNbOeQ8wRZqtK4Ql1Ed8E=";
+      hash = "sha256-aSA4KLVZlsBnhNRu8XNxMkiaF5T7RZuipmOlH1p0DKo=";
     };
     aarch64-linux = {
       os = "linux";
       arch = "arm64";
-      hash = "sha256-1zgNXkcVh4xEEIq+ahORvDhzUxkpnwrzZYvVp4qgOxA=";
+      hash = "sha256-sQwCsGEHIP9PYBt3qMH1Uh6J9aFKbn4Mx4h/skTgRz0=";
     };
   };
   download = downloadMap."${stdenv.hostPlatform.system}";
