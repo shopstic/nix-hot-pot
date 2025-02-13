@@ -209,15 +209,17 @@ function createPackageSpecifierResolver(
       }
 
       if (lockedVersions.length > 1) {
-        throw new Error(
-          `A specifier leads to ambiguous version resolution: ${
-            JSON.stringify(request)
-          }. There are multiple locked versions for package name: ${
-            JSON.stringify(specifier.name)
-          }. All known locked versions are: ${
-            lockedVersions.map((v) => v.version).join(", ")
-          }`,
-        );
+        const versionSet = new Set(lockedVersions.map((v) => v.version));
+
+        if (versionSet.size > 1) {
+          throw new Error(
+            `A specifier leads to ambiguous version resolution: ${
+              JSON.stringify(request)
+            }. There are multiple locked versions for package name: ${
+              JSON.stringify(specifier.name)
+            }. All known locked versions are: ${[...versionSet].join(", ")}`,
+          );
+        }
       }
 
       const lockedVersion = lockedVersions[0];
