@@ -58,9 +58,11 @@
             };
           deno_2_0_x = pkgs.callPackage ./pkgs/deno-2.0.x.nix { };
           deno_2_1_x = pkgs.callPackage ./pkgs/deno-2.1.x.nix { };
+          deno_2_2_x = pkgs.callPackage ./pkgs/deno-2.2.x.nix { };
           denort_1_46_x = pkgs.callPackage ./pkgs/denort-1.46.x.nix { };
           denort_2_0_x = pkgs.callPackage ./pkgs/denort-2.0.x.nix { };
           denort_2_1_x = pkgs.callPackage ./pkgs/denort-2.1.x.nix { };
+          denort_2_2_x = pkgs.callPackage ./pkgs/denort-2.2.x.nix { };
           deno = deno_2_1_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
@@ -172,6 +174,7 @@
                 denort_1_46_x deno_1_46_x
                 denort_2_0_x deno_2_0_x
                 denort_2_1_x deno_2_1_x
+                denort_2_2_x deno_2_2_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2container-bin redpanda hasura-cli
                 kubesess kubeshark
