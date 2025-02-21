@@ -18,6 +18,7 @@
 , git
 , yj
 , jq
+, nix-serve-ng
 , amazon-ecr-credential-helper
 }:
 let
@@ -101,6 +102,7 @@ let
       yj
       jq
       amazon-ecr-credential-helper
+      nix-serve-ng
     ];
   };
 
@@ -136,6 +138,4 @@ let
     ];
   };
 in
-image // {
-  dir = runCommand "${name}-dir" { } "${image.copyTo}/bin/copy-to dir:$out";
-}
+image

@@ -144,6 +144,4 @@ let
     ];
   };
 in
-image // {
-  dir = runCommand "${name}-dir" { } "${image.copyTo}/bin/copy-to dir:$out";
-}
+image
