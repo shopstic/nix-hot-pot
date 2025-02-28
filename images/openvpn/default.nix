@@ -5,6 +5,7 @@
 , dumb-init
 , openvpn
 , netcat
+, socat
 , iptables
 , sysctl
 , iproute2
@@ -29,6 +30,7 @@ let
             dumb-init
             openvpn
             netcat
+            socat
             iptables
             sysctl
             iproute2
