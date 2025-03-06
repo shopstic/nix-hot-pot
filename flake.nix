@@ -63,12 +63,12 @@
           denort_2_0_x = pkgs.callPackage ./pkgs/denort-2.0.x.nix { };
           denort_2_1_x = pkgs.callPackage ./pkgs/denort-2.1.x.nix { };
           denort_2_2_x = pkgs.callPackage ./pkgs/denort-2.2.x.nix { };
-          deno = deno_2_1_x.overrideAttrs (oldAttrs: {
+          deno = deno_2_2_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
           });
-          denort = denort_2_1_x.overrideAttrs (oldAttrs: {
+          denort = denort_2_2_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -140,6 +140,7 @@
               inherit
                 deno skopeo-nix2container regclient;
               inherit (pkgs)
+                nurl
                 awscli2
                 parallel
                 kubectl
