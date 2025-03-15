@@ -4,11 +4,13 @@ import { genCacheEntryAction } from "./actions/gen_cache_entry.ts";
 import { trimLockAction } from "./actions/trim_lock.ts";
 import { parseImportMapFromJson } from "./lib/import_map.ts";
 import { createGraph } from "./lib/graph.ts";
+import { stageAction } from "./actions/stage.ts";
 
 await new CliProgram()
   .addAction("unmap-specifiers", unmapSpecifiersAction)
   .addAction("gen-cache-entry", genCacheEntryAction)
   .addAction("trim-lock", trimLockAction)
+  .addAction("stage", stageAction)
   .addAction(
     "cache-wasm",
     createCliAction({}, async () => {

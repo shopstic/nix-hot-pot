@@ -26,19 +26,38 @@ update_deps() {
   "$0" update_lock
 }
 
-test_transpile() {
+test_unmap_specifiers() {
   local SRC_DIR=${1:?"Source directory is required as the first argument"}
   local IMPORT_MAP_PATH=${2:?"Import map path is required"}
-  local TEMP_SRC_DIR
+  local TEMP_SRC_DIR=${3:-""}
 
-  TEMP_SRC_DIR=$(mktemp -d)
-  echo >&2 "Temporary source directory: ${TEMP_SRC_DIR}"
-  # trap "rm -Rf ${TEMP_SRC_DIR}" EXIT
+  if [[ -z "${TEMP_SRC_DIR}" ]]; then
+    TEMP_SRC_DIR=$(mktemp -d)
+    echo >&2 "Temporary source directory: ${TEMP_SRC_DIR}"
+    trap "rm -Rf ${TEMP_SRC_DIR}" EXIT
+  fi
 
   # Copy the source directory to a temporary directory
   rsync -avrx --exclude "*.git" "${SRC_DIR}"/ "${TEMP_SRC_DIR}"/
 
-  deno run -A --check "${THIS_DIR}"/transpile/main.ts transpile --src-path "${TEMP_SRC_DIR}" --import-map-path "${IMPORT_MAP_PATH}" "${@:3}"
+  deno run -A --check "${THIS_DIR}"/src/main.ts unmap-specifiers --src-dir "${TEMP_SRC_DIR}" --import-map "${IMPORT_MAP_PATH}" "${@:3}"
+}
+
+test_trim_lock() {
+  local SRC_DIR=${1:?"Source directory is required as the first argument"}
+  local IMPORT_MAP_PATH=${2:?"Import map path is required"}
+  local TEMP_SRC_DIR=${3:-""}
+
+  if [[ -z "${TEMP_SRC_DIR}" ]]; then
+    TEMP_SRC_DIR=$(mktemp -d)
+    echo >&2 "Temporary source directory: ${TEMP_SRC_DIR}"
+    trap "rm -Rf ${TEMP_SRC_DIR}" EXIT
+  fi
+
+  # Copy the source directory to a temporary directory
+  rsync -avrx --exclude "*.git" "${SRC_DIR}"/ "${TEMP_SRC_DIR}"/
+
+  deno run -A --check "${THIS_DIR}"/src/main.ts trim-lock --src-dir "${TEMP_SRC_DIR}" --import-map "${IMPORT_MAP_PATH}" "${@:3}"
 }
 
 test_gen_cache_entry() {

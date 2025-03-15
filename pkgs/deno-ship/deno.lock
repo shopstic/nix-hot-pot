@@ -1,15 +1,14 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@deno/cache-dir@0.17": "0.17.0",
+    "jsr:@deno/cache-dir@0.18": "0.18.0",
     "jsr:@deno/graph@0.86": "0.86.9",
-    "jsr:@deno/graph@~0.87.3": "0.87.3",
+    "jsr:@deno/graph@~0.89.2": "0.89.2",
     "jsr:@std/assert@^1.0.11": "1.0.11",
-    "jsr:@std/async@^1.0.10": "1.0.11",
+    "jsr:@std/async@^1.0.11": "1.0.11",
     "jsr:@std/bytes@^1.0.5": "1.0.5",
-    "jsr:@std/cli@^1.0.11": "1.0.14",
+    "jsr:@std/cli@^1.0.14": "1.0.14",
     "jsr:@std/fmt@^1.0.3": "1.0.6",
-    "jsr:@std/fmt@^1.0.4": "1.0.6",
     "jsr:@std/fmt@^1.0.6": "1.0.6",
     "jsr:@std/fs@^1.0.14": "1.0.14",
     "jsr:@std/fs@^1.0.6": "1.0.14",
@@ -17,19 +16,19 @@
     "jsr:@std/io@0.225": "0.225.2",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@std/semver@^1.0.4": "1.0.4",
+    "jsr:@std/streams@^1.0.9": "1.0.9",
+    "jsr:@std/yaml@^1.0.5": "1.0.5",
     "jsr:@wok/case@^1.0.2": "1.0.2",
-    "jsr:@wok/schema@^2.2.0": "2.2.0",
-    "jsr:@wok/typebox@^1.1.0": "1.1.0",
-    "jsr:@wok/utils@^4.2.9": "4.2.9",
-    "npm:@sinclair/typebox@~0.34.13": "0.34.30",
-    "npm:type-fest@^4.32.0": "4.37.0",
-    "npm:type-fest@^4.33.0": "4.37.0",
+    "jsr:@wok/schema@3": "3.0.0",
+    "jsr:@wok/typebox@2": "2.0.0",
+    "jsr:@wok/utils@^5.1.2": "5.1.2",
+    "npm:@sinclair/typebox@~0.34.28": "0.34.30",
     "npm:type-fest@^4.37.0": "4.37.0",
     "npm:typescript@^5.8.2": "5.8.2"
   },
   "jsr": {
-    "@deno/cache-dir@0.17.0": {
-      "integrity": "c3fca070e1727a30a67352fdbb994fc8125c19c536a536cee8aba741e91eb1de",
+    "@deno/cache-dir@0.18.0": {
+      "integrity": "25ef3ef94fe9d0681201efd879f4b7d417262124a204a546afba91590b309182",
       "dependencies": [
         "jsr:@deno/graph@0.86",
         "jsr:@std/fmt@^1.0.3",
@@ -41,8 +40,8 @@
     "@deno/graph@0.86.9": {
       "integrity": "c4f353a695bcc5246c099602977dabc6534eacea9999a35a8cb24e807192e6a1"
     },
-    "@deno/graph@0.87.3": {
-      "integrity": "6d5c17966f396b118fa33d90adef0e4489bcb595df0f0c18aecdf9be60f7550a"
+    "@deno/graph@0.89.2": {
+      "integrity": "8c53a70c5151f4e43b8cce8c896c507ab303ead327816e98e5996adbb4b34fa9"
     },
     "@std/assert@1.0.11": {
       "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
@@ -83,34 +82,42 @@
     "@std/semver@1.0.4": {
       "integrity": "a62af791917d8fd6c48d6ebbb872f83fad3fc6671ffadbbd39ea229c2d34d175"
     },
+    "@std/streams@1.0.9": {
+      "integrity": "a9d26b1988cdd7aa7b1f4b51e1c36c1557f3f252880fa6cc5b9f37078b1a5035"
+    },
+    "@std/yaml@1.0.5": {
+      "integrity": "71ba3d334305ee2149391931508b2c293a8490f94a337eef3a09cade1a2a2742"
+    },
     "@wok/case@1.0.2": {
       "integrity": "5d7c4da6ac87a372d603c6ab6fb0e07ec74d4a712c3cb9051961a0892b1f3090"
     },
-    "@wok/schema@2.2.0": {
-      "integrity": "c62676c83ef3a8cb40ff8860bf8a076dd25b4940381ae0da1e548acee230ec5a",
+    "@wok/schema@3.0.0": {
+      "integrity": "f4ec510de14528e5c9fb924a5b8adf9417677669be0dfe953754fe6e3af15a93",
       "dependencies": [
         "jsr:@wok/typebox",
-        "npm:type-fest@^4.32.0"
+        "npm:type-fest"
       ]
     },
-    "@wok/typebox@1.1.0": {
-      "integrity": "09a56923782648ae74d54a4839e808fa0b3bbef17c0b0879d654f42cc8b20b2e",
+    "@wok/typebox@2.0.0": {
+      "integrity": "8e232fe64321c79adb5b82120e3f841b08656486c673c8a3e3461c30f9306fff",
       "dependencies": [
         "npm:@sinclair/typebox"
       ]
     },
-    "@wok/utils@4.2.9": {
-      "integrity": "85e9c1df98474ad352199a4555c60235a34021bba5eb2844b32d3982de3f3019",
+    "@wok/utils@5.1.2": {
+      "integrity": "3c9b8cc4418ce6df366aa546040b02de73268bfae56b7f0f38d91dd610f2c418",
       "dependencies": [
         "jsr:@std/assert",
         "jsr:@std/async",
         "jsr:@std/cli",
-        "jsr:@std/fmt@^1.0.4",
+        "jsr:@std/fmt@^1.0.6",
         "jsr:@std/internal",
+        "jsr:@std/streams",
+        "jsr:@std/yaml",
         "jsr:@wok/case",
         "jsr:@wok/schema",
         "jsr:@wok/typebox",
-        "npm:type-fest@^4.33.0"
+        "npm:type-fest"
       ]
     }
   },
@@ -134,18 +141,18 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@deno/cache-dir@0.17",
-      "jsr:@deno/graph@~0.87.3",
+      "jsr:@deno/cache-dir@0.18",
+      "jsr:@deno/graph@~0.89.2",
       "jsr:@std/assert@^1.0.11",
       "jsr:@std/fmt@^1.0.6",
       "jsr:@std/fs@^1.0.14",
       "jsr:@std/path@^1.0.8",
       "jsr:@std/semver@^1.0.4",
       "jsr:@wok/case@^1.0.2",
-      "jsr:@wok/deup@^2.1.2",
-      "jsr:@wok/schema@^2.2.0",
-      "jsr:@wok/typebox@^1.1.0",
-      "jsr:@wok/utils@^4.2.9",
+      "jsr:@wok/deup@3",
+      "jsr:@wok/schema@3",
+      "jsr:@wok/typebox@2",
+      "jsr:@wok/utils@^5.1.2",
       "npm:type-fest@^4.37.0",
       "npm:typescript@^5.8.2"
     ]
