@@ -186,7 +186,7 @@
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
               libpq = pkgs.callPackage ./pkgs/libpq.nix { };
-              libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix;
+              libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix { };
               libpq_17 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_17; };
               libpq_16 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_16; };
               libgpgme = pkgs.callPackage ./pkgs/libgpgme.nix { };
