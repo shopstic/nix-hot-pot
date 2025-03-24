@@ -53,7 +53,7 @@ fn_nix_build() {
       jq -re '.[0].outputs.out') || fn_fatal "Failed to build image"
 
     echo "Copying result from ${builder} to local store: ${out_path}" >&2
-    nix copy --from "${builder}" "${out_path}"
+    nix copy --no-require-sigs --from "${builder}" "${out_path}"
     echo "${out_path}"
   fi
 }
