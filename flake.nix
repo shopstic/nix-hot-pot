@@ -193,7 +193,6 @@
               librnp = pkgs.callPackage ./pkgs/librnp.nix { };
               libevent-core = pkgs.callPackage ./pkgs/libevent-core.nix { };
               atlas = pkgs.callPackage ./pkgs/atlas.nix { };
-              cli-nix = ./cli_nix.sh;
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
                 ubuntu-base-image = nix2container.pullImage {
