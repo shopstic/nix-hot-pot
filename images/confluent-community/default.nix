@@ -14,23 +14,22 @@
 }:
 let
   name = "confluent-community";
-  minorVersion = "7.8";
-  version = "7.8.0";
+  minorVersion = "7.9";
+  version = "7.9.0";
   user = "app";
   userUid = 1000;
   shadow = nonRootShadowSetup { inherit user; uid = userUid; shellBin = "/dev/false"; };
-  home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
 
   confluent-community = fetchzip {
     url = "https://packages.confluent.io/archive/${minorVersion}/confluent-community-${version}.zip";
-    sha256 = "sha256-c8b4tg0zakTQV3BRF2JpS7xopBABknoeLOVxuipjiOg=";
+    sha256 = "sha256-lSJfrPhDZA1mUzTmCgXVvdJcVG3dsMngyTb7rf6e+/E=";
     postFetch = ''
       rm -Rf $out/src
     '';
   };
 
-  nix-bin = buildEnv {
-    name = "nix-bin";
+  root-env = buildEnv {
+    name = "root-env";
     pathsToLink = [ "/bin" ];
     paths = [
       dumb-init
@@ -39,17 +38,21 @@ let
       jre17
       curl
     ];
+    postBuild = ''
+      mkdir -p $out/home/${user}
+      cp -R ${shadow}/. $out/
+    '';
   };
 
   image = nix2container.buildImage
     {
       inherit name;
       tag = version;
-      copyToRoot = [ nix-bin shadow home-dir ];
+      copyToRoot = [ root-env ];
       maxLayers = 7;
       perms = [
         {
-          path = home-dir;
+          path = root-env;
           regex = "/home/${user}";
           mode = "0755";
           gid = userUid;

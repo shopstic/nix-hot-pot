@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
+shopt -s extglob globstar
 
-image_arch_to_nix_arch() {
+SCRIPT_DIR="$(dirname "$(realpath "$0")")"
+# shellcheck disable=SC1090
+for file in "${SCRIPT_DIR}"/cli/*.sh; do source "$file"; done
+
+fn_image_arch_to_nix_arch() {
   local image_arch=${1:?"Image arch is required (amd64 | arm64)"}
 
   if [[ "${image_arch}" == "arm64" ]]; then
@@ -14,93 +19,65 @@ image_arch_to_nix_arch() {
   fi
 }
 
-build_all_images() {
+fn_build_all_images() {
   local arch=${1:?"Arch is required (amd64 | arm64)"}
 
   local nix_arch
-  nix_arch=$("$0" image_arch_to_nix_arch "${arch}") || exit $?
+  nix_arch=$(fn_image_arch_to_nix_arch "${arch}")
 
-  nix build -L -v ".#packages.${nix_arch}-linux.all-images"
+  local out_path
+  out_path=$(fn_nix_build -L ".#packages.${nix_arch}-linux.all-images")
+  echo "Linking ${out_path} to ./result" >&2
+  if [[ -e ./result ]]; then
+    rm -f ./result
+  fi
+  ln -s "${out_path}" ./result
 }
 
-push_all_single_arch_images() {
+fn_push_all_single_arch_images() {
   local image_arch=${1:?"Arch is required (amd64 | arm64)"}
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
-  parallel -j4 --tagstring "[{}]" --line-buffer --retries=5 \
-    "$0" push_single_arch {} "${image_arch}" ::: "${IMAGES[@]}"
+  parallel -j2 --tagstring "[{}]" --line-buffer --retries=2 \
+    "$0" fn_push_single_arch {} "${image_arch}" ::: "${IMAGES[@]}"
 }
 
-push_all_manifests() {
+fn_push_all_manifests() {
   readarray -t IMAGES < <(find ./images -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
 
   parallel -j8 --tagstring "[{}]" --line-buffer --retries=5 \
-    "$0" push_manifest {} ::: "${IMAGES[@]}"
+    "$0" fn_push_manifest {} ::: "${IMAGES[@]}"
 }
 
-push_single_arch() {
-  local image_repository=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
-  local image_push_skip_diffing=${IMAGE_PUSH_SKIP_DIFFING:-"0"}
-
+fn_push_single_arch() {
   local image=${1:?"Image name is required"}
   local arch=${2:?"Arch is required (amd64 | arm64)"}
 
   local nix_arch
-  nix_arch=$("$0" image_arch_to_nix_arch "${arch}") || exit $?
+  nix_arch=$(fn_image_arch_to_nix_arch "${arch}")
 
   local image_tag
-  image_tag=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.imageTag") || exit $?
+  image_tag=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.imageTag")
 
   local file_name
-  file_name=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.name") || exit $?
-
-  local target_image="${image_repository}/${image}:${image_tag}-${arch}"
-  local last_image="${image_repository}/${image}:latest-${arch}"
+  file_name=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.name")
 
   local nix_store_path
   nix_store_path=$(realpath "./result/${file_name}")
 
-  local last_image_nix_store_path=""
-  if [[ "${image_push_skip_diffing}" == "0" ]]; then
-    last_image_nix_store_path=$(regctl manifest get --format='{{jsonPretty .}}' "${last_image}" | jq -r '.annotations["nix.store.path"]') || true
-  else
-    echo "Skipping diffing of last image" >&2
-  fi
-
-  if [[ "${last_image_nix_store_path}" == "${nix_store_path}" ]]; then
-    echo "Last image ${last_image} already exists with nix.store.path annotation of ${nix_store_path}"
-    regctl index create "${target_image}" --ref "${last_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}"
-  else
-    echo "Last image ${last_image} nix.store.path=${last_image_nix_store_path} does not match ${nix_store_path}"
-    echo "Pushing image ${target_image}"
-    skopeo copy --dest-compress-format="zstd:chunked" --insecure-policy nix:"${nix_store_path}" docker://"${target_image}"
-    regctl index create "${target_image}" --ref "${target_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}"
-    regctl index create "${last_image}" --ref "${target_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}"
-  fi
+  fn_image_push "${nix_store_path}" "${image}" "${image_tag}" "${arch}"
 }
 
-push_manifest() {
-  local image_repository=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
+fn_push_manifest() {
   local image=${1:?"Image name is required"}
+
+  local current_system
+  current_system=$(nix config show --json | jq -re '.system.value')
+
   local image_tag
+  image_tag=$(nix eval --raw ".#packages.${current_system}.image-${image}.imageTag")
 
-  local nix_arch
-  nix_arch=$(uname -m) || exit $?
-  if [[ "${nix_arch}" == "arm64" ]]; then
-    nix_arch="aarch64"
-  fi
-
-  image_tag=$(nix eval --raw ".#packages.${nix_arch}-linux.image-${image}.imageTag") || exit $?
-
-  local target="${image_repository}/${image}:${image_tag}"
-
-  echo >&2 "Writing manifest for ${target}"
-  regctl index create "${target}" \
-    --ref "${image_repository}/${image}:${image_tag}-amd64" \
-    --ref "${image_repository}/${image}:${image_tag}-arm64" \
-    --platform linux/amd64 \
-    --platform linux/arm64
-  regctl image copy "${target}" "${image_repository}/${image}:latest"
+  fn_image_push_manifest "${image}" "${image_tag}"
 }
 
 "$@"

@@ -11,10 +11,14 @@ let
   name = "rpk";
   user = "rpk";
   shadow = nonRootShadowSetup { inherit user; uid = 1000; shellBin = "/dev/false"; };
-  home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
-  nix-bin = buildEnv {
-    name = "nix-bin";
+  root-env = buildEnv {
+    name = "root-env";
     pathsToLink = [ "/bin" ];
+    postBuild = ''
+      mv $out/bin $out/nix-bin
+      mkdir -p $out/home/${user}
+      cp -R ${shadow}/. $out/
+    '';
     paths = [
       bash
       redpanda
@@ -27,7 +31,7 @@ let
       {
         inherit name;
         tag = redpanda.version;
-        copyToRoot = [ nix-bin shadow home-dir ];
+        copyToRoot = [ root-env ];
         maxLayers = 50;
         config = {
           env = [

@@ -31,13 +31,8 @@ let
 
   shadow = nonRootShadowSetup { inherit user; uid = userUid; shellBin = "${bash}/bin/bash"; };
 
-  dirs = runCommand "dirs" { } ''
-    mkdir -p $out/home/${user}
-    mkdir -p $out/tmp
-  '';
-
-  nix-bin = buildEnv {
-    name = "nix-bin";
+  root-env = buildEnv {
+    name = "root-env";
     pathsToLink = [ "/bin" ];
     paths = [
       coreutils
@@ -49,30 +44,32 @@ let
       jre
       dnsutils
     ];
+    postBuild = ''
+      mkdir -p $out/home/${user}
+      mkdir -p $out/tmp
+      cp -R ${shadow}/. $out/
+      mkdir -p $out/usr/bin
+      ln -s ${coreutils}/bin/env $out/usr/bin/env
+    '';
   };
-
-  usr-bin = runCommand "usr-bin" { } ''
-    mkdir -p $out/usr/bin
-    ln -s ${coreutils}/bin/env $out/usr/bin/env
-  '';
 
   image = nix2container.buildImage
     {
       inherit name;
       # fromImage = base-image;
       tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
-      copyToRoot = [ nix-bin shadow dirs usr-bin ];
+      copyToRoot = [ root-env ];
       maxLayers = 10;
       perms = [
         {
-          path = dirs;
+          path = root-env;
           regex = "/home/${user}";
           gid = userUid;
           uid = userUid;
           mode = "0755";
         }
         {
-          path = dirs;
+          path = root-env;
           regex = "/tmp";
           gid = userUid;
           uid = userUid;
@@ -91,6 +88,4 @@ let
       };
     };
 in
-image // {
-  dir = runCommand "${name}-dir" { } "${image.copyTo}/bin/copy-to dir:$out";
-}
+image

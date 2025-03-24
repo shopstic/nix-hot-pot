@@ -41,25 +41,20 @@
           };
           nix2containerPkgs = nix2containerPkg.packages.${system};
           skopeo-nix2container = nix2containerPkgs.skopeo-nix2container.overrideAttrs (oldAttrs: rec {
-            version = "1.16.1";
+            version = "1.18.0";
             src = pkgs.fetchFromGitHub {
               rev = "v${version}";
               owner = "containers";
               repo = "skopeo";
-              hash = "sha256-RsFfShru4ujB+x0hju8Xju43JJk/+PAevIPjjDC5YbQ=";
+              hash = "sha256-Ws01dYx2Jq/zB8rWiWSnV4ZgcxyBWHWvE3DfG7gvFOc=";
             };
           });
           nix2container-bin = nix2containerPkgs.nix2container-bin;
           nix2container = nix2containerPkgs.nix2container;
           fdb = fdbPkg.packages.${system}.fdb_7;
-          deno_1_46_x = pkgs.callPackage ./pkgs/deno-1.46.x.nix
-            {
-              setFuture = true;
-            };
           deno_2_0_x = pkgs.callPackage ./pkgs/deno-2.0.x.nix { };
           deno_2_1_x = pkgs.callPackage ./pkgs/deno-2.1.x.nix { };
           deno_2_2_x = pkgs.callPackage ./pkgs/deno-2.2.x.nix { };
-          denort_1_46_x = pkgs.callPackage ./pkgs/denort-1.46.x.nix { };
           denort_2_0_x = pkgs.callPackage ./pkgs/denort-2.0.x.nix { };
           denort_2_1_x = pkgs.callPackage ./pkgs/denort-2.1.x.nix { };
           denort_2_2_x = pkgs.callPackage ./pkgs/denort-2.2.x.nix { };
@@ -172,7 +167,6 @@
             {
               inherit
                 deno denort
-                denort_1_46_x deno_1_46_x
                 denort_2_0_x deno_2_0_x
                 denort_2_1_x deno_2_1_x
                 denort_2_2_x deno_2_2_x
@@ -191,26 +185,25 @@
               };
               jib-cli = pkgs.callPackage ./pkgs/jib-cli.nix { jre = jre17; };
               grpc-health-probe = pkgs.callPackage ./pkgs/grpc-health-probe.nix { };
-              pg-schema-diff = pkgs.callPackage ./pkgs/pg-schema-diff.nix { };
               libpq = pkgs.callPackage ./pkgs/libpq.nix { };
-              libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix {
-                # Temporary until nixpkgs catches up to sqlite 3.46.1
-                sqlite = pkgs.sqlite.overrideAttrs (oldAttrs: {
-                  version = "3.46.1";
-                  src = pkgs.fetchurl {
-                    url = "https://www.sqlite.org/2024/sqlite-autoconf-3460100.tar.gz";
-                    hash = "sha256-Z9P+bSaObq3crjcn/OWPzI6cU4ab3Qegxh443fKWUHE=";
-                  };
-                });
-              };
+              libsqlite = pkgs.callPackage ./pkgs/libsqlite.nix;
               libpq_17 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_17; };
               libpq_16 = pkgs.callPackage ./pkgs/libpq.nix { postgresql = pkgs.postgresql_16; };
               libgpgme = pkgs.callPackage ./pkgs/libgpgme.nix { };
               librnp = pkgs.callPackage ./pkgs/librnp.nix { };
               libevent-core = pkgs.callPackage ./pkgs/libevent-core.nix { };
               atlas = pkgs.callPackage ./pkgs/atlas.nix { };
+              cli-nix = ./cli_nix.sh;
             } // pkgs.lib.optionalAttrs pkgs.stdenv.isLinux (
               let
+                ubuntu-base-image = nix2container.pullImage {
+                  imageName = "docker.io/library/ubuntu"; # 24.04
+                  imageDigest = "sha256:72297848456d5d37d1262630108ab308d3e9ec7ed1c3286a32fe09856619a782";
+                  sha256 =
+                    if pkgs.stdenv.isx86_64 then
+                      "sha256-H2ddt+ZxnnzrGBoTyAVMs/qkQuUHG+HelIgcqzVcjS4=" else
+                      "sha256-0tdFmdMibQDbZ5o/bgOO0eMfo4ep/omWTpeevdDH5nc=";
+                };
                 images = {
                   image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { inherit nix2container; };
                   image-lib-fdb = pkgs.callPackage ./images/lib-fdb {
@@ -231,19 +224,19 @@
                     inherit nix2container nonRootShadowSetup jre17;
                   };
                   image-tailscale-router-init = pkgs.callPackage ./images/tailscale-router-init {
-                    inherit writeTextFiles nonRootShadowSetup nix2container aws-batch-routes;
+                    inherit ubuntu-base-image writeTextFiles nonRootShadowSetup nix2container aws-batch-routes;
                   };
                   image-pvc-autoresizer = pkgs.callPackage ./images/pvc-autoresizer {
                     inherit nix2container;
                   };
                   image-github-runner-nix = pkgs.callPackage ./images/github-runner-nix {
-                    inherit nix2container writeTextFiles nonRootShadowSetup;
+                    inherit ubuntu-base-image nix2container writeTextFiles nonRootShadowSetup;
                   };
                   image-gitlab-runner-nix = pkgs.callPackage ./images/gitlab-runner-nix {
-                    inherit nix2container writeTextFiles nonRootShadowSetup;
+                    inherit ubuntu-base-image nix2container writeTextFiles nonRootShadowSetup;
                   };
                   image-remote-dev = pkgs.callPackage ./images/remote-dev {
-                    inherit nix2container writeTextFiles nonRootShadowSetup;
+                    inherit ubuntu-base-image nix2container writeTextFiles nonRootShadowSetup;
                   };
                   image-kubectl = pkgs.callPackage ./images/kubectl {
                     inherit nix2container;
@@ -287,6 +280,7 @@
           defaultPackage = pkgs.linkFarmFromDrvs "nix-hot-pot"
             (pkgs.lib.unique (builtins.attrValues (pkgs.lib.filterAttrs (n: _: (!(pkgs.lib.hasPrefix "image-" n) && n != "all-images")) packages)));
         }) // {
+          cli = ./cli;
           lib =
             let
               inherit (pkgs.lib)

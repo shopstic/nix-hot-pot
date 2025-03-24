@@ -19,6 +19,7 @@
 , amazon-ecr-credential-helper
 , fetchFromGitHub
 , nix-serve-ng
+, ubuntu-base-image
 }:
 let
   name = "github-runner-nix";
@@ -42,20 +43,17 @@ let
     '';
   });
 
-  base-image = nix2container.pullImage {
-    imageName = "docker.io/library/ubuntu"; # 24.04
-    imageDigest = "sha256:80dd3c3b9c6cecb9f1667e9290b3bc61b78c2678c02cbdae5f0fea92cc6734ab";
-    sha256 =
-      if stdenv.isx86_64 then
-        "sha256-KKVXvKN0ul3yQXPMaRznwqVMpoQ2w5NbAGlIQf63moA=" else
-        "sha256-0EIgRSVcMP8tZqww+nZWkoPHFb3J2lMqbvYxhXmZmvk=";
-  };
-
   user = "runner";
   userUid = 1000;
   nixbldUserCount = 64;
 
-  shadow = writeTextFiles {
+  env = [
+    "PATH=${globalPath}"
+    "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
+    "GH_RUNNER_PATH=${patched-github-runner}/bin"
+  ];
+
+  root-files = writeTextFiles {
     "etc/shadow" = ''
       root:!x:::::::
       ${user}:!:::::::
@@ -76,21 +74,20 @@ let
       ${user}:x::
       nixbld:!::${lib.concatMapStringsSep "," (x: "nixbld${toString x}") (lib.range 0 nixbldUserCount)}
     '';
-  };
-
-  home-dir = writeTextFiles {
     "home/${user}/.docker/config.json" = builtins.toJSON {
       credHelpers = {
         "public.ecr.aws" = "ecr-login";
       };
     };
+    "etc/environment" = builtins.concatStringsSep "\n" env;
   };
 
-  nix-bin = buildEnv {
-    name = "nix-bin";
+  root-env = buildEnv {
+    name = "root-env";
     pathsToLink = [ "/bin" ];
     postBuild = ''
       mv $out/bin $out/nix-bin
+      cp -R ${root-files}/. $out/
     '';
     paths = [
       wrapped-nix
@@ -107,20 +104,10 @@ let
 
   globalPath = "/nix-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
 
-  env = [
-    "PATH=${globalPath}"
-    "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
-    "GH_RUNNER_PATH=${patched-github-runner}/bin"
-  ];
-
-  etc-dir = writeTextFiles {
-    "etc/environment" = builtins.concatStringsSep "\n" env;
-  };
-
   image = nix2container.buildImage {
     inherit name;
     tag = "${patched-github-runner.version}-${nix.version}";
-    fromImage = base-image;
+    fromImage = ubuntu-base-image;
     config = {
       inherit env;
       volumes = {
@@ -131,11 +118,11 @@ let
         "--"
       ];
     };
-    copyToRoot = [ nix-bin shadow home-dir etc-dir ];
+    copyToRoot = [ root-env ];
     maxLayers = 30;
     perms = [
       {
-        path = home-dir;
+        path = root-env;
         regex = "/home/${user}";
         mode = "0755";
         uid = userUid;

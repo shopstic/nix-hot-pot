@@ -6,6 +6,7 @@
 , nix2container
 , runCommand
 , buildEnv
+, glibcLocales
 , dumb-init
 , cacert
 , nix
@@ -23,7 +24,7 @@
 , nix-direnv
 , fzf
 , amazon-ecr-credential-helper
-, glibcLocales
+, ubuntu-base-image
 }:
 let
   name = "remote-dev";
@@ -38,21 +39,12 @@ let
     exec ${nix}/bin/nix "$@" 2> >(${gnugrep}/bin/grep -v "^evaluating file '.*'$" >&2)
   '';
 
-  base-image = nix2container.pullImage {
-    imageName = "docker.io/library/ubuntu"; # 24.04
-    imageDigest = "sha256:80dd3c3b9c6cecb9f1667e9290b3bc61b78c2678c02cbdae5f0fea92cc6734ab";
-    sha256 =
-      if stdenv.isx86_64 then
-        "sha256-KKVXvKN0ul3yQXPMaRznwqVMpoQ2w5NbAGlIQf63moA=" else
-        "sha256-0EIgRSVcMP8tZqww+nZWkoPHFb3J2lMqbvYxhXmZmvk=";
-  };
-
   user = "nix";
   userUid = 1000;
 
   nixbldUserCount = 64;
 
-  shadow = writeTextFiles {
+  root-files = writeTextFiles {
     "etc/shadow" = ''
       root:!x:::::::
       sshd:!x:::::::
@@ -77,19 +69,11 @@ let
       ${user}:x::
       nixbld:!::${lib.concatMapStringsSep "," (x: "nixbld${toString x}") (lib.range 0 nixbldUserCount)}
     '';
-  };
-
-  home-dir = writeTextFiles {
     "home/${user}/.docker/config.json" = builtins.toJSON {
       credHelpers = {
         "public.ecr.aws" = "ecr-login";
       };
     };
-  };
-
-  globalPath = "/nix-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
-
-  etc-dir = writeTextFiles {
     "etc/environment" = builtins.concatStringsSep "\n" env;
     "etc/profile.d/02-environment.sh" = builtins.concatStringsSep "\n" (map (x: "export " + x) env);
     "etc/bash.bashrc" = ''
@@ -128,15 +112,18 @@ let
       sandbox = relaxed
       substituters = https://cache.nixos.org?priority=40 https://nix.shopstic.com?priority=60
       trusted-public-keys = nix-cache:jxOpK2dQOv/7JIb5/30+W4oidtUgmFMXLc/3mC09mKM= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
-      experimental-features = nix-command flakes
+      experimental-features = nix-command flakes ca-derivations
     '';
   };
 
-  nix-bin = buildEnv {
-    name = "nix-bin";
+  globalPath = "/nix-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
+
+  root-env = buildEnv {
+    name = "root-env";
     pathsToLink = [ "/bin" ];
     postBuild = ''
       mv $out/bin $out/nix-bin
+      cp -R ${root-files}/. $out/
     '';
     paths = [
       wrapped-nix
@@ -165,7 +152,7 @@ let
   image = nix2container.buildImage {
     inherit name;
     tag = "${version}-${nix.version}";
-    fromImage = base-image;
+    fromImage = ubuntu-base-image;
     config = {
       inherit env;
       volumes = {
@@ -177,14 +164,14 @@ let
         "--"
       ];
     };
-    copyToRoot = [ nix-bin shadow home-dir etc-dir ];
+    copyToRoot = [ root-env ];
     layers = [
       (nix2container.buildLayer { deps = [ docker-slim ]; })
     ];
     maxLayers = 100;
     perms = [
       {
-        path = home-dir;
+        path = root-env;
         regex = "/home/${user}";
         mode = "0755";
         gid = userUid;

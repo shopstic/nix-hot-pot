@@ -28,8 +28,6 @@ let
 
   shadow = nonRootShadowSetup { inherit user; uid = userUid; shellBin = "${bash}/bin/bash"; };
 
-  home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
-
   entrypoint = writeShellScriptBin "entrypoint.sh" ''
     set -euo pipefail
     JAVA_SECURITY_OVERRIDES=''${JAVA_SECURITY_OVERRIDES:-""}
@@ -43,11 +41,13 @@ let
     exec "$@"
   '';
 
-  nix-bin = buildEnv {
-    name = "nix-bin";
+  root-env = buildEnv {
+    name = "root-env";
     pathsToLink = [ "/bin" ];
     postBuild = ''
       mv $out/bin $out/nix-bin
+      mkdir -p $out/home/${user}
+      cp -R ${shadow}/. $out/
     '';
     paths = [
       dumb-init
@@ -64,11 +64,11 @@ let
         inherit name;
         fromImage = base-image;
         tag = "${(builtins.replaceStrings ["+"] ["_"] jre.version)}-${fdb.version}";
-        copyToRoot = [ nix-bin shadow home-dir ];
+        copyToRoot = [ root-env ];
         maxLayers = 100;
         perms = [
           {
-            path = home-dir;
+            path = root-env;
             regex = "/home/${user}";
             gid = userUid;
             uid = userUid;

@@ -12,14 +12,17 @@ let
   user = "ng-server";
   userUid = 1000;
   shadow = nonRootShadowSetup { inherit user; uid = userUid; shellBin = "/dev/false"; };
-  home-dir = runCommand "home-dir" { } ''mkdir -p $out/home/${user}'';
-  nix-bin = buildEnv {
-    name = "nix-bin";
+  root-env = buildEnv {
+    name = "root-env";
     pathsToLink = [ "/bin" ];
     paths = [
       dumb-init
       ng-server
     ];
+    postBuild = ''
+      mkdir -p $out/home/${user}
+      cp -R ${shadow}/. $out/
+    '';
   };
 
   image =
@@ -27,11 +30,11 @@ let
       {
         inherit name;
         tag = ng-server.version;
-        copyToRoot = [ nix-bin shadow home-dir ];
+        copyToRoot = [ root-env ];
         maxLayers = 50;
         perms = [
           {
-            path = home-dir;
+            path = root-env;
             regex = "/home/${user}";
             mode = "0755";
             gid = userUid;
