@@ -78,8 +78,8 @@ fn_push_manifest() {
   image_tag=$(nix eval --raw ".#packages.${current_system}.image-${image}.imageTag")
 
   local target
-  target=$(fn_image_push_manifest "$@")
-  
+  target=$(fn_image_push_manifest "${image}" "${image_tag}")
+
   local target_latest="${target%%:*}:latest"
   regctl image copy "${target}" "${target_latest}"
 }
