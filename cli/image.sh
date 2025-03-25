@@ -23,7 +23,7 @@ fn_image_push() {
 
   if [[ "${last_image_nix_store_path}" == "${nix_store_path}" ]]; then
     echo "Last image ${last_image} already exists with nix.store.path annotation of ${nix_store_path}" >&2
-    regctl index create "${target_image}" --ref "${last_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}"
+    regctl index create "${target_image}" --ref "${last_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" >&2
   else
     echo "Last image ${last_image} nix.store.path=${last_image_nix_store_path} does not match ${nix_store_path}" >&2
     echo "Pushing image ${target_image}" >&2
@@ -32,15 +32,17 @@ fn_image_push() {
       --insecure-policy \
       --image-parallel-copies="${skopeo_copy_parallelism}" \
       nix:"${nix_store_path}" \
-      docker://"${target_image}"
+      docker://"${target_image}" >&2
 
     local pids=()
-    regctl index create "${target_image}" --ref "${target_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" &
+    regctl index create "${target_image}" --ref "${target_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" >&2 &
     pids+=($!)
-    regctl index create "${last_image}" --ref "${target_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" &
+    regctl index create "${last_image}" --ref "${target_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" >&2 &
     pids+=($!)
     wait "${pids[@]}" || exit 1
   fi
+
+  echo "${target_image}"
 }
 
 fn_image_push_manifest() {
