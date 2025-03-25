@@ -33,7 +33,7 @@ fn_image_push() {
       --image-parallel-copies="${skopeo_copy_parallelism}" \
       nix:"${nix_store_path}" \
       docker://"${target_image}"
-    
+
     local pids=()
     regctl index create "${target_image}" --ref "${target_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" &
     pids+=($!)
@@ -49,11 +49,11 @@ fn_image_push_manifest() {
   local image_tag=${2:?"Image tag is required"}
   local target="${image_repository}/${image}:${image_tag}"
 
-  echo >&2 "Writing manifest for ${target}"
+  echo "Writing manifest for ${target}" >&2
   regctl index create "${target}" \
     --ref "${image_repository}/${image}:${image_tag}-amd64" \
     --ref "${image_repository}/${image}:${image_tag}-arm64" \
     --platform linux/amd64 \
-    --platform linux/arm64
-  regctl image copy "${target}" "${image_repository}/${image}:latest"
+    --platform linux/arm64 >&2
+  echo "${target}"
 }
