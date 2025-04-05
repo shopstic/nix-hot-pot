@@ -67,7 +67,7 @@ stdenv.mkDerivation {
           chmod -R +w "$DENO_DIR"
           for dir in deps npm registries remote; do
             if [ -d ${deno-cache-dir}/$dir ]; then
-              ln -s ${deno-cache-dir}/$dir "$DENO_DIR/$dir"
+              cp -R ${deno-cache-dir}/$dir "$DENO_DIR/$dir"
             fi
           done
         '' 
