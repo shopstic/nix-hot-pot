@@ -165,7 +165,9 @@ func run(l *logger, name string, args []string, timeout int) int {
 
 func waitAndLog(l *logger, seconds int) {
 	for i := seconds; i > 0; i-- {
-		l.info("Waiting %d second(s) before re-running the command...", i)
+		if i%60 == 0 || i == seconds {
+			l.info("Waiting %d second(s) before re-running the command...", i)
+		}
 		time.Sleep(time.Second)
 	}
 }
