@@ -5,6 +5,7 @@ fn_image_push() {
   local image_repository=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
   local image_push_skip_diffing=${IMAGE_PUSH_SKIP_DIFFING:-"0"}
   local skopeo_copy_parallelism=${SCOPEO_COPY_PARALLELISM:-"20"}
+  local skopeo_copy_retry_times=${SCOPEO_COPY_RETRY_TIMES:-"1"}
 
   local nix_store_path=${1:?"Nix store path is required"}
   local image=${2:?"Image name is required"}
@@ -31,6 +32,7 @@ fn_image_push() {
       --dest-compress-format="zstd:chunked" \
       --insecure-policy \
       --image-parallel-copies="${skopeo_copy_parallelism}" \
+      --retry-times="${skopeo_copy_retry_times}" \
       nix:"${nix_store_path}" \
       docker://"${target_image}" >&2
 
