@@ -1,14 +1,14 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@deno/cache-dir@~0.19.1": "0.19.1",
+    "jsr:@deno/cache-dir@0.20": "0.20.0",
     "jsr:@deno/graph@0.86": "0.86.9",
     "jsr:@deno/graph@0.90": "0.90.0",
     "jsr:@std/assert@^1.0.12": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
     "jsr:@std/async@^1.0.12": "1.0.12",
     "jsr:@std/bytes@^1.0.5": "1.0.5",
-    "jsr:@std/cli@^1.0.16": "1.0.16",
+    "jsr:@std/cli@^1.0.16": "1.0.17",
     "jsr:@std/fmt@^1.0.3": "1.0.7",
     "jsr:@std/fmt@^1.0.6": "1.0.7",
     "jsr:@std/fmt@^1.0.7": "1.0.7",
@@ -26,14 +26,14 @@
     "jsr:@wok/typebox@2": "2.0.0",
     "jsr:@wok/utils@^5.2.5": "5.2.5",
     "npm:@sinclair/typebox@~0.34.28": "0.34.33",
-    "npm:type-fest@^4.37.0": "4.40.0",
-    "npm:type-fest@^4.39.1": "4.40.0",
-    "npm:type-fest@^4.40.0": "4.40.0",
+    "npm:type-fest@^4.37.0": "4.40.1",
+    "npm:type-fest@^4.39.1": "4.40.1",
+    "npm:type-fest@^4.40.1": "4.40.1",
     "npm:typescript@^5.8.3": "5.8.3"
   },
   "jsr": {
-    "@deno/cache-dir@0.19.1": {
-      "integrity": "98feae3c938dd42b8af6d65c0e8aa457fae1429e850e4db68473e9c66a406403",
+    "@deno/cache-dir@0.20.0": {
+      "integrity": "840a78d4294102ac9ba6be70e8c1bf2983d18de4ef022f2c1bb8f8aaaffada48",
       "dependencies": [
         "jsr:@deno/graph@0.86",
         "jsr:@std/fmt@^1.0.3",
@@ -60,8 +60,8 @@
     "@std/bytes@1.0.5": {
       "integrity": "4465dd739d7963d964c809202ebea6d5c6b8e3829ef25c6a224290fbb8a1021e"
     },
-    "@std/cli@1.0.16": {
-      "integrity": "02df293099c35b9e97d8ca05f57f54bd1ee08134f25d19a4756b3924695f4b00"
+    "@std/cli@1.0.17": {
+      "integrity": "e15b9abe629e17be90cc6216327f03a29eae613365f1353837fa749aad29ce7b"
     },
     "@std/fmt@1.0.7": {
       "integrity": "2a727c043d8df62cd0b819b3fb709b64dd622e42c3b1bb817ea7e6cc606360fb"
@@ -130,8 +130,8 @@
     "@sinclair/typebox@0.34.33": {
       "integrity": "sha512-5HAV9exOMcXRUxo+9iYB5n09XxzCXnfy4VTNW4xnDv+FgjzAGY989C28BIdljKqmF+ZltUwujE3aossvcVtq6g=="
     },
-    "type-fest@4.40.0": {
-      "integrity": "sha512-ABHZ2/tS2JkvH1PEjxFDTUWC8dB5OsIGZP4IFLhR293GqT5Y5qB1WwL2kMPYhQW9DVgVD8Hd7I8gjwPIf5GFkw=="
+    "type-fest@4.40.1": {
+      "integrity": "sha512-9YvLNnORDpI+vghLU/Nf+zSv0kL47KbVJ1o3sKgoTefl6i+zebxbiDQWoe/oWWqPhIgQdRZRT1KA9sCPL810SA=="
     },
     "typescript@5.8.3": {
       "integrity": "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ=="
@@ -146,7 +146,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@deno/cache-dir@~0.19.1",
+      "jsr:@deno/cache-dir@0.20",
       "jsr:@deno/graph@0.90",
       "jsr:@std/assert@^1.0.13",
       "jsr:@std/fmt@^1.0.7",
@@ -158,7 +158,7 @@
       "jsr:@wok/schema@3",
       "jsr:@wok/typebox@2",
       "jsr:@wok/utils@^5.2.5",
-      "npm:type-fest@^4.40.0",
+      "npm:type-fest@^4.40.1",
       "npm:typescript@^5.8.3"
     ]
   }
