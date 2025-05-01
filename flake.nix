@@ -55,15 +55,17 @@
           deno_2_0_x = pkgs.callPackage ./pkgs/deno-2.0.x.nix { };
           deno_2_1_x = pkgs.callPackage ./pkgs/deno-2.1.x.nix { };
           deno_2_2_x = pkgs.callPackage ./pkgs/deno-2.2.x.nix { };
+          deno_2_3_x = pkgs.callPackage ./pkgs/deno-2.3.x.nix { };
           denort_2_0_x = pkgs.callPackage ./pkgs/denort-2.0.x.nix { };
           denort_2_1_x = pkgs.callPackage ./pkgs/denort-2.1.x.nix { };
           denort_2_2_x = pkgs.callPackage ./pkgs/denort-2.2.x.nix { };
-          deno = deno_2_2_x.overrideAttrs (oldAttrs: {
+          denort_2_3_x = pkgs.callPackage ./pkgs/denort-2.3.x.nix { };
+          deno = deno_2_3_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
           });
-          denort = denort_2_2_x.overrideAttrs (oldAttrs: {
+          denort = denort_2_3_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
@@ -170,6 +172,7 @@
                 denort_2_0_x deno_2_0_x
                 denort_2_1_x deno_2_1_x
                 denort_2_2_x deno_2_2_x
+                denort_2_3_x deno_2_3_x
                 intellij-helper manifest-tool jdk17 jre17 regclient
                 skopeo-nix2container nix2container-bin redpanda hasura-cli
                 kubesess kubeshark
