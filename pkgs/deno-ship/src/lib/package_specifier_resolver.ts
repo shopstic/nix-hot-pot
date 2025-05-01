@@ -25,6 +25,7 @@ interface ResolvedPackageSpecifier extends PackageSpecifier {
 
 interface DenoLockPackage {
   dependencies?: string[];
+  optionalDependencies?: string[];
 }
 
 export interface DenoLock {
@@ -336,6 +337,13 @@ export async function buildPackageSpecifierResolver(
 
     if (pkg.dependencies) {
       for (const dep of pkg.dependencies) {
+        const depSpecifier = spec.type === "npm" ? `npm:${dep}` : dep;
+        resolveDependencies(depSpecifier);
+      }
+    }
+
+    if (pkg.optionalDependencies) {
+      for (const dep of pkg.optionalDependencies) {
         const depSpecifier = spec.type === "npm" ? `npm:${dep}` : dep;
         resolveDependencies(depSpecifier);
       }
