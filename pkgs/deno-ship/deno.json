@@ -1,12 +1,12 @@
 {
   "imports": {
-    "@deno/cache-dir": "jsr:@deno/cache-dir@^0.20.0",
-    "@deno/import-map": "https://deno.land/x/import_map@v0.21.0/mod.ts",
-    "@deno/graph": "jsr:@deno/graph@^0.91.0",
+    "@deno/cache-dir": "jsr:@deno/cache-dir@^0.22.3",
+    "@deno/import-map": "https://deno.land/x/import_map@v0.22.0/mod.ts",
+    "@deno/graph": "jsr:@deno/graph@^0.95.1",
     "@std/assert": "jsr:@std/assert@^1.0.13",
     "@std/fmt": "jsr:@std/fmt@^1.0.8",
-    "@std/fs": "jsr:@std/fs@^1.0.17",
-    "@std/path": "jsr:@std/path@^1.0.9",
+    "@std/fs": "jsr:@std/fs@^1.0.18",
+    "@std/path": "jsr:@std/path@^1.1.0",
     "@std/semver": "jsr:@std/semver@^1.0.5",
     "@wok/case": "jsr:@wok/case@^1.0.2",
     "@wok/deup": "jsr:@wok/deup@^3.0.0",
