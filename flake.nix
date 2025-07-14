@@ -56,16 +56,18 @@
           deno_2_1_x = pkgs.callPackage ./pkgs/deno-2.1.x.nix { };
           deno_2_2_x = pkgs.callPackage ./pkgs/deno-2.2.x.nix { };
           deno_2_3_x = pkgs.callPackage ./pkgs/deno-2.3.x.nix { };
+          deno_2_4_x = pkgs.callPackage ./pkgs/deno-2.4.x.nix { };
           denort_2_0_x = pkgs.callPackage ./pkgs/denort-2.0.x.nix { };
           denort_2_1_x = pkgs.callPackage ./pkgs/denort-2.1.x.nix { };
           denort_2_2_x = pkgs.callPackage ./pkgs/denort-2.2.x.nix { };
           denort_2_3_x = pkgs.callPackage ./pkgs/denort-2.3.x.nix { };
-          deno = deno_2_3_x.overrideAttrs (oldAttrs: {
+          denort_2_4_x = pkgs.callPackage ./pkgs/denort-2.4.x.nix { };
+          deno = deno_2_4_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
           });
-          denort = denort_2_3_x.overrideAttrs (oldAttrs: {
+          denort = denort_2_4_x.overrideAttrs (oldAttrs: {
             meta = oldAttrs.meta // {
               priority = 0;
             };
