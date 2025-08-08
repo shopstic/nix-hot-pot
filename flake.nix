@@ -41,12 +41,12 @@
           };
           nix2containerPkgs = nix2containerPkg.packages.${system};
           skopeo-nix2container = nix2containerPkgs.skopeo-nix2container.overrideAttrs (oldAttrs: rec {
-            version = "1.18.0";
+            version = "1.20.0";
             src = pkgs.fetchFromGitHub {
               rev = "v${version}";
               owner = "containers";
               repo = "skopeo";
-              hash = "sha256-Ws01dYx2Jq/zB8rWiWSnV4ZgcxyBWHWvE3DfG7gvFOc=";
+              hash = "sha256-uw41kaIljz9Y378rX2BK0W/ZVUx8IjlIBqYHDuLgZpA=";
             };
           });
           nix2container-bin = nix2containerPkgs.nix2container-bin;
@@ -202,11 +202,11 @@
               let
                 ubuntu-base-image = nix2container.pullImage {
                   imageName = "docker.io/library/ubuntu"; # 24.04
-                  imageDigest = "sha256:72297848456d5d37d1262630108ab308d3e9ec7ed1c3286a32fe09856619a782";
+                  imageDigest = "sha256:a08e551cb33850e4740772b38217fc1796a66da2506d312abe51acda354ff061";
                   sha256 =
                     if pkgs.stdenv.isx86_64 then
-                      "sha256-H2ddt+ZxnnzrGBoTyAVMs/qkQuUHG+HelIgcqzVcjS4=" else
-                      "sha256-0tdFmdMibQDbZ5o/bgOO0eMfo4ep/omWTpeevdDH5nc=";
+                      "sha256-J4yiH/AOv+m9XJPhxcqE/1Dr4wtcyHIPGFuN26I94cs=" else
+                      "sha256-TzFJq4KbUUSm2zJ9Uk6xQxRH7n6CqS62uDl1F8X56qc=";
                 };
                 images = {
                   image-bin-docker-client = pkgs.callPackage ./images/bin-docker-client { inherit nix2container; };
