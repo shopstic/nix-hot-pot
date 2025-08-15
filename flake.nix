@@ -302,6 +302,11 @@
                   inherit deno;
                 })
                 ./lib/deno-app-cache.nix;
+              denoAppDeps = callPackageWith
+                (pkgs // {
+                  inherit deno;
+                })
+                ./lib/deno-app-deps.nix;
               denoAppCompile = callPackageWith
                 (pkgs // {
                   inherit deno-ship deno denort;

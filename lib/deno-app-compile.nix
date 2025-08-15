@@ -63,13 +63,8 @@ stdenv.mkDerivation {
         if deno-cache-dir != null 
         then 
         ''
-          cp ${deno-cache-dir}/*_cache_* "$DENO_DIR"/
-          chmod -R +w "$DENO_DIR"
-          for dir in deps npm registries remote; do
-            if [ -d ${deno-cache-dir}/$dir ]; then
-              cp -R ${deno-cache-dir}/$dir "$DENO_DIR/$dir"
-            fi
-          done
+          time cp -r ${deno-cache-dir}/. "$DENO_DIR"/
+          time chmod -R +w "$DENO_DIR"
         '' 
         else ""
       }
@@ -78,7 +73,6 @@ stdenv.mkDerivation {
       ${generatePatchCommands "RESULT" appSrcPath}
       ${lib.strings.concatStringsSep "\n" additionalSrcCommands}
       ${postPatch}
-      
       
       COMPILE_FLAGS=(
         ${if deno-cache-dir != null then "--cached-only" else ""}
