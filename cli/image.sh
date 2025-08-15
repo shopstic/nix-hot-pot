@@ -4,6 +4,7 @@ set -euo pipefail
 fn_image_push() {
   local image_repository=${IMAGE_REPOSITORY:?"IMAGE_REPOSITORY env var is required"}
   local image_push_skip_diffing=${IMAGE_PUSH_SKIP_DIFFING:-"0"}
+  local image_push_diffing_last_tag=${IMAGE_PUSH_DIFFING_LAST_TAG:-"latest"}
   local skopeo_copy_parallelism=${SCOPEO_COPY_PARALLELISM:-"20"}
   local skopeo_copy_retry_times=${SCOPEO_COPY_RETRY_TIMES:-"1"}
 
@@ -13,7 +14,7 @@ fn_image_push() {
   local arch=${4:?"Arch is required (amd64 | arm64)"}
 
   local target_image="${image_repository}/${image}:${image_tag}-${arch}"
-  local last_image="${image_repository}/${image}:latest-${arch}"
+  local last_image="${image_repository}/${image}:${image_push_diffing_last_tag}-${arch}"
 
   local last_image_nix_store_path=""
   if [[ "${image_push_skip_diffing}" == "0" ]]; then
@@ -24,7 +25,9 @@ fn_image_push() {
 
   if [[ "${last_image_nix_store_path}" == "${nix_store_path}" ]]; then
     echo "Last image ${last_image} already exists with nix.store.path annotation of ${nix_store_path}" >&2
-    regctl index create "${target_image}" --ref "${last_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" >&2
+    if [[ "${target_image}" != "${last_image}" ]]; then
+      regctl index create "${target_image}" --ref "${last_image}" --annotation nix.store.path="${nix_store_path}" --platform linux/"${arch}" >&2
+    fi
   else
     echo "Last image ${last_image} nix.store.path=${last_image_nix_store_path} does not match ${nix_store_path}" >&2
     echo "Pushing image ${target_image}" >&2
