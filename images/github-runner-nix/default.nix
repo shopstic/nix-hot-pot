@@ -33,6 +33,12 @@ let
     exec ${nix}/bin/nix "$@" 2> >(${gnugrep}/bin/grep -v "^evaluating file '.*'$" >&2)
   '';
 
+  legacy-nix-symlinks = runCommand "legacy-nix-symlinks" {} ''
+    mkdir -p $out/bin
+    ln -s ${nix}/bin/nix $out/bin/nix-store
+    ln -s ${nix}/bin/nix $out/bin/nix-daemon
+  '';
+
   patched-github-runner = github-runner.overrideAttrs (finalAttrs: previousAttrs: {
     postInstall = ''
       ${previousAttrs.postInstall}
@@ -95,6 +101,7 @@ let
     '';
     paths = [
       wrapped-nix
+      legacy-nix-symlinks
       docker-slim
       rsync
       dumb-init
