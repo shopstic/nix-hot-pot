@@ -10,16 +10,16 @@
 
 buildGoModule rec {
   pname = "dive";
-  version = "0.12.0";
+  version = "0.13.1";
 
   src = fetchFromGitHub {
     owner = "wagoodman";
     repo = "dive";
     rev = "v${version}";
-    hash = "sha256-CuVRFybsn7PVPgz3fz5ghpjOEOsTYTv6uUAgRgFewFw=";
+    hash = "sha256-/pjIousIxEOjbjzHVoB4kJ4phDM=";
   };
 
-  vendorHash = "sha256-uzzawa/Doo6j/Fh9dJMzGKbpp24UTLAo9VGmuQ80IZE=";
+  vendorHash = lib.fakeHash;
 
   nativeBuildInputs = [ pkg-config ];
 
