@@ -56,21 +56,25 @@ let
   root-files = writeTextFiles {
     "etc/shadow" = ''
       root:!x:::::::
+      sshd:*:19000:0:99999:7:::
       ${user}:!:::::::
       ${lib.concatMapStringsSep "\n" (x: "nixbld${toString x}:!:18610:0:99999:7:::") (lib.range 0 nixbldUserCount)}
     '';
     "etc/passwd" = ''
       root:x:0:0::/root:/bin/bash
+      sshd:x:111:111:privilege-separated ssh:/run/sshd:/usr/sbin/nologin
       ${user}:x:${toString userUid}:${toString userUid}::/home/${user}:
       ${lib.concatMapStringsSep "\n" (x: "nixbld${toString x}:x:${toString (x + 30000)}:30000::/dev/null:") (lib.range 0 nixbldUserCount)}
     '';
     "etc/group" = ''
       root:x:0:0::/root:/bin/bash
+      sshd:x:111:
       ${user}:x:${toString userUid}:${toString userUid}::/home/${user}:
       nixbld:x:30000:${lib.concatMapStringsSep "," (x: "nixbld${toString x}") (lib.range 0 nixbldUserCount)}
     '';
     "etc/gshadow" = ''
       root:x::
+      sshd:!*::
       ${user}:x::
       nixbld:!::${lib.concatMapStringsSep "," (x: "nixbld${toString x}") (lib.range 0 nixbldUserCount)}
     '';
