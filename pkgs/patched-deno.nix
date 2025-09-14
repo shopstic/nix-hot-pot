@@ -1,0 +1,126 @@
+{ rustPlatform
+, fetchFromGitHub
+, cacert
+, rust-bin
+, cargo
+, rustc
+, # Native compilation tools
+  cmake
+, gcc
+, clang
+, llvm
+, lld
+, # Protocol Buffers compiler
+  protobuf
+, # Python 3 for WPT tests
+  python3
+, # Additional system libraries
+  pkg-config
+, openssl
+, zlib
+, libffi
+, darwin
+, glib
+, stdenv
+, lib
+,
+}:
+let
+  rust-toolchain = rust-bin.stable."1.89.0".default.override {
+    extensions = [ "rustfmt" "clippy" ];
+  };
+
+  buildDeps = [
+    # Core build tools
+    rust-toolchain
+    cargo
+    rustc
+
+    # Native compilation tools
+    cmake
+    gcc
+    clang
+    llvm
+    lld
+
+    # Protocol Buffers compiler
+    protobuf
+
+    # Python 3 for WPT tests
+    python3
+
+    # Additional system libraries
+    pkg-config
+    openssl
+    zlib
+    libffi
+  ] ++ (lib.optionals stdenv.isDarwin [
+    # macOS specific
+    darwin.apple_sdk.frameworks.CoreFoundation
+    darwin.apple_sdk.frameworks.Security
+    darwin.apple_sdk.frameworks.SystemConfiguration
+  ]) ++ (lib.optionals stdenv.isLinux [
+    # Linux specific
+    glib
+  ]);
+  src = fetchFromGitHub {
+    owner = "nktpro";
+    repo = "deno";
+    rev = "feature/fix-otel";
+    sha256 = "sha256-pjFHZK6NHYR93VsrDU5V7XO4wn+la4tBuyA/AA0bLd0=";
+  };
+in
+rustPlatform.buildRustPackage {
+  pname = "deno";
+  version = "2.5.0";
+  __noChroot = true;
+
+  src = fetchFromGitHub {
+    owner = "nktpro";
+    repo = "deno";
+    rev = "feature/fix-otel";
+    sha256 = "sha256-pjFHZK6NHYR93VsrDU5V7XO4wn+la4tBuyA/AA0bLd0=";
+  };
+
+  cargoLock = {
+    lockFile = "${src}/Cargo.lock";
+    outputHashes = {
+      # Git dependencies from https://github.com/nktpro/opentelemetry-rust?branch=feature%2Ffix-observable
+      # All packages share the same git commit hash: 6357ef371697dc3eca8e36e8fc1478a3c8d6001b
+      "opentelemetry-0.27.0" = "sha256-579+gB25eCZxAtf0TGdSQ9Hvetp9phgDZrGLjJD2XSA=";
+      "opentelemetry-http-0.27.0" = "sha256-579+gB25eCZxAtf0TGdSQ9Hvetp9phgDZrGLjJD2XSA=";
+      "opentelemetry-otlp-0.27.0" = "sha256-579+gB25eCZxAtf0TGdSQ9Hvetp9phgDZrGLjJD2XSA=";
+      "opentelemetry-semantic-conventions-0.27.0" = "sha256-579+gB25eCZxAtf0TGdSQ9Hvetp9phgDZrGLjJD2XSA=";
+      "opentelemetry_sdk-0.27.0" = "sha256-579+gB25eCZxAtf0TGdSQ9Hvetp9phgDZrGLjJD2XSA=";
+    };
+  };
+
+  nativeBuildInputs = buildDeps ++ [ cacert ];
+
+  buildInputs = [
+    openssl
+    zlib
+    libffi
+  ] ++ (lib.optionals stdenv.isLinux [
+    glib
+  ]);
+
+  # Build configuration
+  cargoBuildFlags = [ "--bin" "deno" "--bin" "denort" ];
+
+  # Skip tests that require network access or special setup
+  doCheck = false;
+
+  # Environment variables for the build
+  CARGO_TARGET_DIR = "target";
+  RUST_BACKTRACE = "1";
+
+  # Ensure proper linking
+  PKG_CONFIG_PATH = "${openssl.dev}/lib/pkgconfig:${zlib.dev}/lib/pkgconfig";
+
+  # For macOS
+  NIX_LDFLAGS = "-L${lib.getLib openssl}/lib -L${lib.getLib zlib}/lib";
+
+  # For Linux
+  NIX_CFLAGS_COMPILE = "-I${openssl.dev}/include -I${zlib.dev}/include";
+}

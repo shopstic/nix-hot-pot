@@ -13,9 +13,13 @@
       url = "github:nktpro/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rustOverlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg }:
+  outputs = { self, nixpkgs, flakeUtils, fdbPkg, npmlock2nixPkg, nix2containerPkg, rustOverlay }:
     flakeUtils.lib.eachSystem [ "aarch64-darwin" "aarch64-linux" "x86_64-linux" ]
       (system:
         let
@@ -31,6 +35,7 @@
               (self: super: {
                 nodejs-16_x = super.nodejs-18_x;
               })
+              rustOverlay.overlays.default
             ];
           };
           npmlock2nix = import npmlock2nixPkg {
@@ -132,6 +137,7 @@
             nodejs = pkgs.nodejs_22;
           };
           regclient = pkgs.callPackage ./pkgs/regclient.nix { };
+          patched-deno = pkgs.callPackage ./pkgs/patched-deno.nix { };
         in
         (rec {
           devShell = pkgs.mkShellNoCC {
@@ -167,6 +173,7 @@
               jre17 = jdk17Pkg.jre;
               hasura-cli = pkgs.callPackage ./pkgs/hasura-cli.nix { };
               k9s = pkgs.callPackage ./pkgs/k9s.nix { };
+              otel-tui = pkgs.callPackage ./pkgs/otel-tui.nix { };
             in
             {
               inherit
@@ -183,6 +190,8 @@
                 aws-batch-routes symlink-mirror periodic-exec pcap-ws ng-server
                 deno-ship
                 typescript-eslint
+                otel-tui
+                patched-deno
                 ;
               inherit (pkgs) kubectx terraform;
               openapi-ts-gen = pkgs.callPackage ./pkgs/openapi-ts-gen {
