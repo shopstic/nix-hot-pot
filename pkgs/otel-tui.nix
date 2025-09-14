@@ -1,6 +1,8 @@
 { lib
 , buildGoModule
 , fetchFromGitHub
+, stdenv
+, xorg
 }:
 buildGoModule rec {
   pname = "otel-tui";
@@ -8,6 +10,9 @@ buildGoModule rec {
 
   # Disable Go workspace mode to allow go mod vendor
   env.GOWORK = "off";
+
+  # Add X11 development libraries for CGO dependencies (Linux only)
+  buildInputs = lib.optionals stdenv.isLinux [ xorg.libX11 ];
 
   src = fetchFromGitHub {
     owner = "ymtdzzz";
