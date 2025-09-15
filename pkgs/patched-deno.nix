@@ -61,7 +61,7 @@ let
     owner = "nktpro";
     repo = "deno";
     rev = "feature/fix-otel";
-    sha256 = "sha256-pjFHZK6NHYR93VsrDU5V7XO4wn+la4tBuyA/AA0bLd0=";
+    sha256 = "sha256-AXXhctdRBjvfO9PBcJXIZLJPwd9cFSyihR7Dur5/khU=";
   };
 in
 rustPlatform.buildRustPackage {
@@ -69,12 +69,7 @@ rustPlatform.buildRustPackage {
   version = "2.5.0";
   __noChroot = true;
 
-  src = fetchFromGitHub {
-    owner = "nktpro";
-    repo = "deno";
-    rev = "feature/fix-otel";
-    sha256 = "sha256-pjFHZK6NHYR93VsrDU5V7XO4wn+la4tBuyA/AA0bLd0=";
-  };
+  inherit src;
 
   cargoLock = {
     lockFile = "${src}/Cargo.lock";
