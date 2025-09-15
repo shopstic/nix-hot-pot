@@ -19,7 +19,6 @@
 , openssl
 , zlib
 , libffi
-, darwin
 , glib
 , stdenv
 , lib
@@ -54,12 +53,7 @@ let
     openssl
     zlib
     libffi
-  ] ++ (lib.optionals stdenv.isDarwin [
-    # macOS specific
-    darwin.apple_sdk.frameworks.CoreFoundation
-    darwin.apple_sdk.frameworks.Security
-    darwin.apple_sdk.frameworks.SystemConfiguration
-  ]) ++ (lib.optionals stdenv.isLinux [
+  ] ++ (lib.optionals stdenv.isLinux [
     # Linux specific
     glib
   ]);
@@ -101,9 +95,9 @@ rustPlatform.buildRustPackage {
     openssl
     zlib
     libffi
+    libclang
   ] ++ (lib.optionals stdenv.isLinux [
     glib
-    libclang
   ]);
 
   # Build configuration
@@ -122,5 +116,5 @@ rustPlatform.buildRustPackage {
   # Platform-specific environment variables
   NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-L${lib.getLib openssl}/lib -L${lib.getLib zlib}/lib";
   NIX_CFLAGS_COMPILE = lib.optionalString stdenv.isLinux "-I${openssl.dev}/include -I${zlib.dev}/include";
-  LIBCLANG_PATH = lib.optionalString stdenv.isLinux "${libclang.lib}/lib";
+  LIBCLANG_PATH = "${libclang.lib}/lib";
 }
