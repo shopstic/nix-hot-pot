@@ -23,7 +23,7 @@
 , glib
 , stdenv
 , lib
-,
+, libclang
 }:
 let
   rust-toolchain = rust-bin.stable."1.89.0".default.override {
@@ -103,6 +103,7 @@ rustPlatform.buildRustPackage {
     libffi
   ] ++ (lib.optionals stdenv.isLinux [
     glib
+    libclang
   ]);
 
   # Build configuration
@@ -118,9 +119,8 @@ rustPlatform.buildRustPackage {
   # Ensure proper linking
   PKG_CONFIG_PATH = "${openssl.dev}/lib/pkgconfig:${zlib.dev}/lib/pkgconfig";
 
-  # For macOS
-  NIX_LDFLAGS = "-L${lib.getLib openssl}/lib -L${lib.getLib zlib}/lib";
-
-  # For Linux
-  NIX_CFLAGS_COMPILE = "-I${openssl.dev}/include -I${zlib.dev}/include";
+  # Platform-specific environment variables
+  NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-L${lib.getLib openssl}/lib -L${lib.getLib zlib}/lib";
+  NIX_CFLAGS_COMPILE = lib.optionalString stdenv.isLinux "-I${openssl.dev}/include -I${zlib.dev}/include";
+  LIBCLANG_PATH = lib.optionalString stdenv.isLinux "${libclang.lib}/lib";
 }
